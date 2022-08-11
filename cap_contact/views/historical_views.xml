@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<record id="view_historical_notes_tree" model="ir.ui.view">
+		<field name="name">view.historical.notes.tree</field>
+		<field name="model">historical.notes</field>
+		<field name="arch" type="xml">
+			<tree>
+				<field name="sequence" widget="handle"/>
+				<field name="name"/>
+				<field name="origin"/>
+			</tree>
+		</field>
+	</record>
+
+	<record id="view_historical_notes_form" model="ir.ui.view">
+		<field name="name">view.historical.notes.form</field>
+		<field name="model">historical.notes</field>
+		<field name="arch" type="xml">
+			<form>
+				<sheet string="Historical Notes">
+					<widget name="web_ribbon" text="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+					<field name="active" invisible="1"/>
+					<div class="oe_title">
+						<h1>
+							<field name="name" required="1" placeholder="Name..." invisible="1"/>
+						</h1>
+					</div>
+					<group>
+						<group>
+							<field name="location_id" string="Location" domain="[['partner_type','=','location']]" can_create="true" can_write="true"/>
+						</group>
+						<group>
+							<field name="origin" string="origin" can_create="true" can_write="true"/>
+						</group>
+					</group>
+					<group>
+						<field name="job_notes" string="Job Notes"/>
+						<field name="did_you_invoice" string="Did you invoice?"/>
+						<field name="reason_for_not_invoicing" string="Reason for not invoicing" attrs="{'invisible': [['did_you_invoice','!=','No, other reason']]}"/>
+						<field name="did_you_get_payment" string="Did you get payment?" attrs="{'invisible': [['did_you_invoice','!=','Yes']]}"/>
+						<field name="reason_for_no_payment" string="Reason for no payment" attrs="{'invisible': [['did_you_get_payment','!=','No, other reason']]}"/>
+						<field name="did_you_properly_track_your_materials" string="Did you properly track your materials?"/>
+						<field name="reason_for_not_tracking_materials" string="Reason for not tracking materials" attrs="{'invisible': [['did_you_properly_track_your_materials','!=','No, other reason']]}"/>
+					</group>
+				</sheet>
+				<div class="oe_chatter" name="oe_chatter">
+					<field name="message_follower_ids"/>
+					<field name="message_ids"/>
+					<field name="activity_ids"/>
+				</div>
+			</form>
+		</field>
+	</record>
+
+	<record id="view_historical_pictures_tree" model="ir.ui.view">
+		<field name="name">view.historical.pictures.tree</field>
+		<field name="model">historical.pictures</field>
+		<field name="arch" type="xml">
+			<tree>
+				<field name="name"/>
+			</tree>
+		</field>
+	</record>
+
+	<record id="view_historical_pictures_form" model="ir.ui.view">
+		<field name="name">view.historical.pictures.form</field>
+		<field name="model">historical.pictures</field>
+		<field name="arch" type="xml">
+			<form>
+				<sheet string="Historical Pictures">
+					<widget name="web_ribbon" text="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+					<field name="active" invisible="1"/>
+					<div class="oe_title">
+						<h1>
+							<field name="name" required="1" placeholder="Name..." invisible="1"/>
+						</h1>
+					</div>
+					<group>
+						<group>
+							<field name="location_id" domain="[['partner_type','=','location']]" string="Location" can_create="true" can_write="true"/>
+						</group>
+						<group>
+							<field name="origin" string="origin" can_create="true" can_write="true"/>
+						</group>
+					</group>
+					<group>
+						<group>
+							<field widget="image" options="{'size': [0, 90]}" name="job_picture_1" string="Job Picture 1"/>
+							<field widget="image" options="{'size': [0, 90]}" name="job_picture_3" string="Job Picture 3" attrs="{'invisible': [['job_picture_2','=',False]]}"/>
+							<field widget="image" options="{'size': [0, 90]}" name="job_picture_5" string="Job Picture 5" attrs="{'invisible': [['job_picture_4','=',False]]}"/>
+						</group>
+						<group>
+							<field widget="image" options="{'size': [0, 90]}" name="job_picture_2" string="Job Picture 2" attrs="{'invisible': [['job_picture_1','=',False]]}"/>
+							<field widget="image" options="{'size': [0, 90]}" name="job_picture_4" string="Job Picture 4" attrs="{'invisible': [['job_picture_3','=',False]]}"/>
+							<field widget="image" options="{'size': [0, 90]}" name="job_picture_6" string="Job Picture 6" attrs="{'invisible': [['job_picture_5','=',False]]}"/>
+						</group>
+					</group>
+				</sheet>
+				<div class="oe_chatter" name="oe_chatter">
+					<field name="message_follower_ids"/>
+					<field name="message_ids"/>
+					<field name="activity_ids"/>
+				</div>
+			</form>
+		</field>
+	</record>
+
+	<record id='action_historical_notes' model='ir.actions.act_window'>
+		 <field name="name">Historical Notes</field>
+		 <field name="res_model">historical.notes</field>
+		 <field name="view_mode">tree,form</field>
+	</record>
+
+	<record id='action_historical_pictures' model='ir.actions.act_window'>
+		 <field name="name">Historical Pictures</field>
+		 <field name="res_model">historical.pictures</field>
+		 <field name="view_mode">tree,form</field>
+	</record>
+
+	<menuitem name="Historical Notes" id="menu_historical_notes" parent="contacts.res_partner_menu_config" action="action_historical_notes" sequence="1"/>
+
+	<menuitem name="Historical Pictures" id="menu_historical_pictures" parent="contacts.res_partner_menu_config" action="action_historical_pictures" sequence="2"/>
+
+</odoo>

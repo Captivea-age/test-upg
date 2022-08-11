@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="group_field_technician" model="res.groups">
+            <field name="name">Field Technician</field>
+        </record>
+
+        <record id="sale_order_rule_field_technician" model="ir.rule">
+            <field name="name">Technician Sale order</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('field_technician.group_field_technician'))]"/>
+        </record>
+
+        <record id="account_invoice_rule_field_technician" model="ir.rule">
+            <field name="name">Technician Invoices</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('field_technician.group_field_technician'))]"/>
+        </record>
+
+        <record id="project_rule_field_technician" model="ir.rule">
+            <field name="name">Technician Project</field>
+            <field name="model_id" ref="project.model_project_project"/>
+            <field name="domain_force">[('create_uid', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('field_technician.group_field_technician'))]"/>
+        </record>
+
+        <record id="employee_rule_field_technician" model="ir.rule">
+            <field name="name">Technician Employee</field>
+            <field name="model_id" ref="hr.model_hr_employee"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('field_technician.group_field_technician'))]"/>
+        </record>
+
+        <record id="expense_rule_field_technician" model="ir.rule">
+            <field name="name">Technician Expense</field>
+            <field name="model_id" ref="hr_expense.model_hr_expense"/>
+            <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('field_technician.group_field_technician'))]"/>
+        </record>
+
+        <record id="task_rule_field_technician" model="ir.rule">
+            <field name="name">Technician Task</field>
+            <field name="model_id" ref="project.model_project_task"/>
+            <field name="domain_force">[('planned_date_begin','>=', ((user.date_today).strftime('%Y-%m-%d'))+' '+'00:00:00'),('planned_date_begin','&lt;=', ((user.date_today).strftime('%Y-%m-%d'))+' '+'23:59:59'),'|',('technician_team_ids.id', '=', user.id),('user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('field_technician.group_field_technician'))]"/>
+        </record>
+
+    </data>
+
+</odoo>

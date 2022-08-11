@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+        <record id="ticket_creation_from_relation" model="ir.actions.server">
+            <field name="name">Cap_ Module_: Ticket creation from relation</field>
+            <field name="model_id" ref="model_contact_location_relationship"/>
+            <field name="state">code</field>
+            <field name="code">
+for record in records:
+    helpdesk = env['helpdesk.ticket'].create({
+        'name':record.name,   
+        'customer_name':record.contact_id.id,  
+        'partner_id':record.location_id.id, 
+        'pick_the_location_id':record.id, 
+        'team_id':2,    
+    })
+
+    action =  {
+            'type': 'ir.actions.act_window',
+            'res_model': 'helpdesk.ticket',
+            'view': 'helpdesk.helpdesk_ticket_view_form',
+            'view_mode':'form',
+            'res_id':helpdesk.id,
+            'target': 'current',
+    }
+
+            </field>
+        </record>
+    </data>
+
+</odoo>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="helpdesk_tag_view_tree_inherit" model="ir.ui.view">
+        <field name="name">helpdesk.tags.tree.inherit</field>
+        <field name="model">helpdesk.tag</field>
+        <field name="priority">99</field>
+        <field name="inherit_id" ref="helpdesk.helpdesk_tag_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree[1]/field[@name='name']" position="after">
+                <field filename="emoji_filename" name="emoji" string="Emoji" widget="image" class="oe_avatar"/>
+                <field invisible="1" name="emoji_filename"/>
+            </xpath>
+            <xpath expr="//tree[1]/field[@name='color']" position="after">
+                <field name="priority"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

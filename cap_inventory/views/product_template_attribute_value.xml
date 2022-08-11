@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_product_template_attribute_value_list_custom" model="ir.ui.view">
+            <field name="name">view.product.template.attribute.value.custom.list</field>
+            <field name="model">product.template.attribute.value</field>
+            <field name="inherit_id" ref="product.product_template_attribute_value_view_tree"/>
+            <field name="priority">101</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='price_extra']" position="before">
+                    <field name="cost" widget="monetary" />
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

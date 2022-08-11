@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="project_task_view_gantt_inherit" model="ir.ui.view">
+        <field name="name">project.task.view.gantt.inherit</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project_enterprise.project_task_view_gantt"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="x_studio_job_notes"/>
+                <field name="x_studio_job_type"/>
+            </xpath>
+            <xpath expr="//div[@t-name='gantt-popover']//ul" position="replace">
+                <li><strong>Customer:&#160;</strong> <t t-esc="x_studio_customer_name[1]" /></li>
+                <li><strong>Intervention Location:&#160;</strong> <t t-esc="partner_id[1]" /></li>
+                <li><strong>Start Date:&#160;</strong> <t t-esc="planned_date_begin.format('L LTS')" /></li>
+                <li><strong>End Date:&#160;</strong> <t t-esc="planned_date_end.format('L LTS')"/></li>
+                <li>
+                    <strong>Ladder needed:&#160;</strong>
+                    <t t-if="x_studio_job_notes != ''" t-esc="x_studio_job_notes"/>
+                    <t t-else="">Not Specified</t>
+                </li>
+                <li>
+                    <strong>Job type:&#160;</strong>
+                    <t t-if="x_studio_job_type" t-esc="x_studio_job_type"/>
+                    <t t-else="">Not Specified</t>
+                </li>
+                <li>
+                    <strong>Scheduled Ready:&#160;</strong>
+                    <t t-if="schedule_ready">Yes</t>
+                    <t t-else="">No</t>
+                </li>
+            </xpath>
+        </field>
+    </record>
+</odoo>

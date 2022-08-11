@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_pm_test_records_form" model="ir.ui.view">
+            <field name="name">view.pm.test.records.form</field>
+            <field name="model">preventive_maintenance.test.records</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+	                    <group>
+	                    	<group>
+	                    		<field name="system_id"/>
+	                    		<field name="component_id"/>
+	                    		<field name="test_type"/>
+	                    	</group>
+	                    	<group>
+	                    		<field name="maintenance_id"/>
+	                    		<field name="date"/>
+	                    		<field name="value"/>
+	                    		<field name="result"/>
+	                    		<field name="job_id"/>
+	                    	</group>
+	                    </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="view_pm_test_records_simplified_form" model="ir.ui.view">
+            <field name="name">view.pm.test.records.simplified.form</field>
+            <field name="model">preventive_maintenance.test.records</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <group>
+                                    <field name="value" label="Value"/>
+                                  </group>
+                                  <group>
+                                    <field name="test_type_unit" label="Unit"/>
+                                  </group>
+                                    
+
+                                <field name="result" invisible="1"/>
+                                <field name="test_id" invisible="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="saveTestResultAndClose" type="object" string="Save"/>
+<!--                         <button name="close" type="object" string="Discard"/> -->
+                        <button string="Close" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_pm_test_records_tree" model="ir.ui.view">
+            <field name="name">view.pm.test.records.tree</field>
+            <field name="model">preventive_maintenance.test.records</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="system_id"/>
+                    <field name="component_id"/>
+                    <field name="date"/>
+                    <field name="value"/>
+                    <field name="result"/>
+                    <field name="job_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="pm_test_records_action" model="ir.actions.act_window">
+            <field name="name">Test Records</field>
+            <field name="res_model">preventive_maintenance.test.records</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+    </data>
+</odoo>

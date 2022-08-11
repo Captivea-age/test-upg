@@ -1,0 +1,110 @@
+.btn-primary {
+    color: #FFFFFF;
+    background-color: #539636;
+    border-color: #539636;
+}
+.btn-secondary{
+    color:#539636;
+}
+
+.o_main_navbar{
+    border-bottom: 1px solid #471F6F ;
+    background-color: #471F6F ;
+}
+.o_main_navbar > a:hover {
+    background-color: #539636 !important;
+}
+.o_main_navbar > ul > li > a:hover {
+    background-color: #539636 !important;
+}
+.o_main_navbar .show .dropdown-toggle {
+    background-color: #539636 !important;
+}
+.alert{
+    padding:0px;
+}
+.o_helpdesk_dashboard{
+    display:none;
+}
+.o_kanban_view.o_kanban_dashboard.o_helpdesk_kanban{
+    padding-top:5px!important;
+}
+.o_main_navbar > ul > li.o_extra_menu_items.show > ul > li > a {
+    background-color: #471F6F !important;
+}
+a.fa .o_menu_toggle .fa-chevron-left :hover {
+    background-color: #539636 !important;
+}
+
+/*
+
+    Contact View
+
+*/
+
+.bold_name {
+    font-weight: bold !important;
+}
+
+div.custom-line-height > div > table > tbody > tr {
+    line-height: 45px !important;
+}
+
+
+/*
+
+    Field Service TECH VIEW css
+
+*/
+
+.purple_text{
+    color: #652CB3;
+}
+.pink_text{
+    color: #E187FF;
+}
+.partner_age{
+    background-color: #ba9be8;
+    border: 1px solid #000;
+    width: 70px;
+    height: 30px;    
+    color: #000;
+    padding:3px;
+}
+.no_margin {
+    margin-left:0px !important;
+    margin-right:0px !important;
+}
+
+.o_field_phone_sms {
+    display:none !important;
+}
+
+@media screen and (max-width: 640px) {
+
+    .desktop_view_visible{
+        display:none;
+    }
+    .phone_view_invisible{
+        display:none!important;
+    }
+
+    .phone_view_visible{
+        display: block!important;
+    }
+
+}
+
+@media screen and (min-width: 640px) {
+
+    .desktop_view_visible{
+        display: block!important;
+    }
+    .desktop_view_invisible{
+        display:none;
+    }
+    .phone_view_visible{
+        display:none;
+    }
+
+}

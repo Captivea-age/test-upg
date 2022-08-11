@@ -1,0 +1,107 @@
+<html>
+  <head>
+    <script
+      type="text/javascript"
+      src="https://codesandbox.io/public/sse-hooks/sse-hooks.f648b14c15c640a14a557113a991cb8d.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://codesandbox.io/static/js/banner.be879265d.js"
+    ></script>
+
+    <link rel="stylesheet" type="text/css" href="index.css" />
+    <link
+      rel="stylesheet"
+      href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+      integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
+      crossorigin="anonymous"
+    />
+
+    <script
+      type="text/javascript"
+      src="//dl.frontapp.com/libs/plugin-sdk-1.0.1.min.js"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <div class="login-form">
+      <label for="email">Email</label>
+      <input id="email" type="text" />
+      <label for="password">Password</label>
+      <input id="password" type="password" />
+      <button id="login">Login</button>
+    </div>
+    <div class="displayNone container box">
+      <div id="mainTitle" class="box-title">RDU</div>
+      <div class="row">
+        <h3 class="side-heading">Contact</h3>
+      </div>
+      <div class="row">
+        <div class="col-sm flex-1">
+          <p class="with-btn">
+            <span id="name">loading...</span>
+            <span class="action-btn"
+              ><a href="#" id="external-link" target="_blank"
+                ><i class="fas fa-external-link-square-alt"></i></a
+            ></span>
+          </p>
+          <p>
+            <span id="resident_title"></span>
+            <span id="top_address"></span>
+          </p>
+        </div>
+        <div class="col-sm flex-1">
+          <p id="phone_sms"></p>
+          <p id="email"></p>
+          <p id="phone_1"></p>
+          <p id="phone_2"></p>
+        </div>
+      </div>
+      <div id="locationsHistory" class="row">
+        <div class="col-sm">
+          <h3 class="side-heading location-title">
+            <span>Locations/History</span>
+            <div>
+              <button data-filter="fs" class="filter active">
+                <i class="fas fa-filter" data-filter="fs"></i> FS
+              </button>
+              <button data-filter="hd" class="filter">
+                <i class="fas fa-filter" data-filter="hd"></i> HD
+              </button>
+              <button data-filter="all" class="filter">
+                <i class="fas fa-filter" data-filter="all"></i> ALL
+              </button>
+            </div>
+          </h3>
+          <div id="locations"></div>
+        </div>
+      </div>
+      <a
+        class="button"
+        target="_blank"
+        href="https://comfortmonster-staging.odoo.com/web#id=&action=138&model=res.partner&view_type=form&cids=1&menu_id=100&mobile=9999999999
+      "
+        id="createNewCustomerContact"
+      >
+        Create New Customer Contact
+      </a>
+      <a
+        class="button btn-outlined"
+        target="_blank"
+        href="#"
+        id="searchForNameInstead"
+      >
+        Search for Name Instead
+      </a>
+
+      <button id="logout">Logout</button>
+    </div>
+    <script type="text/javascript" src="api.js"></script>
+    <script type="text/javascript" src="index.js"></script>
+    <script
+      crossorigin
+      type="text/javascript"
+      src="https://codesandbox.io/static/js/watermark-button.be960f43b.js"
+    ></script>
+  </body>
+</html>

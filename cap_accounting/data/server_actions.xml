@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+<!--
+        <record id="ir_pm_notification_generation" model="ir.actions.server">
+            <field name="name">PM: Notification generation</field>
+            <field name="model_id" ref="preventive_maintenance.model_preventive_maintenance_notification_board"/>
+            <field name="state">code</field>
+            <field name="code">
+
+            </field>
+        </record> -->
+
+        </data>
+
+      </odoo>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_helpdesk_form_custom" model="ir.ui.view">
+            <field name="name">view.helpdesk.custom.form</field>
+            <field name="model">helpdesk.ticket</field>
+            <field name="inherit_id" ref="helpdesk.helpdesk_ticket_view_form"/>
+            <field name="priority">101</field>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="after">
+                    <div class="text-center alert alert-danger" role="alert">
+                        <field name="display_error" nolabel="1" widget="html"/>
+                    </div>
+                    <div class="text-center alert alert-warning" role="alert">
+                        <field name="display_warning" nolabel="1" widget="html"/>
+                    </div>
+
+                    <div class="text-center alert alert-info" role="alert">
+                        <field name="display_info" nolabel="1" widget="html"/>
+                    </div>
+                </xpath>
+<!--                 <xpath expr='//form[@string="Helpdesk Ticket"]' position='attributes'>
+                    <attribute name="create">false</attribute>
+                </xpath> -->
+                <xpath expr='//form' position='attributes'>
+                    <attribute name="create">false</attribute>
+                </xpath>
+<!--                 <xpath expr='//field[@name="stage_id"]' position='attributes'>
+                    <attribute name="invisible">1</attribute>
+                </xpath> -->
+<!--                 <xpath expr='//button[@name="371"]' position='attributes'>
+                    <attribute name="invisible">1</attribute>
+                </xpath> -->
+<!--                 <xpath expr='//button[@name="1179"]' position='attributes'>
+                    <attribute name="invisible">1</attribute>
+                </xpath> -->
+<!--                 <xpath expr='//button[@name="766"]' position='attributes'>
+                    <attribute name="invisible">1</attribute>
+                </xpath> -->
+            </field>
+        </record>
+
+        <record id="view_helpdesk_fsm_form_custom" model="ir.ui.view">
+            <field name="name">view.helpdesk.fsm.custom.form</field>
+            <field name="model">helpdesk.create.fsm.task</field>
+            <field name="inherit_id" ref="helpdesk_fsm.create_fsm_task_view_form"/>
+            <field name="priority">100</field>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_generate_task']" position="replace">
+                </xpath>
+                <xpath expr="//button[@name='action_generate_and_view_task']" position="replace">
+                        <button string="Create &amp; View Job" class="btn btn-primary" name="action_generate_and_view_task" type="object"/>
+                </xpath>
+
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>                
+                <xpath expr="//field[@name='project_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>                
+                <xpath expr="//field[@name='partner_id']" position="replace">
+                    <field name="partner_id" label="Location" readonly="1" widget="Many2one"/>
+                </xpath>         
+            </field>
+        </record>
+        <record id="project_task_view_list_fsm_inherit_custom" model="ir.ui.view">
+            <field name="name">project.task.tree.fsm.inherit.custom</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="industry_fsm.project_task_view_list_fsm"/>
+            <field name="priority">100</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='project_id']" position="replace">
+                    <!--<field name="start_date"/>
+                    <field name="date_end"/>-->
+                    <field name="planned_date_begin"/>
+                    <field name="planned_date_end"/>
+                </xpath>  
+                <xpath expr="//field[@name='worksheet_template_id']" position="replace">
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

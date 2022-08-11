@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+      <record id="job_department_from_helpdesk" model="base.automation">
+          <field name="name">CAP_ Module_: Job department from Helpdesk queue</field>
+          <field name="model_id" ref="project.model_project_task"/>
+          <field name="state">code</field>
+          <field eval="True" name="active" />
+          <field name="trigger">on_create_or_write</field>
+          <field name="code">if record['helpdesk_ticket_id']:
+    if record.helpdesk_ticket_id.team_id.name=="Service":
+      record['department_id'] = 2
+    elif record.helpdesk_ticket_id.team_id.name=="Maintenance":
+      record['department_id'] = 5
+    elif record.helpdesk_ticket_id.team_id.name=="Repair":
+      record['department_id'] = 3
+    elif record.helpdesk_ticket_id.team_id.name=="Replacement":
+      record['department_id'] = 4
+          </field>
+      </record>
+
+    </data>
+</odoo>

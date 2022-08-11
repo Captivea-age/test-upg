@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_project_task_form_custom" model="ir.ui.view">
+            <field name="name">view.project.task.custom.form.two</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_form2" ></field>
+            <field name="priority">110</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='user_id']" position="attributes">
+                    <attribute name="domain">[('technician_bool','=',True)]</attribute>
+                </xpath>
+<!--                 <xpath expr="//field[@name='technician_team_ids']" position="attributes">
+                    <attribute name="domain">[('technician_bool','=',True)]</attribute>
+                </xpath> -->
+            </field>
+        </record>
+        
+<!--         <record id="view_field_service_appointment_form_custom" model="ir.ui.view">
+            <field name="name">view.field.service.appointment.form.custom</field>
+            <field name="model">field.service.appointment</field>
+            <field name="inherit_id" ref="cap_studio_customization.view_field_service_appointment_form" ></field>
+            <field name="priority">100</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='field_technician_id']" position="attributes">
+                    <attribute name="domain">[('technician_bool','=',True),('team_color','!=',False),('technician_role','!=',False)]</attribute>
+                </xpath>
+            </field>
+        </record> -->
+
+    </data>
+</odoo>

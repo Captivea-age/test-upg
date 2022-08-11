@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="technician_view_form_custom" model="ir.ui.view">
+            <field name="name">Technician view custom form</field>
+            <field name="model">project.task</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="cap_field_service.technician_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="job_type_id" readonly="1" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True, 'no_open':True}" class="ml32"/>
+                    <field name="location_type_id" readonly="1" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True, 'no_open':True}" class="ml32"/>
+                </xpath>
+                <xpath expr="//page[@name='job_notes']" position="inside">
+                    <group>
+                        <field name="job_notes"/>
+                        <field name="did_you_invoice"/>
+                        <field name="reason_for_not_invoicing" attrs="{'invisible': [['did_you_invoice','!=','No, other reason']]}"/>
+                        <field name="did_you_get_payment" attrs="{'invisible': [['did_you_invoice','!=','Yes']]}"/>
+                        <field name="reason_for_no_payment" attrs="{'invisible': [['did_you_get_payment','!=','No, other reason']]}"/>
+                        <field name="did_you_properly_track_your_materials"/>
+                        <field name="no_tracking_reason" attrs="{'invisible': [['did_you_properly_track_your_materials','!=','No, other reason']]}"/>
+                    </group>
+                </xpath>
+                <xpath expr="//page[@name='history_page']" position="inside">
+                    <group>
+                    <field name='service_titan_id' readonly="1" string="Service Titan ID"/>
+                    <field name='service_titan_link' string="Service Titan link" widget="html"/>
+                    <field name="historical_job_notes_list" string="Historical Job Notes"/>
+                    </group>
+                </xpath>
+                <xpath expr="//page[@name='follow_ups_needed']" position="inside">
+                    <group>
+                        <field name="followup_needed" widget="toggle_boolean"/>
+                        <field name="followup_department" widget="many2many_tags" attrs="{'required': [('followup_needed', '=', True)]}" />
+                        <field name="followup_notes" attrs="{'required': [('followup_needed', '=', True)]}" />
+                    </group>
+                </xpath>
+
+                <!-- <xpath expr="//page[@name='timesheets']" position="inside">
+                    <field name="timesheet_ids" readonly="1">
+                        <tree>
+                          <field name="date"/>
+                          <field name="employee_id"/>
+                          <field name="name"/>
+                          <field name="unit_amount" string="Time Spent" widget="timesheet_uom"/>
+                        </tree>
+                    </field>
+                </xpath> -->
+                <xpath expr="//button[@name='action_fsm_view_material']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_view_ticket']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_view_so']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//button[@id='purple_button']" position="after">
+                  <!--<field name="url_job_service_titan" widget='url' />-->
+                  <field name="button_job_service_titan" readonly="1" widget='html' />
+                </xpath>
+                <xpath expr="//field[@name='job_notes']" position="attributes">
+                    <attribute name="attrs">{'required': [('stage_id', '=', 2)]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='did_you_invoice']" position="attributes">
+                    <attribute name="attrs">{'required': [('stage_id', '=', 2)]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='did_you_properly_track_your_materials']" position="attributes">
+                    <attribute name="attrs">{'required': [('stage_id', '=', 2)]}</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

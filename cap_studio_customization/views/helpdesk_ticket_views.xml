@@ -1,0 +1,645 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<record id="helpdesk_ticket_view_form_inherit_studio_cust" model="ir.ui.view">
+        <field name='name'>helpdesk.ticket.form.inherit.studio.custo</field>
+        <field name="priority">100</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="inherit_id" ref="helpdesk.helpdesk_ticket_view_form"/>
+        <field name="arch" type="xml">
+			  <xpath expr="//field[@name='email_cc']" position="replace">
+			    <field name="location_type_1" string="Location type"/>
+			  </xpath>
+			  <xpath expr="//field[@name='partner_email']" position="replace"/>
+			  <xpath expr="//button[@name='forum_post_new']" position="replace"/>
+			  <xpath expr="//button[@name='assign_ticket_to_self']" position="replace"/>
+			  <xpath expr="//button[@name='action_generate_fsm_task']" position="after">
+			    <button name="%(action_create_ticket_and_replacement_from_helpdesk)d" class="oe_read_only" type="action" string="Create AOR Project" invisible="1"/>
+			  </xpath>
+			  <xpath expr="//field[@name='fsm_task_count']" position="attributes">
+			    <attribute name="string">Jobs</attribute>
+			  </xpath>
+			  <xpath expr="//button[@name='action_view_repairs']" position="after">
+			    <button class="oe_stat_button" icon="fa-shopping-basket" type="action" name="%(action_open_purchase_order)d">
+			      <field widget="statinfo" name="purchase_order_count" string="Purchases"/>
+			    </button>
+			  </xpath>
+			  <xpath expr="//button[@name='forum_post_open']" position="after">
+			    <button class="oe_stat_button" icon="fa-credit-card" type="action" name="%(action_open_sale_order)d">
+			      <field widget="statinfo" name="sale_order_count" string="Sales Orders"/>
+			    </button>
+			  </xpath>
+			  <xpath expr="//form[1]/sheet[1]/div[not(@name)][1]/h1[1]/field[@name='name']" position="attributes">
+			    <attribute name="attrs">{}</attribute>
+			    <attribute name="force_save">True</attribute>
+			    <attribute name="readonly">1</attribute>
+			    <attribute name="required">0</attribute>
+			  </xpath>
+			  <xpath expr="//form[1]/sheet[1]/group[1]" position="attributes">
+			    <attribute name="modifiers">{}</attribute>
+			  </xpath>
+			  <xpath expr="//form[1]/sheet[1]/group[1]/group[1]" position="attributes">
+			    <attribute name="modifiers">{}</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='use_website_helpdesk_forum']" position="before">
+			    <field name="customer_name" options="{'no_quick_create':True, 'no_create':True, 'no_create_edit':True}" string="Location contact"/>
+			  </xpath>
+			  <xpath expr="//field[@name='forum_post_id']" position="after">
+			    <field name="modify_location_contact" class="oe_edit_only" string="Choose Different Contact" widget="boolean_toggle" attrs="{&quot;invisible&quot;: [[&quot;pick_the_location_id&quot;,&quot;=&quot;,False]]}"/>
+			    <field name="customer_search_id" string="Contact Person" domain="[&quot;|&quot;,[&quot;partner_type&quot;,&quot;=&quot;,&quot;person&quot;],[&quot;partner_type&quot;,&quot;=&quot;,&quot;company&quot;]]" attrs="{&quot;invisible&quot;: [&quot;&amp;&quot;,[&quot;partner_id&quot;,&quot;!=&quot;,False],[&quot;pick_the_location_id&quot;,&quot;!=&quot;,False]]}" options="{&quot;no_quick_create&quot;:true,&quot;no_create&quot;:true,&quot;no_open&quot;:true}"/>
+			    <xpath expr="//field[@name='partner_id']" position="move"/>
+			    <field name="pick_the_location_id" string="Associated Contact/Location" domain="['|',['location_id.id','=',partner_id],['contact_id.id','=',customer_search_id] ]" options="{&quot;no_quick_create&quot;:true,&quot;no_open&quot;:true,&quot;no_create&quot;:true}" attrs="{&quot;invisible&quot;: [&quot;&amp;&quot;,[&quot;pick_the_location_id&quot;,&quot;!=&quot;,False],[&quot;modify_location_contact&quot;,&quot;=&quot;,False]]}" context="{'default_contact':partner_id}" on_change="1" modifiers="{}"/>
+			    <field name="location_id" string="Location" force_save="True" attrs="{&quot;readonly&quot;: [[&quot;pick_the_location_id&quot;,&quot;!=&quot;,False]]}" domain="[['child_ids.partner_type','=','person']]" on_change="1" can_create="true" can_write="true" id="location_id" modifiers="{'readonly':[['pick_the_location_id','!=',false]]}" invisible="1"/>
+			  </xpath>
+			  <xpath expr="//form[1]/sheet[1]/group[1]/group[2]" position="attributes">
+			    <attribute name="modifiers">{}</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='partner_name']" position="before">
+			    <xpath expr="//field[@name='tag_ids']" position="move"/>
+			    <xpath expr="//field[@name='domain_user_ids']" position="move"/>
+			    <xpath expr="//field[@name='ticket_type_id']" position="move"/>
+			    <xpath expr="//field[@name='priority']" position="move"/>
+			    <field name="time_needed" string="Time needed" widget="float_time" attrs="{&quot;invisible&quot;: [[&quot;time_needed&quot;,&quot;=&quot;,0]]}"/>
+			    <field name="high_skill_needed" widget="toggle_button" attrs="{&quot;invisible&quot;: [[&quot;time_needed&quot;,&quot;=&quot;,0]]}"/>
+			    <xpath expr="//field[@name='company_id']" position="move"/>
+			    <xpath expr="//field[@name='sla_deadline']" position="move"/>
+			    <xpath expr="//field[@name='active']" position="move"/>
+			    <xpath expr="//field[@name='team_id']" position="move"/>
+			    <field name="department_assigned_id" string="Department Assigned" invisible="1" can_create="true" can_write="true" modifiers="{'invisible':true}" id="department_assigned_id"/>
+			    <field name="sale_order_id" force_save="True" readonly="1"/>
+			    <field name="extra_phone" string="Extra phone"/>
+			    <field name="employee_assigned_id" string="Employee Assigned" domain="[['department_id','=','department_assigned_id']]" invisible="1" can_create="true" can_write="true" modifiers="{'invisible':true}" id="employee_assigned_id"/>
+			    <xpath expr="//field[@name='user_id']" position="move"/>
+			  </xpath>
+			  <xpath expr="//field[@name='partner_name']" position="attributes">
+			    <attribute name="attrs">{}</attribute>
+			    <attribute name="id">partner_name</attribute>
+			    <attribute name="invisible">1</attribute>
+			    <attribute name="modifiers">{'invisible':[['partner_id','!=',false]]}</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='commercial_partner_id']" position="attributes">
+			    <attribute name="can_create">true</attribute>
+			    <attribute name="can_write">true</attribute>
+			    <attribute name="id">commercial_partner_id</attribute>
+			    <attribute name="modifiers">{'invisible':true,'readonly':true}</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='sale_order_id']" position="attributes">
+			    <attribute name="can_create">true</attribute>
+			    <attribute name="can_write">true</attribute>
+			    <attribute name="id">sale_order_id</attribute>
+			    <attribute name="modifiers">{'invisible':true}</attribute>
+			    <attribute name="options">{'no_create': True}</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='use_credit_notes']" position="attributes">
+			    <attribute name="id">use_credit_notes</attribute>
+			    <attribute name="modifiers">{'invisible':true,'readonly':true}</attribute>
+			  </xpath>
+			  <xpath expr="//form[1]/sheet[1]/group[1]/group[2]/field[@name='use_product_returns']" position="attributes">
+			    <attribute name="id">use_product_returns__14__</attribute>
+			    <attribute name="modifiers">{'invisible':true,'readonly':true}</attribute>
+			  </xpath>
+			  <xpath expr="//form[1]/sheet[1]/group[1]/group[2]/field[@name='use_product_repairs']" position="attributes">
+			    <attribute name="id">use_product_repairs__15__</attribute>
+			    <attribute name="modifiers">{'invisible':true,'readonly':true}</attribute>
+			  </xpath>
+			  <xpath expr="//form[1]/sheet[1]/group[1]/group[2]/field[@name='product_id']" position="attributes">
+			    <attribute name="can_create">true</attribute>
+			    <attribute name="can_write">true</attribute>
+			    <attribute name="id">product_id</attribute>
+			    <attribute name="modifiers">{'invisible':[['use_credit_notes','=',false],['use_product_returns','=',false],['use_product_repairs','=',false]]}</attribute>
+			    <attribute name="on_change">1</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='tracking']" position="attributes">
+			    <attribute name="id">tracking</attribute>
+			    <attribute name="modifiers">{'invisible':true,'readonly':true}</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='lot_id']" position="attributes">
+			    <attribute name="can_create">true</attribute>
+			    <attribute name="can_write">true</attribute>
+			    <attribute name="id">lot_id</attribute>
+			    <attribute name="modifiers">{'invisible':['|',['tracking','in',['none',false]],'&amp;','&amp;',['use_credit_notes','=',false],['use_product_returns','=',false],['use_product_repairs','=',false]]}</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='lot_id']" position="after">
+			    <field name="create_from_the_task_id" string="Create From the task" force_save="True" attrs="{&quot;invisible&quot;: [[&quot;create_from_the_task_id&quot;,&quot;=&quot;,False]]}" readonly="1"/>
+			  </xpath>
+			  <xpath expr="//form[1]/sheet[1]/group[1]" position="after">
+			    <!--         <field name="customer_name" string="Contact :"/>
+			 -->
+			    <field name="preferred_contact_method_1" widget="many2many_checkboxes" can_create="true" can_write="true" modifiers="{}" id="preferred_contact_method_1" required="1"/>
+			    <field name="email_2" string="Email" nolabel="1"/>
+			    <field name="phone_2" string="Phone" nolabel="1" widget="phone"/>
+			    <field name="monstercare_subscriptions" string="MonsterCare subscriptions"/>
+			    <field name="monstercare_list_1" string="Monstercare list"/>
+			    <field name="partner_email" string="Email" invisible="1"/>
+			    <field name="email_cc" string="Email CC"/>
+			    <field name="customer_email" string="Customer Email" invisible="1"/>
+			    <xpath expr="//field[@name='partner_name']" position="move"/>
+			    <notebook>
+			      <page name="description_tab" string="Description" invisible="1"/>
+			    </notebook>
+			  </xpath>
+			  <xpath expr="//form[1]/sheet[1]/notebook[1]/page[1]" position="inside">
+			    <xpath expr="//field[@name='description']" position="move"/>
+			  </xpath>
+			  <xpath expr="//form[1]/sheet[1]/notebook[1]" position="inside">
+			    <page string="Additional Contacts for this Location" name="contacts_tab" modifiers="{}">
+			      <button name="createContact" string="Create new contact" type="object" class="btn btn-primary"/>
+			      <field name="location_contacts_ids" string="Location Contacts" readonly="1">
+			        <tree>
+			          <field name="sequence" widget="handle"/>
+			          <field name="name" invisible="1"/>
+			          <field name="relationship_type"/>
+			          <field name="contact_roles" widget="many2many_tags"/>
+			          <field name="contact_id"/>
+			          <field name="contact_phone"/>
+			          <field name="preferred_contact_method_ids" widget="many2many_tags"/>
+			        </tree>
+			      </field>
+			    </page>
+			    <page name="related_docs" string="Related Invoices" modifiers="{}" attrs="{'invisible':[['team_id','=',1]]}">
+			      <field name="related_invoices_ids" string="Ticket Invoice(s)" attrs="{'invisible':[['team_id','!=',2]]}"/>
+			      <field name="related_repairs_invoices_ids" string="Repairs Invoice(s)" attrs="{'invisible':[['team_id','!=',3]]}"/>
+			      <field name="related_sales_invoices_ids" string="Sales Invoice(s)" attrs="{'invisible':['|','|', ['team_id','!=',4], ['team_id','!=',5], ['team_id','!=',3]]}"/>
+			    </page>
+			    <page string="Related Products from Sale order" name="studio_page_sfH5z">
+			      <field name="sales_order_items" string="Sales Order Items">
+			        <tree string="Sales Order Lines" create="false">
+			          <field name="order_id"/>
+			          <field name="product_id"/>
+			          <field name="name"/>
+			          <field name="product_uom_qty" string="Qty"/>
+			          <field name="product_type" invisible="1"/>
+			          <field name="virtual_available_at_date" invisible="1"/>
+			          <field name="qty_available_today" invisible="1"/>
+			          <field name="free_qty_today" invisible="1"/>
+			          <field name="scheduled_date" invisible="1"/>
+			          <field name="forecast_expected_date" invisible="1"/>
+			          <field name="warehouse_id" invisible="1"/>
+			          <field name="qty_to_deliver" invisible="1"/>
+			          <field name="is_mto" invisible="1"/>
+			          <field name="display_qty_widget" invisible="1"/>
+			          <widget name="qty_at_date_widget" width="20px"/>
+			          <field name="qty_delivered"/>
+			          <field name="qty_invoiced"/>
+			          <field name="qty_to_invoice"/>
+			          <field name="product_uom" string="Unit of Measure" groups="uom.group_uom"/>
+			          <field name="currency_id" invisible="1"/>
+			        </tree>
+			      </field>
+			    </page>
+			    <page string="Related Purchased products" name="studio_page_sWFko">
+			      <group name="studio_group_sWFko">
+			        <field name="products_purchased_ids" string="Products purchased"/>
+			      </group>
+			    </page>
+			    <page string="Job notes" name="jobnotes_tab">
+			      <group name="studio_group_jTOkx">
+			        <field name="job_notes_recap_table" string=" "/>
+			      </group>
+			    </page>
+			    <page string="Inspection" name="studio_page_k6bqE">
+			      <group name="studio_group_k6bqE">
+			        <field name="notification_ids"/>
+			      </group>
+			    </page>
+			    <page string="Customer check" name="studio_page_Ldz2l">
+			      <group name="studio_group_43dec1">
+			        <field name="authority" readonly="1" widget="toggle_button"/>
+			        <field name="customer_closure_approval" widget="toggle_button"/>
+			        <field name="_1st_approval_sent" readonly="1"/>
+			        <field name="_2nd_approval_sent" readonly="1"/>
+			        <field name="_3rd_approval_sent" readonly="1"/>
+			        <field name="_4th_approval_sent" readonly="1"/>
+			      </group>
+			    </page>
+			    <page string="Systems &amp; Memberships" name="system_membership">
+			      <button name="openSystemCreation" string="Add a system" class="btn btn-primary" type="object"/>
+			    </page>
+			  </xpath>
+			  <xpath expr="//field[@name='active']" position="attributes">
+			    <attribute name="id">active</attribute>
+			    <attribute name="modifiers">{'invisible':true}</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='team_id']" position="attributes">
+			    <attribute name="can_create">true</attribute>
+			    <attribute name="can_write">true</attribute>
+			    <attribute name="id">team_id</attribute>
+			    <attribute name="modifiers">{}</attribute>
+			    <attribute name="on_change">1</attribute>
+			    <attribute name="options">{"no_create":true,"no_open":true}</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='user_id']" position="attributes">
+			    <attribute name="attrs">{}</attribute>
+			    <attribute name="can_create">true</attribute>
+			    <attribute name="can_write">true</attribute>
+			    <attribute name="domain">[]</attribute>
+			    <attribute name="id">user_id</attribute>
+			    <attribute name="modifiers">{'invisible':true}</attribute>
+			    <attribute name="on_change">1</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='domain_user_ids']" position="attributes">
+			    <attribute name="can_create">true</attribute>
+			    <attribute name="can_write">true</attribute>
+			    <attribute name="id">domain_user_ids</attribute>
+			    <attribute name="modifiers">{'invisible':true,'readonly':true}</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='ticket_type_id']" position="attributes">
+			    <attribute name="can_create">true</attribute>
+			    <attribute name="can_write">true</attribute>
+			    <attribute name="id">ticket_type_id</attribute>
+			    <attribute name="invisible">1</attribute>
+			    <attribute name="modifiers">{}</attribute>
+			    <attribute name="string">Phone numbers</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='tag_ids']" position="attributes">
+			    <attribute name="can_create">true</attribute>
+			    <attribute name="can_write">true</attribute>
+			    <attribute name="id">tag_ids</attribute>
+			    <attribute name="modifiers">{}</attribute>
+			    <attribute name="options">{"color_field": "color", "no_create": true}</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='company_id']" position="attributes">
+			    <attribute name="can_create">true</attribute>
+			    <attribute name="can_write">true</attribute>
+			    <attribute name="groups"/>
+			    <attribute name="id">company_id</attribute>
+			    <attribute name="invisible">1</attribute>
+			    <attribute name="modifiers">{'invisible':true,'readonly':true}</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='sla_deadline']" position="attributes">
+			    <attribute name="groups"/>
+			    <attribute name="id">sla_deadline</attribute>
+			    <attribute name="modifiers">{'invisible':[['sla_deadline','=',false]],'readonly':true}</attribute>
+			    <attribute name="string">Location Type</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='partner_id']" position="attributes">
+			    <attribute name="attrs">{"invisible": ["&amp;",["customer_search_id","!=",False],["pick_the_location_id","=",False]], "required": [["partner_name","!=",False]]}</attribute>
+			    <attribute name="can_create">true</attribute>
+			    <attribute name="can_write">true</attribute>
+			    <attribute name="domain">[["partner_type","=","location"]]</attribute>
+			    <attribute name="id">partner_id</attribute>
+			    <attribute name="modifiers">{'required':true}</attribute>
+			    <attribute name="on_change">1</attribute>
+			    <attribute name="string">Location</attribute>
+			  </xpath>
+			  <!-- ajout des modifs pas possibles en module -->
+			  <xpath expr="//field[@name='name']" position="before">
+			    <img style="width:5%" src="/cap_helpdesk/static/src/img/service-comfy.png" alt="img"/>
+			    <span class="ml-4">HD<field name="id" options="{'format': 0}" readonly="1"/>  - </span>
+			  </xpath>
+			  <xpath expr="//field[@name='partner_id']" position="attributes">
+			    <attribute name="options">{'no_create': True, 'no_create_edit':True}</attribute>
+			  </xpath>
+			  <xpath expr="/form[1]/sheet[1]/group[1]/group[1]" position="inside">
+			    <field name="customer_name" invisible="True"/>
+			    <!--
+			        <button name="createLocation" string="Create new Location (existing contact)" attrs="{'invisible':[('customer_name','!=',False)]}" type="object" class="btn btn-primary"/>-->
+			  </xpath>
+			  <xpath expr="//field[@name='user_id']" position="attributes">
+			    <attribute name="invisible">1</attribute>
+			  </xpath>
+			  <!--<xpath expr="//field[@name='modify_location_contact']" position="attributes">
+			        <attribute name="class"></attribute>
+			    </xpath>-->
+			  <xpath expr="//field[@name='name']" position="before">
+			    <style type="text/css">
+                    .o_form_view.o_form_editable .oe_title {
+                        max-width: 10000px !important;
+                    }
+			        </style>
+			  </xpath>
+			  <xpath expr="//field[@name='monstercare_subscriptions']" position="attributes">
+			    <attribute name="string">Subscriptions</attribute>
+			  </xpath>
+<!-- 			  <xpath expr="//field[@name='tag_ids']" position="attributes">
+			    <attribute name="invisible">1</attribute>
+			  </xpath> -->
+			  <xpath expr="//field[@name='extra_phone']" position="attributes">
+			    <attribute name="invisible">1</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='monstercare_list_1']" position="attributes">
+			    <attribute name="invisible">1</attribute>
+			  </xpath>
+<!-- 			  <xpath expr="//field[@name='name']" position="after"> -->
+              <xpath expr="//form[1]/sheet[1]/div[not(@name)][1]/h1" position="after">
+			    <group name="contact_and_location" style="border: 1px solid black;font-size:1.08333333rem;padding-left:10px;margin-top: 25px;">
+			      <legend style="max-width:100%;width: 174px;position: relative;top: -13px;margin-left: 10px;padding-left: 2px;background: white;">
+			                Contact and Location
+			            </legend>
+			      <group name="contact_and_location_1" style="float:left;margin-right: -15px;">
+			            </group>
+			      <group name="contact_and_location_2" style="float:left">
+			            </group>
+			    </group>
+			  </xpath>
+			  <xpath expr="//group[@name='contact_and_location']" position="after">
+			    <group name="ticket_info" style="border: 1px solid black;font-size:1.08333333rem;padding-left:10px;margin-top: 25px;min-height:240px;">
+			      <legend style="max-width:100%;width: 150px;position: relative;top: -13px;margin-left: 10px;padding-left: 2px;background: white;">
+			                Ticket Information
+			            </legend>
+			      <group name="ticket_info_1" style="float:left;margin-right: -35px;">
+			            </group>
+			      <group name="ticket_info_2" style="float:left">
+			            </group>
+			    </group>
+			  </xpath>
+			  <xpath expr="//group[@name='contact_and_location_1']" position="inside">
+			    <xpath expr="//field[@name='customer_search_id']" position="move"/>
+			    <xpath expr="//field[@name='partner_id']" position="move"/>
+			    <xpath expr="//field[@name='pick_the_location_id']" position="move"/>
+			    <span class="o_form_label o_td_label" name="address_name" modifiers="{}">
+			            Location address
+			        </span>
+			    <div class="o_address_format" name="studio_div_93d002" modifiers="{}">
+			      <field name="location_street" class="o_address_street" string="Street" placeholder="Street..." attrs="{&quot;required&quot;: [[&quot;partner_id&quot;,&quot;!=&quot;,False]]}" widget="char" modifiers="{'required':true}" id="location_street"/>
+			      <field name="location_street2" class="o_address_street" string="Street2" placeholder="Street 2..." modifiers="{}" id="location_street2"/>
+			      <field name="location_city" class="o_address_city" string="City" placeholder="City" attrs="{&quot;required&quot;: [[&quot;partner_id&quot;,&quot;!=&quot;,False]]}" modifiers="{'required':true}" id="city"/>
+			      <span style="margin-left:-5px;">,</span>
+			      <field name="state_code" nolabel="1" readonly="1" style="margin-left:5px;margin-right:5px;"/>
+			      <field name="location_zip" class="o_address_zip" string="Zip Code" placeholder="ZIP" attrs="{&quot;required&quot;: [[&quot;partner_id&quot;,&quot;!=&quot;,False]]}" modifiers="{'required':true}" id="zip"/>
+			      <field name="location_state" class="o_address_state" string="State" placeholder="State" attrs="{&quot;invisible&quot;: 1}" modifiers="{'required':true}" id="location_state"/>
+			      <!-- <field name="country_id" class="o_address_country" string="Country" placeholder="Country" required="1" invisible="1" can_create="true" can_write="true" modifiers="{'invisible':true,'required':true}" id="country_id"/> -->
+			    </div>
+			    <xpath expr="//field[@name='location_type_1']" position="move"/>
+			    <xpath expr="//field[@name='monstercare_subscriptions']" position="move"/>
+			  </xpath>
+			  <xpath expr="//group[@name='contact_and_location_2']" position="inside">
+			    <xpath expr="//field[@name='customer_name']" position="move"/>
+			    <xpath expr="//field[@name='modify_location_contact']" position="move"/>
+			    <xpath expr="//field[@name='preferred_contact_method_1']" position="move" readonly="1"/>
+			    <xpath expr="//field[@name='email_2']" position="move"/>
+			    <xpath expr="//field[@name='phone_2']" position="move"/>
+			  </xpath>
+			  <xpath expr="//field[@name='email_2']" position="attributes">
+			    <!--<attribute name="style">position:relative;top: -77px;right: -308px;</attribute>-->
+			  </xpath>
+			  <xpath expr="//field[@name='phone_2']" position="attributes">
+			    <!--<attribute name="style">position:relative;top: -54px;right: -84px;</attribute>-->
+			  </xpath>
+			  <xpath expr="//group[@name='ticket_info_1']" position="inside">
+			    <xpath expr="//field[@name='priority']" position="move"/>
+                <xpath expr="//field[@name='tag_ids']" position="move"/>
+			    <xpath expr="//field[@name='team_id']" position="move"/>
+			    <xpath expr="//field[@name='description']" position="move"/>
+			    <xpath expr="//button[@name='action_generate_fsm_task']" position="move"/>
+			  </xpath>
+			  <xpath expr="//group[@name='ticket_info_2']" position="inside">
+			    <xpath expr="//field[@name='sale_order_id']" position="move"/>
+			    <field name="followup_department" widget="many2many_tags"/>
+			  </xpath>
+			  <xpath expr="//button[@name='action_generate_fsm_task']" position="attributes">
+			    <attribute name="style">position:relative; right:-255px;</attribute>
+			  </xpath>
+			  <xpath expr="//form[1]/sheet[1]/notebook[1]/page[1]" position="attributes">
+			    <attribute name="invisible">1</attribute>
+			  </xpath>
+			  <xpath expr="/form[1]/sheet[1]/notebook[1]/page[2]/field[1]" position="replace"/>
+			  <xpath expr="/form[1]/sheet[1]/notebook[1]/page[2]" position="inside">
+			    <field name="contact_list_ids"/>
+			  </xpath>
+			  <xpath expr="/form[1]/sheet[1]/notebook[1]/page[2]/field[1]" position="attributes">
+			    <attribute name="string">Contact list</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='contact_list_ids']" position="inside">
+			    <tree>
+			      <field name="sequence" widget="handle"/>
+			      <field name="name"/>
+			    </tree>
+			  </xpath>
+			  <xpath expr="//field[@name='contact_list_ids']/tree//field[@name='name']" position="attributes">
+			    <attribute name="class">bold-name</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='contact_list_ids']/tree//field[@name='name']" position="after">
+			    <field name="relationship_type"/>
+                <field name="contact_phone"/>
+				<field name="contact_mobile"/>
+                <field name="contact_roles_ids" widget="many2many_tags"/>
+                <field name="preferred_contact_method_ids" widget="many2many_tags"/>
+			  </xpath>
+			  <xpath expr="/form[1]/sheet[1]/notebook[1]" position="inside">
+			    <page string="Jobs list" name="joblist_tab">
+			      <group name="studio_group_lVUlG">
+			      </group>
+			    </page>
+			  </xpath>
+			  <xpath expr="/form[1]/sheet[1]/notebook[1]/page[1]" position="attributes">
+			    <attribute name="attrs">{}</attribute>
+			    <attribute name="invisible"/>
+			  </xpath>
+			  <xpath expr="/form[1]/sheet[1]/notebook[1]/page[10]/group[1]" position="inside">
+			    <field name="jobs_list_1_ids"/>
+			  </xpath>
+			  <xpath expr="/form[1]/sheet[1]/notebook[1]/page[10]/group[1]/field[1]" position="attributes">
+			    <attribute name="string">Jobs list</attribute>
+			  </xpath>
+			  <xpath expr="/form[1]/sheet[1]/notebook[1]/page[10]/group[1]/field[1]" position="replace"/>
+			  <xpath expr="/form[1]/sheet[1]/notebook[1]/page[10]/group[1]" position="inside">
+			    <field name="jobs_list_1_ids"/>
+			  </xpath>
+			  <xpath expr="/form[1]/sheet[1]/notebook[1]/page[10]/group[1]/field[1]" position="replace"/>
+			  <xpath expr="/form[1]/sheet[1]/notebook[1]/page[10]/group[1]" position="inside">
+			    <field name="jobs_list_ids"/>
+			  </xpath>
+			  <xpath expr="//field[@name='jobs_list_ids']" position="inside">
+			    <tree string="Tasks" multi_edit="1" sample="1">
+			      <field name="message_needaction" invisible="1" readonly="1"/>
+			      <field name="is_closed" invisible="1"/>
+			      <field name="sequence" invisible="1" readonly="1"/>
+			      <field name="helpdesk_ticket_id"/>
+			      <field name="name"/>
+			      <field name="project_id" optional="show" readonly="1"/>
+			      <field name="worksheet_template_id" optional="hide"/>
+			      <field name="partner_id" optional="hide"/>
+			      <field name="parent_id" groups="project.group_subtask_project" optional="hide"/>
+			      <field name="user_id" optional="show" widget="many2one_avatar_user"/>
+			      <field name="company_id" groups="base.group_multi_company" optional="show"/>
+			      <field name="allow_subtasks" invisible="1"/>
+			      <field name="planned_hours" widget="timesheet_uom_no_toggle" sum="Initially Planned Hours" optional="hide"/>
+			      <field name="effective_hours" widget="timesheet_uom" sum="Effective Hours" optional="show"/>
+			      <field name="remaining_hours" widget="timesheet_uom" sum="Remaining Hours" optional="hide" decoration-danger="progress &gt;= 100" decoration-warning="progress &gt;= 80 and progress &lt; 100"/>
+			      <field name="subtask_effective_hours" widget="timesheet_uom" attrs="{'invisible' : [('allow_subtasks', '=', False)]}" optional="hide"/>
+			      <field name="total_hours_spent" widget="timesheet_uom" attrs="{'invisible' : [('allow_subtasks', '=', False)]}" optional="hide"/>
+			      <field name="progress" widget="progressbar" optional="show" groups="hr_timesheet.group_hr_timesheet_user"/>
+			      <field name="activity_ids" widget="list_activity" optional="show"/>
+			      <field name="date_deadline" optional="hide" widget="remaining_days" attrs="{'invisible': [('is_closed', '=', True)]}"/>
+			      <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" optional="show"/>
+			      <field name="kanban_state" widget="state_selection" optional="hide" readonly="1"/>
+			      <field name="stage_id" invisible="context.get('set_visible',False)" optional="show" readonly="1"/>
+			    </tree>
+			  </xpath>
+			  <xpath expr="//field[@name='jobs_list_ids']/tree//field[@name='helpdesk_ticket_id']" position="replace"/>
+			  <xpath expr="//field[@name='jobs_list_ids']/tree//field[@name='project_id']" position="replace"/>
+			  <xpath expr="//field[@name='jobs_list_ids']/tree//field[@name='company_id']" position="replace"/>
+			  <xpath expr="//field[@name='jobs_list_ids']/tree" position="attributes">
+			    <attribute name="multi_edit">false</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='jobs_list_ids']/tree" position="attributes">
+			    <attribute name="edit">false</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='jobs_list_ids']/tree" position="attributes">
+			    <attribute name="create">false</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='jobs_list_ids']/tree" position="attributes">
+			    <attribute name="delete">false</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='jobs_list_ids']/tree//field[@name='effective_hours']" position="replace"/>
+			  <xpath expr="//field[@name='jobs_list_ids']/tree//field[@name='progress']" position="attributes">
+			    <attribute name="attrs">{}</attribute>
+			    <attribute name="invisible">1</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='jobs_list_ids']/tree//field[@name='activity_ids']" position="replace"/>
+			  <xpath expr="//field[@name='jobs_list_ids']/tree//field[@name='name']" position="after">
+			    <field name="planned_date_begin"/>
+			  </xpath>
+			  <xpath expr="//field[@name='jobs_list_ids']/tree//field[@name='planned_date_begin']" position="after">
+			    <field name="planned_date_end"/>
+			  </xpath>
+			  <xpath expr="//form[not(ancestor::field)]" position="attributes">
+			    <attribute name="create">false</attribute>
+			  </xpath>
+			  <xpath expr="//form[not(ancestor::field)]" position="attributes">
+			    <attribute name="edit">false</attribute>
+			  </xpath>
+			  <xpath expr="//form[not(ancestor::field)]" position="attributes">
+			    <attribute name="delete">false</attribute>
+			  </xpath>
+			  <xpath expr="//form[not(ancestor::field)]" position="attributes">
+			    <attribute name="create">true</attribute>
+			  </xpath>
+			  <xpath expr="//form[not(ancestor::field)]" position="attributes">
+			    <attribute name="edit">true</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='followup_department']" position="inside">
+			    <tree>
+			      <field name="name"/>
+			      <field name="description"/>
+			    </tree>
+			  </xpath>
+			  <xpath expr="//field[@name='followup_department']/tree" position="attributes">
+			    <attribute name="create">false</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='followup_department']/tree" position="attributes">
+			    <attribute name="edit">false</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='followup_department']/tree" position="attributes">
+			    <attribute name="delete">false</attribute>
+			  </xpath>
+<!--             <xpath expr="/form[1]/sheet[1]/div[2]/h1[1]/group[2]/group[2]/field[1]" position="after"> -->
+			  <xpath expr="//field[@name='sale_order_id']" position="after">
+			    <field name="followup_notes"/>
+			  </xpath>
+			  <xpath expr="//field[@name='followup_notes']" position="attributes">
+			    <attribute name="force_save">True</attribute>
+			    <attribute name="attrs">{}</attribute>
+			    <attribute name="readonly">1</attribute>
+			  </xpath>
+			  <xpath expr="/form[1]/sheet[1]/notebook[1]/page[9]" position="inside">
+			    <field name="systems_list_ids"/>
+			  </xpath>
+			  <xpath expr="//field[@name='systems_list_ids']" position="inside">
+			    <tree>
+			      <field name="name"/>
+			      <field name="location_id"/>
+			      <field name="system_type_id"/>
+			      <field name="system_age"/>
+			      <field name="health"/>
+			      <field name="maintenance_needed"/>
+			      <field name="notification_status"/>
+			      <field name="monstercare_covered"/>
+			      <field name="subscription_id"/>
+			    </tree>
+			  </xpath>
+			  <xpath expr="//field[@name='systems_list_ids']/tree//field[@name='maintenance_needed']" position="replace"/>
+			  <xpath expr="//field[@name='systems_list_ids']/tree//field[@name='notification_status']" position="replace"/>
+			  <xpath expr="//field[@name='systems_list_ids']/tree//field[@name='monstercare_covered']" position="attributes">
+			    <attribute name="string">MC ?</attribute>
+			  </xpath>
+			  <xpath expr="//field[@name='systems_list_ids']/tree//field[@name='subscription_id']" position="attributes">
+			    <attribute name="string">Membership</attribute>
+			  </xpath>
+                <!-- begin : change tabs order & name -->
+                <xpath expr="//page[@name='description_tab']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                  </xpath>
+            <xpath expr="//page[@name='contacts_tab']" position="attributes">
+                    <attribute name="string">Contacts</attribute>
+                  </xpath>
+            <xpath expr="//page[@name='related_docs']" position="attributes">
+                    <attribute name="string">Invoices</attribute>
+                  </xpath>
+             <xpath expr="//page[@name='contacts_tab']" position="after">
+                     <xpath expr="//page[@name='system_membership']" position="move"/>
+                  </xpath>
+            
+            <xpath expr="//page[@name='joblist_tab']" position="attributes">
+                     <attribute name="string">Location History</attribute>
+                  </xpath>
+            <xpath expr="//page[@name='joblist_tab']" position="inside">
+                     <xpath expr="//field[@name='job_notes_recap_table']" position="move"/>
+                  </xpath>
+            <xpath expr="//page[@name='jobnotes_tab']" position="attributes">
+                     <attribute name="invisible">1</attribute>
+                  </xpath>
+             <xpath expr="//page[@name='joblist_tab']" position="after">
+                       <page string="Purchase Orders" name="purchase_order_tab">
+                            <field name="purchase_order_ids"/>
+                        </page>
+                  </xpath>
+                <!-- end -->
+            <!-- begin : change system m2m -->
+            <xpath expr="//field[@name='systems_list_ids']" position="replace">
+                    <field name="system_ids" readonly="0"/>
+                  </xpath>
+            <!-- end -->
+            <!-- begin : hide some fields -->
+            <xpath expr="//field[@name='product_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='create_from_the_task_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//button[@name='1147']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//button[@name='1146']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <!-- end -->
+            <xpath expr="//field[@name='sale_order_id']" position="attributes">
+            	<attribute name="string">SVC2 Sale order</attribute>
+            </xpath>
+		</field>
+	</record>
+
+	<record id="helpdesk_ticket_view_tree_inherit_studio_custo" model="ir.ui.view">
+        <field name='name'>helpdesk.ticket.tree.inherit.studio.custo</field>
+        <field name="priority">100</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="inherit_id" ref="helpdesk.helpdesk_tickets_view_tree"/>
+        <field name="arch" type="xml">
+			<xpath expr="//field[@name='partner_id']" position="after">
+                <field name="contact_name"/>
+            </xpath>
+			<xpath expr="//field[@name='user_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+		</field>
+	</record>
+    
+        
+    <record id="helpdesk_ticket_view_kanba_customn" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.kanban.custom</field>
+          <field name="model">helpdesk.ticket</field>
+          <field name="inherit_id" ref="helpdesk.helpdesk_ticket_view_kanban" ></field>
+          <field name="type">kanban</field>
+          <field name="arch" type="xml">
+          	<xpath expr='//kanban' position='attributes'>
+                    <attribute name="create">false</attribute>
+                </xpath>
+            <xpath expr="//field[@name='name']" position="replace">
+                <field name="customer_name"/>
+            </xpath>
+              <xpath expr="//field[@name='id']" position="replace">
+            </xpath>
+          </field>
+      </record>
+</odoo>

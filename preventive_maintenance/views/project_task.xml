@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_project_task_form_custom_pm" model="ir.ui.view">
+            <field name="name">view.project.task.custom.form.pm</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_form2" ></field>
+            <field name="priority">102</field>
+            <field name="arch" type="xml">
+            <xpath expr="/form[1]/sheet[1]/notebook[1]" position="inside">
+                    <page string="Systems &amp; Maintenance" name="systems">
+                        <button name="openSystemCreation" type="object" string="Create a system"/><br/>
+                        
+                        <field name="system_ids" readonly="0"/>
+                        <label for="system_selection">System Selection</label>
+                        <field domain="[['id','in', system_ids]]" name="system_selection" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True, 'no_open':True,}"/>
+                        
+<!--                         <button invisible="[('system_selection', '=', False)]" name="openTestListPopup" type="object" string="Generate tests"/><br/> -->
+                        <button name="openTestListPopup" attrs="{'invisible': [('system_selection', '=', False)]}" type="object" string="Generate tests"/><br/>
+                        <h3>Tests to perform</h3>
+                        <field name="test_ids">
+                              <tree>
+                                <field name="system_id"/>
+                                    <field name="maintenance_id"/>
+                                        <field name="component_id"/>
+                                        <field name="test_type"/>
+
+                                        <field name="date"/>
+                                        <field name="value"/>
+                                        <field name="test_type_unit"/>
+                                        <field name="result"/>
+                                        <button name="testPass" type="object" string="Pass"/>
+                                        <button name="testWarning" type="object" string="Warning"/>
+                                        <button name="testFail" type="object" string="Fail"/>
+                            </tree>
+                        </field>
+                                                
+                        Show sleeping list : <field name="sleeping_list_invisible" widget="boolean_toggle"/>
+                        <h3  attrs="{'invisible':[('sleeping_list_invisible','=',False)]}">Available tests</h3>                        
+                        <field name="sleeping_test_ids" attrs="{'invisible':[('sleeping_list_invisible','=',False)]}">
+                              <tree>
+                                <field name="system_id"/>
+                                    <field name="maintenance_id"/>
+                                        <field name="component_id"/>
+                                        <field name="test_type"/>
+
+                                        <field name="date"/>
+                                        <field name="value"/>
+                                        <field name="result"/>
+                                        <button name="testPass" type="object" string="Pass"/>
+                                        <button name="testWarning" type="object" string="Warning"/>
+                                        <button name="testFail" type="object" string="Fail"/>
+                            </tree>
+                        </field>
+
+
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

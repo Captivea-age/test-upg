@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+      <record id="helpdesk_closure_check" model="base.automation">
+          <field name="name">CAP_Module_ Helpdesk closure check</field>
+          <field name="model_id" ref="helpdesk.model_helpdesk_ticket"/>
+          <field name="state">code</field>
+          <field eval="True" name="active" />
+          <field name="trigger">on_create_or_write</field>
+          <field name="code">if record.stage_id.is_close :
+            if record.authority :
+              if record.customer_closure_approval == False:
+                raise Warning("You can't close the ticket without the customer's approval")
+          </field>
+      </record>
+    </data>
+</odoo>

@@ -1,0 +1,68 @@
+<templates>
+    <t t-extend="GanttView.Row">
+        <t t-jquery="p.o_gantt_pill_title" t-operation="replace">
+           <div class="gantt-card-inline-flow">
+                <div class="block">
+                    <div class="gantt-task-status">
+                        <span class="text-truncate position-relative mb-0 badge badge-pill" t-if="pill.x_studio_job_finished != false">Finish</span>
+                        <span class="text-truncate position-relative mb-0 badge badge-pill" t-elif="pill.x_studio_arrived_at_location != false">Arrive</span>
+                        <span class="text-truncate position-relative mb-0 badge badge-pill" t-elif="pill.x_studio_start_drive != false">Start</span>
+                        <span class="text-truncate position-relative mb-0 badge badge-pill" t-else="">Not Start</span>
+                    </div>
+                    <div class="gantt-img">
+                        <img alt='no image' class="o_object_fit_cover rounded-circle" width="25" height="25" t-attf-src="/web/image?model=project.task&amp;id={{pill.id}}&amp;field=tag_image"/>
+                    </div>
+                </div>
+                <div class="gantt-text">
+                    <div class="gantt-lign">
+                        <!--<strong>Task:&#160;</strong>--><span class="text-truncate position-relative mb-0 o_gantt_pill_title" t-esc="name"/>,&#160;
+                        <!--<strong>Customer:&#160;</strong>--><span class="text-truncate position-relative mb-0 o_gantt_pill_title" t-esc="x_studio_customer_name[1]"/>,&#160;
+                        <!--<strong>Intervention Location:&#160;</strong>--><span class="text-truncate position-relative mb-0 o_gantt_pill_title" t-esc="pill.partner_id[1]"/>
+                    </div>
+                    <div class="gantt-lign">
+                        <!--<strong>Job Notes:&#160;</strong>-->
+                        <span class="text-truncate position-relative mb-0 o_gantt_pill_title" t-esc="pill.x_studio_job_note" t-if="pill.x_studio_job_note"/>
+                        <span class="text-truncate position-relative mb-0 o_gantt_pill_title" t-else="">Not Specified</span>,&#160;
+                        <!--<strong>Job Type:&#160;</strong>-->
+                        <span class="text-truncate position-relative mb-0 o_gantt_pill_title" t-if="pill.schedule_ready">Yes</span>
+                        <span class="text-truncate position-relative mb-0 o_gantt_pill_title" t-else="">No</span>,&#160;
+                        <!--<strong>Scheduled Ready:&#160;</strong>-->
+                        <span class="text-truncate position-relative mb-0 o_gantt_pill_title" t-if="pill.schedule_ready">Yes</span>
+                        <span class="text-truncate position-relative mb-0 o_gantt_pill_title" t-else="">No</span>
+                    </div>
+                </div>
+                <div class="gantt-tags">
+                    <t t-if="pill.tags_to_char">
+                        <t t-foreach="pill.tags_to_char.split(', ')" t-as="my_tags">
+                            <span t-if="my_tags" class="badge badge-pill" t-esc="my_tags"/>
+                        </t>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </t>
+    <t t-extend="GanttView.buttons">
+        <t t-jquery=".o_gantt_button_next" t-operation="after">
+            <input id="date" type="date" class="o_gantt_date_picker" />
+        </t>
+    </t>
+    <t t-extend="GanttView">
+        <t t-jquery="t[t-as=slot]" t-operation="replace">
+            <t t-foreach="widget.viewInfo.slots" t-as="slot">
+                <t t-set="isToday" t-value="slot.isSame(new Date(), 'day') &amp;&amp; widget.state.scale !== 'day'"/>
+                <div t-attf-class="col o_gantt_header_cell text-center p-2 #{isToday? 'o_gantt_today' : ''} ">
+                    <t t-if="widget.state.scale in formats" t-esc="slot.format(formats[widget.state.scale])"/>
+                    <small t-else="">
+                        <t t-if="slot.format('k') > 12">
+                            <b t-esc="slot.format('k')-12"/>
+                        </t>
+                        <t t-else="">
+                            <b t-esc="slot.format('k')"/>
+                        </t>
+                        <span class="d-block d-xl-inline-block" t-esc="slot.format('a')"/>
+                    </small>
+                </div>
+            </t>
+        </t>
+    </t>
+</templates>

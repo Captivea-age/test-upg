@@ -1,0 +1,38 @@
+<odoo>
+    <record id="view_res_user_inherit" model="ir.ui.view">
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="model">res.users</field>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+            <xpath expr="//group[1]" position="inside">
+                <field name="team_color" string="Zone" options="{&quot;no_create&quot;:true}"/>
+                <field name="technician_role"/>
+                <field name="technician_bool" widget="boolean_toggle"/>
+                <field name="today_less_8" invisible="1"/>
+                <field name="today_more_8" invisible="1"/>
+            </xpath>
+        </field>
+      </record>
+    
+<!--     <record id="view_field_service_appointment_form_inherit" model="ir.ui.view">
+        <field name="inherit_id" ref="cap_studio_customization.view_field_service_appointment_form"/>
+        <field name="model">field.service.appointment</field>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='field_technician_id']" position="attributes">
+                <attribute name="domain">[('technician_bool','=',True)]</attribute>
+            </xpath>
+        </field>
+      </record> -->
+<!--       
+    <record id="view_appointment_selection_wizard_tree_inherit" model="ir.ui.view">
+        <field name="inherit_id" ref="cap_studio_customization.view_appointment_selection_wizard_tree"/>
+        <field name="model">appointment.selection.wizard</field>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='field_technician_id']" position="attributes">
+                <attribute name="domain">[('technician_bool','=',True)]</attribute>
+            </xpath>
+        </field>
+      </record> -->
+</odoo>

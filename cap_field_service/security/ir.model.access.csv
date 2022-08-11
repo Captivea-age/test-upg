@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+arrival_window_access,arrival_window_access,model_arrival_window,base.group_user,1,1,1,1
+project_task_tech_access,project_task_tech_access,model_project_task,base.group_user,1,1,1,1
+project_task_followup_department_user,project_task_followup_department,model_followup_department,base.group_user,1,1,0,0
+project_task_followup_department_pm,project_task_followup_department,model_followup_department,project.group_project_manager,1,1,1,1
+time_selection_access,time_selection_access,model_time_selection,base.group_user,1,1,1,1
+team_color_access,team_color_access,model_team_color,base.group_user,1,1,1,1
+zip_list_access,zip_list_access,model_zip_list,base.group_user,1,1,1,1
+access_material_popup_user,access_material_popup,model_material_popup,base.group_user,1,1,1,0 
+access_material_list_user,access_material_list,model_product_list,base.group_user,1,1,1,0
+access_product_list,access_product_list,model_product_list,base.group_user,1,1,1,1

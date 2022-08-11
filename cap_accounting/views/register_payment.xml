@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+          <record id="account_payment_register_form_custom" model="ir.ui.view">
+              <field name="model">account.payment.register</field>
+              <field name="type">form</field>
+              <field name="inherit_id" ref='account.view_account_payment_register_form'/>
+              <field name="priority">100</field>
+              <field name="arch" type="xml">
+                <xpath expr='//field[@name="journal_id"]' position="attributes">
+                    <attribute name="readonly">1</attribute>                           
+                </xpath>
+                
+                <xpath expr='//field[@name="amount"]' position="attributes">
+                    <attribute name="readonly">1</attribute>                           
+                </xpath>
+                <xpath expr='//field[@name="payment_method_id"]' position="attributes">
+                     <attribute name="invisible">0</attribute>  
+                </xpath>
+
+                <xpath expr='//field[@name="partner_bank_id"]' position="attributes">
+                     <attribute name="invisible">1</attribute>  
+                </xpath>
+
+                <xpath expr='//field[@name="currency_id"]' position="attributes">
+                    <attribute name="readonly">1</attribute>                           
+                </xpath>
+                <xpath expr='//field[@name="payment_date"]' position="attributes">
+                    <attribute name="readonly">1</attribute>                           
+                </xpath>
+
+                <xpath expr='//field[@name="communication"]' position="attributes">
+                    <attribute name="readonly">0</attribute>                           
+                </xpath>
+                  
+                <xpath expr='//field[@name="journal_id"]' position="attributes">
+                    <attribute name="context">{'journal_id': 8, 'default_journal_id': 8}</attribute>                           
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

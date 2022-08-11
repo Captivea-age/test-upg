@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_job_type_tree" model="ir.ui.view">
+        <field name="name">view.job.type.tree</field>
+        <field name="model">job.type</field>
+        <field name="arch" type="xml">
+            <tree edit='false' editable='bottom'>
+                <field name="name"/>
+                <field name="time_needed_hours"/>
+                <field name="tags_to_add_ids" string="Tags to add"/>
+                <field name="analytic_tag_ids" widget="many2many_tags" string="Analytic tags"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_job_type_form" model="ir.ui.view">
+        <field name="name">view.job.type.form</field>
+        <field name="model">job.type</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet string="Job Type">
+                    <widget name="web_ribbon" text="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+                    <field name="active" invisible="1"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" required="1" placeholder="Name..."/>
+                        </h1>
+                    </div>
+                    <group name="studio_group_9828ad">
+                        <group>
+                            <field name="department_id" string="Department" required="1"/>
+                            <field name="default_quotation_template" string="Default Quotation Template" options="{&quot;no_open&quot;:true,&quot;no_create&quot;:true}"/>
+                            <field name="time_needed_hours" string="Time needed (hours)" widget="float_time"/>
+                            <field name="description" string="Description"/>
+                        </group>
+                        <group>
+                            <field name="location_types_ids" string="Location Types" widget="many2many_checkboxes" required="1"/>
+                            <field name="installation_type"/>
+                            <field name="analytic_tag_ids" widget="many2many_tags" string="Analytic tags"/>
+
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id='action_job_type' model='ir.actions.act_window'>
+         <field name="name">Job Type</field>
+         <field name="res_model">job.type</field>
+         <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem name="Job Type" id="menu_job_type" parent="project.menu_project_config" action="action_job_type" sequence="3"/>
+</odoo>

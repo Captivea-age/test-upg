@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_reordering_rule_template_tree" model="ir.ui.view">
+            <field name="name">view_reordering_rule_template_tree</field>
+            <field name="model">reordering.rule.template</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name" />
+                    <field name="category_type" />
+                    <field name="category_ids" />
+                </tree>
+
+            </field>
+        </record>
+        <record id="view_reordering_rule_template_form" model="ir.ui.view">
+            <field name="name">view_reordering_rule_template_form</field>
+            <field name="model">reordering.rule.template</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name" />
+                            <field name="category_type" />
+                        </group>
+                        <group>
+                            <field name="category_ids" />
+                        </group>
+                        <field name="location_ids" />
+                        <group>
+                            <field name="reordering_rule_template_line_ids"/>
+                        </group>
+                        <br/>
+                        <button name="update_location" string="Update Locations" class="oe_highlight" type="object"/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

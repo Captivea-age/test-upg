@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_internal_alert_form" model="ir.ui.view">
+            <field name="name">view.internal.alert.form</field>
+            <field name="model">internal.alert</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="partner_id" readonly="True" />
+                            <field name="alert_level" string="Alert level:" />
+                            <field name="alert_text" string="Alert message:" />
+                            <field name="alert_active" string="Is active ?" widget="boolean_toggle" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="view_internal_alert_tree" model="ir.ui.view">
+            <field name="name">view.internal.alert.tree</field>
+            <field name="model">internal.alert</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="alert_level" />
+                    <field name="alert_text" />
+                    <field name="alert_active" widget="boolean_toggle" />
+                </tree>
+            </field>
+        </record>
+
+        <!-- List and Button for internal alert creation -->
+        <!-- Header bars -->
+        <record id="view_res_partner_internal_alert_form" model="ir.ui.view">
+            <field name="name">view.res.partner.internal.alert.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="priority">100</field>
+            <field name="arch" type="xml">
+                <xpath expr="//form[1]/sheet[1]/notebook[1]" position="inside">
+                    <page name="internal_alerts" string="Internal alerts">
+                        <field name="alert_ids" />
+                        <br />
+                        <button name="openAlertPopup" type="object" string="Add an alert" class="btn btn-primary" />
+                    </page>
+                </xpath>
+                <xpath expr="//div[@role='alert']" position="before">
+                    <div class="text-center alert alert-danger" role="alert">
+                        <field name="display_error" nolabel="1" widget="html"/>
+                    </div>
+                    <div class="text-center alert alert-warning" role="alert">
+                        <field name="display_warning" nolabel="1" widget="html"/>
+                    </div>
+                    <div class="text-center alert alert-info" role="alert">
+                        <field name="display_info" nolabel="1" widget="html"/>
+                    </div>
+
+                </xpath>
+            </field>
+        </record>
+
+
+    </data>
+
+</odoo>

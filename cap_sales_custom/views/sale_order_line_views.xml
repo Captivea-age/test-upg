@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+       <!--  <record id="view_sale_order_line_custom" model="ir.ui.view">
+            <field name="name">sale.order.line.tree.custom</field>
+            <field name="model">sale.order.line</field>
+            <field name="inherit_id" ref="sale.view_order_line_tree"/>
+            <field name="arch" type="xml">
+            	<xpath expr="//field[@name='product_template_id']" position="before">
+                    <field name="system_id"/>
+                </xpath>
+           </field>
+        </record> -->
+    </data>
+</odoo>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates>
+
+    <div t-extend="GanttView.Row">
+        <t t-jquery="div.o_gantt_row" t-operation="attributes">
+            <attribute name="t-if" value="widget.name != 'Unassigned Tasks'"/>
+        </t>
+        <t t-jquery="*[t-esc='widget.name']" t-operation="after">
+            <t t-if="widget.thumbnailUrl and widget.resId">
+                <div class="o_field_integer o_field_number o_field_widget o_required_modifier" name="color"
+                     data-original-title="" title="">
+                    <div class="o_field_color_picker_preview">
+                        <li>
+                            <a href="#" t-att-class="'oe_kanban_color_'+widget.user_color" title="zone"/>
+                        </li>
+                        <br/>
+                        <t t-esc="widget.custom_data"/>
+                    </div>
+                </div>
+            </t>
+        </t>
+        <t t-jquery="div.o_gantt_slots_container" t-operation="replace">
+            <div class="o_gantt_slots_container col">
+                <div class="row no-gutters">
+                    <div t-foreach="widget.slots" t-as="slot"
+                         t-attf-class="col o_gantt_cell #{slot.isToday ? 'o_gantt_today' : ''} #{slot.hasButtons ? 'o_gantt_hoverable' : ''}"
+                         t-att-data-date="slot.start.format('YYYY-MM-DD HH:mm:ss')"
+                         t-attf-style="height: #{widget.cellHeight}px;#{slot.style ? ' ' + slot.style : ''}">
+
+                        <!-- plan and add buttons -->
+                        <div t-if="slot.hasButtons" class="o_gantt_cell_buttons justify-content-center">
+                            <div class="position-absolute d-flex">
+                                <i t-if="widget.options.canCreate and widget.options.canCellCreate" title="Create"
+                                   t-attf-class="o_gantt_cell_add fa fa-plus d-flex flex-grow-0 flex-shrink-1 justify-content-center #{widget.options.canPlan ? 'pr-1' : ''}"/>
+                                <i t-if="widget.options.canPlan" title="Plan existing"
+                                   class="o_gantt_cell_plan fa fa-search-plus d-flex flex-grow-0 flex-shrink-1 justify-content-center"/>
+                            </div>
+                        </div>
+
+                        <!-- pills -->
+                        <t t-foreach="slot.pills" t-as="pill">
+                            <div t-if="widget.isTotal"
+                                 class="o_gantt_pill_wrapper position-absolute text-center d-flex justify-content-center"
+                                 t-attf-style="width: #{pill.width}; #{widget.isRTL ? 'right' : 'left'}: #{pill.leftMargin}%;">
+                                <div t-att-data-id="pill.id"
+                                     t-attf-class="o_gantt_pill o_gantt_consolidated_pill"
+                                     t-att-title="pill.display_name"
+                                     t-att-style="'height:' + pill.totalHeight + '%;'"/>
+                                <span class="o_gantt_consolidated_pill_title position-absolute text-truncate px-1"
+                                      t-esc="pill.display_name"/>
+                            </div>
+
+                            <div t-elif="pill.consolidated"
+                                 t-attf-class="o_gantt_pill_wrapper position-absolute text-center o_gantt_consolidated_wrapper #{widget.options.isGroup ? 'o_gantt_pill_wrapper_group' : ''}"
+                                 t-attf-style="width: #{pill.width}; #{widget.isRTL ? 'right' : 'left'}: #{pill.leftMargin}%;">
+                                <div t-att-data-id="pill.id"
+                                     t-attf-class="o_gantt_pill o_gantt_consolidated_pill #{pill.status? 'bg-' + pill.status + ' border-' + pill.status : ''}  #{!widget.options.isGroup ? pill.decorations.join(' ') : ''}  #{'_color' in pill ? 'o_gantt_color_' + pill._color : ''} #{widget.progressField? 'o_gantt_progress': ''}"
+                                     t-att-title="pill.display_name"
+                                >
+                                </div>
+                                <span class="o_gantt_consolidated_pill_title position-relative text-truncate px-1"
+                                      t-esc="pill.display_name"/>
+                            </div>
+
+                            <div t-else=""
+                                 t-attf-class="o_gantt_pill_wrapper position-absolute text-center #{widget.options.isGroup ? 'o_gantt_pill_wrapper_group' : ''}"
+                                 t-attf-style="width: #{pill.width}; margin-top: #{pill.topPadding}px; #{widget.isRTL ? 'right' : 'left'}: #{pill.leftMargin}%;">
+                                <t t-if="pill.dateFirst">
+                                    <div t-att-data-id="pill.id"
+                                         t-attf-class="dateFirst o_gantt_pill position-relative #{!widget.options.isGroup ? pill.decorations.join(' ') : ''}  #{'_color' in pill ? 'o_gantt_color_' + pill._color : ''} #{widget.progressField? 'o_gantt_progress': ''} abcd"
+                                         t-attf-style="#{widget.options.isGroup ? pill.style : ''} #{widget.progressField ? 'background-size:' + pill._progress + '% 100%;': ''}; background-color: #c2bfbf;height: 6px;margin-top: 21px;z-index: 16;position: relative;"
+                                         t-att-title="pill.display_name">
+                                    </div>
+                                </t>
+                                <t t-elif="pill.dateSec">
+                                    <div t-att-data-id="pill.id"
+                                         t-attf-class="dateSec o_gantt_pill position-relative #{!widget.options.isGroup ? pill.decorations.join(' ') : ''}  #{'_color' in pill ? 'o_gantt_color_' + pill._color : ''} #{widget.progressField? 'o_gantt_progress': ''}"
+                                         t-attf-style="#{widget.options.isGroup ? pill.style : ''} #{widget.progressField ? 'background-size:' + pill._progress + '% 100%;': ''}; background-color: #4a90e2;height: 6px;margin-top: 21px;z-index: 16;position: relative;"
+                                         t-att-title="pill.display_name">
+                                    </div>
+                                </t>
+                                <t t-else="">
+                                    <div t-att-data-id="pill.id"
+                                         t-attf-class="d-flex justify-content-center o_gantt_pill position-relative #{!widget.options.isGroup ? pill.decorations.join(' ') : ''}  #{'_color' in pill ? 'o_gantt_color_' + pill._color : ''} #{widget.progressField? 'o_gantt_progress': ''}"
+                                         t-attf-style="#{widget.options.isGroup ? pill.style : ''} #{widget.progressField ? 'background-size:' + pill._progress + '% 100%;': ''} #{pill.stage_id[1] == 'Dispatch' ? 'background:#CBC3E3': ''} #{pill.stage_id[1] == 'Working' ? 'background:#90EE90;': ''} #{pill.stage_id[1] == 'Job Complete' ? 'background:#c2bfbf;': ''} #{pill.stage_id[1] == 'Scheduled' ? 'background:#c4eaf8;': ''}"
+                                         t-att-title="pill.display_name">
+                                        <!-- README: be careful when modifying the DOM inside the pill ; @_onMouseMove is strongly dependant of it -->
+                                        <div class="ml-5 w-25">
+                                            <i t-if="pill.stage_id[1] == 'Done'" class="fa fa-check-circle-o mt-2 mr-3"
+                                               style="font-size: 20px;"></i>
+
+                                            <i t-if="pill.stage_id[1] == 'Scheduled'"
+                                               class="fa fa-clock-o mt-2 mr-3"
+                                               style="font-size: 20px;"></i>
+
+                                            <i t-if="pill.stage_id[1] == 'Dispatch'"
+                                               class="fa fa-wheelchair-alt mt-2 mr-3"
+                                               style="font-size: 20px;"></i>
+
+                                            <i t-if="pill.stage_id[1] == 'Working'"
+                                               class="fa fa-hourglass-start mt-2 mr-3"
+                                               style="font-size: 20px;"></i>
+
+                                            <div t-if="pill.schedule_ready" class="custom-control custom-checkbox">
+                                                <input type="checkbox" id="schedule_ready" name="schedule_ready"
+                                                       data-leave-empty='unchecked'
+                                                       t-att-checked="pill.schedule_ready ? 'checked' : undefined"/>
+                                            </div>
+                                            <div class="o_field_integer o_field_number o_field_widget o_required_modifier"
+                                                 name="color" data-original-title="" title="">
+                                                <div class="o_field_color_picker_preview" style="margin-top: 5px;">
+                                                    <li>
+                                                        <a href="#"
+                                                           t-att-class="'oe_kanban_color_'+pill.task_color"></a>
+                                                    </li>
+                                                </div>
+                                            </div>
+                                            <div t-if="pill.image_on_tag" style="float:left;"
+                                                 class="o_field_many2one_avatar o_field_widget">
+                                                <t t-foreach="pill.image_on_tag" t-as="help_tag_id">
+                                                    <img t-att-src="'/web/image/helpdesk.tag/'+help_tag_id+'/emoji'"
+                                                         alt="Konsultoo"
+                                                         class="o_m2o_avatar"/>
+                                                </t>
+                                            </div>
+                                            <p t-esc="pill.display_name"/>
+                                        </div>
+                                        <p class="text-truncate position-relative mb-0 o_gantt_pill_title"
+                                           t-esc="pill.display_name"
+                                           t-attf-style="#{pill.stage_id[1] == 'Dispatch' ? 'background:#CBC3E3': ''} #{pill.stage_id[1] == 'Working' ? 'background:#90EE90;': ''} #{pill.stage_id[1] == 'Job Complete' ? 'background:#c2bfbf;': ''} #{pill.stage_id[1] == 'Scheduled' ? 'background:#c4eaf8;': ''}"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </div>
+
+
+    <t t-extend="GanttView.buttons">
+        <t t-jquery=".o_gantt_button_next" t-operation="after">
+            <input id="date" type="date" class="o_gantt_date_picker"/>
+        </t>
+    </t>
+    <div t-name="GanttView" t-extend="GanttView">
+        <t t-jquery="t[t-foreach='widget.viewInfo.slots'] div" t-operation="attributes">
+            <attribute name="t-att-data-hour" value="slot.format('k')"/>
+        </t>
+        <t t-jquery="t[t-foreach='widget.viewInfo.slots'] b" t-operation="attributes">
+            <!--            <b t-esc="slot.format('h')"/>-->
+            <attribute name="t-esc" value="slot.format('h')"/>
+        </t>
+        <t t-jquery="div[t-if='widget.totalRow']" t-operation="attributes">
+            <attribute name="class" value="row no-gutters o_gantt_total position-relative d-none"/>
+        </t>
+    </div>
+
+</templates>

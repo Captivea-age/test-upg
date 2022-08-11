@@ -1,0 +1,95 @@
+.o_gantt_view .o_gantt_row_nogroup .o_gantt_pill {
+    height: 75px;
+}
+.o_gantt_view .o_gantt_row_sidebar .o_gantt_row_title {
+    line-height: 75px;
+}
+.o_gantt_view .o_gantt_row_nogroup .o_gantt_cell {
+    min-height: 75px;
+}
+
+.col-2 {
+    position: sticky !important;
+    left: 0px;
+    background: white;
+    z-index: 2;
+    border-right: 1px solid #e9ecef;
+    max-width: 3%;
+}
+
+.container-fluid {
+    width: 325%;
+}
+
+.gantt-img {
+    padding: 1vw 0.1vw 0vw 0.1vw;
+}
+
+.gantt-text {
+    margin: 0.2vw 0vw 1vw 0.2vw;
+    line-height: 0.85vw;
+    font-size: 0.7vw;
+}
+
+.gantt-img > img {
+    vertical-align:initial !important;
+}
+
+.gantt-task-status {
+    padding: 0.8vw 0.2vw 0vw 0vw;
+    font-size: 1.2vw;
+    font-weight: bold;
+}
+
+.gantt-task-status > span {
+    /*background-image: linear-gradient(to bottom right, #007A77, #539636);*/
+    background: #539636;
+    border: 1px solid #F8F9FA;
+    box-shadow: 0px 0px 5px #471f6f;
+    color: #FFF;
+    text-shadow: 1px 1px black;
+}
+
+.gantt-lign {
+    text-align:left;
+}
+
+.gantt-tags {
+    padding: 0.2vw 0vw 0vw 1vw;
+    font-size: 1vw;
+}
+
+.gantt-card-inline-flow {
+    display:inline-flex;
+}
+
+.o_gantt_button_scale[data-value="week"],.o_gantt_button_scale[data-value="week"],.o_gantt_button_scale[data-value="month"],.o_gantt_button_scale[data-value="year"] {
+    display:none;
+}
+
+.o_gantt_date_picker {
+    height: 30px;
+    position: relative;
+    top: 2px;
+    background: #539636;
+    color: #539636;
+    /* font-weight: bold; */
+    border: 0px;
+    /* padding-left: 0px; */
+    padding-right: 5px;
+    width: 36px;
+    font-size: 18px;
+    padding-left: 5px;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  margin-left: -2px;
+  filter:invert(100%);
+  opacity: 1;
+}
+
+.o_gantt_date_picker:hover {
+  background: #007A77;
+  color: #007A77;
+}

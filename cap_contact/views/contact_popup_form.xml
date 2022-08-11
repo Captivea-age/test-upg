@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    	<record id="view_res_partner_search_popup" model="ir.ui.view">
+            <field name="name">view.res.partner.search.popup</field>
+            <field name="model">search.popup</field>
+            <field name="priority">1</field>
+        	<field name="arch" type="xml">
+        		<form> 
+                    <div style="padding:10px;">
+                    	<sheet>
+		        			<h2>Search :</h2>
+	        				<field name="search_field_name" string="Search :" placeholder="Name" attrs="{'invisible':[('location_diff','=','=')]}" />
+	        				<field name="search_field_email"   placeholder="Email"  attrs="{'invisible':[('location_diff','=','=')]}" />
+	        				<field name="search_field_address"  placeholder="Street" />
+	        				<field name="search_field_phone" placeholder="Phone"  attrs="{'invisible':[('location_diff','=','=')]}" />
+	        				<br/>
+		        			<button name="partnerSearch" string="Search" type="object" class="btn btn-primary" />
+		        			<br />
+		        			<br />
+		        			
+		        			Match count: <field name="match_count" readonly="True" string="Match count:"/>
+		        			<br />
+		        			<field name="possible_partner_domain" invisible="True" readonly="True" />
+		        			<field name="location_diff" invisible="True" readonly="True" />
+
+		        			Potential match :<field name="possible_partner_id"  options="{'no_create': True, 'no_create_edit':True}"  string="Possible partners selection" domain="[['id','in',possible_partner_domain]]" attrs="{'invisible':[['possible_partner_id','=',False]]}" />
+		        			<br />
+                            <group>
+                                <group>
+                                    <field name="possible_partner_id_street" attrs="{'invisible':[['possible_partner_id','=',False]]}" /><br />
+                                    <field name="possible_partner_id_city" attrs="{'invisible':[['possible_partner_id','=',False]]}" /><br />
+                                    <field name="possible_partner_id_phone" attrs="{'invisible':[['possible_partner_id','=',False]]}" /><br />
+                                    <field name="possible_partner_id_email" attrs="{'invisible':[['possible_partner_id','=',False]]}" /><br />
+                                </group>
+                                <group>
+                                    <field name="relationship_type"  options="{'no_create': True, 'no_create_edit':True}"  attrs="{'invisible':[['possible_partner_id','=',False]]}"  /><br />
+                                    <field name="contact_roles_ids"  attrs="{'invisible':[['possible_partner_id','=',False]]}"  options="{'no_create': True, 'no_create_edit':True}"  widget="many2many_checkboxes"/><br />
+                                    <field name="contact_method_ids"  attrs="{'invisible':[['possible_partner_id','=',False]]}"  options="{'no_create': True, 'no_create_edit':True}"  widget="many2many_checkboxes"/><br />
+                                </group>
+                            </group>
+                    	</sheet>
+                	</div>
+                    <field name="current_partner_id" readonly="True" nolabel='1' options="{'no_open':True}" style='margin-left: 10px;font-weight: bold;font-size: 16px;'/>
+    	        	<footer>
+                            <field name="helpdesk_ticket_id" invisible="True" />
+                            <button name="savePartnerReturnHelpdesk" string="Add" type="object"  attrs="{'invisible':[('helpdesk_ticket_id','=',False)]}"/>
+
+                            <button name="saveContactToLocation" type="object" string="Add this contact to the location" class="btn btn-primary" attrs="{'invisible':['|','|',('location_diff','=','='), ('possible_partner_id','=',False),('helpdesk_ticket_id','!=',False)]}" />
+                            <!--<button name="saveContactToLocationAndNew" type="object" string="Add this contact and New search" class="btn btn-primary" attrs="{'invisible':['|','|',('location_diff','=','='),('possible_partner_id','=',False),('helpdesk_ticket_id','!=',False)]}" />-->
+
+
+                            <button name="saveLocationToContact" type="object"  class="btn btn-primary" string="Add this Location" attrs="{'invisible':['|','|',('location_diff','=','!='),('possible_partner_id','=',False),('helpdesk_ticket_id','!=',False)]}" />
+                            <button name="saveLocationToContactAndNew" type="object"  class="btn btn-primary" string="Add this Location and New search" attrs="{'invisible':['|','|',('location_diff','=','!='),('possible_partner_id','=',False),('helpdesk_ticket_id','!=',False)]}" />
+
+                            <button name="openPartnerPopup" type="object"   attrs="{'invisible':[('helpdesk_ticket_id','!=',False)]}" class="btn btn-secondary" string="Create new"/>
+    	        	</footer>
+                </form>
+        	</field>
+    	</record>	 
+    </data>
+</odoo>

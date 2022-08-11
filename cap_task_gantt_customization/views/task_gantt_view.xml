@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="project_task_view_gantt_inherit" model="ir.ui.view">
+        <field name="name">project.task.view.gantt.inherit</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project_enterprise.project_task_view_gantt"/>
+        <field name="arch" type="xml">
+            <xpath expr="//gantt//templates" position="inside">
+                <div t-name="gantt-popover-dateFirst" class="container-fluid">
+                    <div class="row no-gutters">
+                        <div class="col">
+                            <ul class="pl-1 mb-0">
+                                <li><strong>Start Drive: </strong> <t t-esc="userTimezoneStartDrive.format('L LTS')"/></li>
+                                <li><strong>Stop Drive: </strong> <t t-esc="userTimezoneStopDrive.format('L LTS')"/></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div t-name="gantt-popover-dateSec" class="container-fluid">
+                    <div class="row no-gutters">
+                        <div class="col">
+                            <ul class="pl-1 mb-0">
+                                <li><strong>Start Job: </strong> <t t-esc="userTimezoneStartJob.format('L LTS')"/></li>
+                                <li><strong>Stop Job: </strong> <t t-esc="userTimezoneStopJob.format('L LTS')"/></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="user_id" />
+                <field name="customer_name"/>
+                <field name="customers_phone"/>
+                <field name="street"/>
+                <field name="street2"/>
+                <field name="city"/>
+                <field name="zip"/>
+                <field name="country_id"/>
+                <field name="department_id"/>
+                <field name="start_date"/>
+                <field name="arrival_window"/>
+                <field name="arrival_window_start"/>
+                <field name="arrival_window_end"/>
+                <field name="start_drive"/>
+                <field name="end_drive"/>
+                <field name="description_text"/>
+            </xpath>
+            <xpath expr="//li[@t-if='partner_id']/.." position="inside">
+                <li t-if="user_id"><strong>Assigned To: </strong> <t t-esc="user_id[1]"/></li><br/>
+                <li t-if="user_id"><strong>Business Unit: </strong> <t t-esc="department_id[1]"/></li><br/>
+                <li t-if="customer_name"><t t-esc="customer_name[1]"/></li>
+                <t t-if="customers_phone"><t t-esc="customers_phone"/></t><br/>
+                <t t-if="street"><t t-esc="street"/></t>,<t t-if="street2"><t t-esc="street2"/></t>,<t t-if="city"><t t-esc="city"/></t>-<t t-if="zip"><t t-esc="zip"/></t>,<t t-if="country_id"><t t-esc="country_id[1]"/></t><br/>
+                <t t-if='description_text'><t t-esc="description_text"/></t><br/>
+                <t t-if='start_date'><t t-esc="start_date"/></t><br/>
+                <li><t t-if="arrival_window"><strong>Arrival Windows: </strong> <t t-esc="arrival_window_start[1]"/> - <t t-esc="arrival_window_end[1]"/></t></li>
+            </xpath>
+        </field>
+    </record>
+</odoo>

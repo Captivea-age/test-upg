@@ -1,0 +1,161 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+      <record id="ir_pm_inspection_tests_creation" model="base.automation">
+          <field name="name">PM: Inspection tests creation</field>
+          <field name="model_id" ref="preventive_maintenance.model_preventive_maintenance_maintenance"/>
+          <field name="state">code</field>
+          <field eval="True" name="active" />
+          <field name="trigger">on_create_or_write</field>
+          <!-- <field name="filter_domain">[["health","=",False]]</field> -->
+          <field name="code">#Getting all test types
+tests = record.env['preventive_maintenance.test.category'].search([(record.pm_type,'=',True)])
+
+#Removing undone test records
+env['preventive_maintenance.test.records'].search([('maintenance_id','=',record.id),('result','=',False)]).unlink()
+
+#For each test type check if there isn't one that has been done before the
+for test in tests:
+  today = datetime.datetime.today()
+  test_interval_months = test.required_interval
+  previous_task_limit = today-datetime.timedelta(days=test_interval_months*30)
+
+  #Gets previous test done with same system id / test type / date under previous_task_limit
+  similar_test = env['preventive_maintenance.test.records'].search([('date','>=',previous_task_limit),('test_type','=',test.id),('system_id','=',record.system_id.id)])
+
+  if len(similar_test)==0 or (record['pm_type'] in ['post_install_pm','certified_pm']):
+
+    env['preventive_maintenance.test.records'].create({
+      'system_id':record.system_id.id,
+      'maintenance_id':record.id,
+      'component_id':test.component_id.id,
+      'date':record.date,
+      'test_type':test.id,
+    })
+
+
+
+          </field>
+
+      </record>
+      <record id="ir_pm_tests_health_update" model="base.automation">
+            <field name="name">TO BE CORRECTED PM: Inspection tests updates component</field>
+            <field name="model_id" ref="model_project_task"/>
+            <field name="state">code</field>
+            <field eval="False" name="active" />
+            <field name="trigger">on_write</field>
+            <!-- <field name="filter_domain">[["health","=",False]]</field> -->
+            <field name="code">#Function to find the real component attached to the system, from what type of component the test is targetting
+def getComponent(test):
+  component = False
+
+  if test.component_id.section_id.name == "Furnace":
+      component = env['pm.furnace.component'].search([
+          ('pm_system_id','=',test.system_id.id),
+          ('furnace_component_name','=',test.component_id.id),
+          ('furnace_section_id','=',test.component_id.section_id.id),
+        ],limit=1)
+
+  elif test.component_id.section_id.name == "Condenser":
+    component = env['pm.condenser.component'].search([
+        ('pm_system_id','=',test.system_id.id),
+        ('condenser_component_name','=',test.component_id.id),
+        ('condenser_section_id','=',test.component_id.section_id.id),
+      ],limit=1)
+
+  elif test.component_id.section_id.name == "Evaporator":
+    component = env['pm.evaporator.component'].search([
+        ('pm_system_id','=',test.system_id.id),
+        ('evaporator_component_name','=',test.component_id.id),
+        ('evaporator_section_id','=',test.component_id.section_id.id),
+      ],limit=1)
+
+  elif test.component_id.section_id.name == "FanCoil":
+    component = env['pm.fancoil.component'].search([
+        ('pm_system_id','=',test.system_id.id),
+        ('fancoil_component_name','=',test.component_id.id),
+        ('fancoil_section_id','=',test.component_id.section_id.id),
+      ],limit=1)
+
+  elif test.component_id.section_id.name == "Thermostat":
+    component = env['pm.thermostat.component'].search([
+        ('pm_system_id','=',test.system_id.id),
+        ('thermostat_component_name','=',test.component_id.id),
+        ('thermostat_section_id','=',test.component_id.section_id.id),
+      ],limit=1)
+
+  elif test.component_id.section_id.name == "Airflow &amp; Ducting":
+    component = env['pm.airflow.ducting.component'].search([
+        ('pm_system_id','=',test.system_id.id),
+        ('airflow_ducting_component_name','=',test.component_id.id),
+        ('airflow_ducting_section_id','=',test.component_id.section_id.id),
+      ],limit=1)
+
+  elif test.component_id.section_id.name == "Blower":
+    component = env['pm.blower.component'].search([
+        ('pm_system_id','=',test.system_id.id),
+        ('blower_component_name','=',test.component_id.id),
+        ('blower_section_id','=',test.component_id.section_id.id),
+      ],limit=1)
+
+  elif test.component_id.section_id.name == "Water &amp; Drainage":
+    component = env['pm.water.drainage.component'].search([
+        ('pm_system_id','=',test.system_id.id),
+        ('water_drainage_component_name','=',test.component_id.id),
+        ('water_drainage_section_id','=',test.component_id.section_id.id),
+      ],limit=1)
+
+  elif test.component_id.section_id.name == "IAQ":
+    component = env['pm.iaq.component'].search([
+        ('pm_system_id','=',test.system_id.id),
+        ('iaq_component_name','=',test.component_id.id),
+        ('iaq_section_id','=',test.component_id.section_id.id),
+      ],limit=1)
+
+  return component
+
+
+today = datetime.date.today()
+
+# Updates the component from the results given in test_ids
+if len(record.test_ids)>0:
+  for test in record.test_ids.filtered(lambda t: t.result == "pass") :
+    component = getComponent(test)
+    if component != False:
+      component['last_test'] = today
+      component['component_state'] = "good"
+
+  for test in record.test_ids.filtered(lambda t: t.result == "warning") :
+    component = getComponent(test)
+    if component != False:
+      component['last_test'] = today
+      component['component_state'] = "warning"
+
+  for test in record.test_ids.filtered(lambda t: t.result == "fail") :
+    component = getComponent(test)
+    if component != False:
+      component['last_test'] = today
+      component['component_state'] = "error"
+            </field>
+
+        </record>
+
+        <!-- Need to find the correct declaration for on_change_field_ids -->
+        <!-- <record id="system_name_generation" model="base.automation">
+            <field name="name">PM: System name generation</field>
+            <field name="model_id" ref="model_project_task"/>
+            <field name="state">code</field>
+            <field eval="True" name="active" />
+            <field name="trigger">on_change</field>
+            <field name="on_change_field_ids">
+              [[6,0,["preventive_maintenance.system_type_id","preventive_maintenance.service_area"]]]
+            </field>
+            <field name="filter_domain">[("system_type_id","!=",False),(service_area!=False)]</field>
+
+            <field name="code">
+              record['name']=str(record.service_area)+" - "+str(record.system_type_id.name)
+            </field>
+        </record>  -->
+    </data>
+</odoo>

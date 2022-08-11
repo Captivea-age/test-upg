@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sale_order_view_form_cap" model="ir.ui.view">
+        <field name="name">cap.sale.order.form.inherit.sale.product.configurator</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form//field[@name='product_id']" position="after">
+                <field name='location_id' invisible="1"/>
+                <field name='system_id' options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True}" domain="[('location_id','=',location_id)]" required="1" create="0"/>
+                <field name="product_template_id" string="Product" invisible="0"
+                       attrs="{'readonly': [('product_updatable', '=', False)],'required': [('display_type', '=', False)],}"
+                       options="{'no_open': True}"
+                       context="{'partner_id': parent.partner_id,
+                           'quantity': product_uom_qty,
+                           'pricelist': parent.pricelist_id,
+                           'uom':product_uom,
+                           'company_id': parent.company_id,
+                           'default_list_price': price_unit,
+                           'default_description_sale': name}"
+                       domain="[('sale_ok', '=', True), '|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]"
+                       widget="product_configurator"/>
+                <field name="product_template_attribute_value_ids" invisible="1"/>
+                <field name="product_custom_attribute_value_ids" invisible="1">
+                    <tree>
+                        <field name="custom_product_template_attribute_value_id"/>
+                        <field name="custom_value"/>
+                    </tree>
+                </field>
+                <field name="product_no_variant_attribute_value_ids" invisible="1"/>
+                <field name="is_configurable_product" invisible="1"/>
+            </xpath>
+            <xpath expr="//form//field[@name='product_id']" position="attributes">
+                <attribute name="optional">hide</attribute>
+                <attribute name="string">Product Variant</attribute>
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//form//div[@name='invoice_lines']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="string">Location</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

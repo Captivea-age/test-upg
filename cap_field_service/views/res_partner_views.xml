@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<record id="view_res_partner_form_custom" model="ir.ui.view">
+			<field name="name">view.res.partner.custom.form</field>
+			<field name="model">res.partner</field>
+			<field name="inherit_id" ref="base.view_partner_form"/>
+			<field name="priority">101</field>
+			<field name="arch" type="xml">
+ 				<xpath expr="//field[@name='category_id']" position="before">
+                    <field name="partner_type" invisible="1"/>
+					<field name="zone" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True, 'no_open':True,}" attrs="{'invisible':[('partner_type','!=','location')]}" />
+					<field name="old_location_name" string="ST Location name" attrs="{'invisible':True}" readonly="1"/>
+ 				</xpath>
+			</field>
+		</record>
+	</data>
+</odoo>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<record id="pm_add_return_airflow_component_view_form" model="ir.ui.view">
+			<field name="name">pm.add.return.airflow.component.form</field>
+			<field name="model">pm.component.airflow.record</field>
+			<field name="arch" type="xml">
+				<form name="add_return" string="Add Return">
+					<sheet>
+						<group>
+	                		<group>
+								<!-- <field name="name" required="1"/> -->
+								<field name="airflow_component" required="1" domain="[('airflow_component_type.supply_or_return','in', ['return', 'both'])]"/>
+								
+	                		</group>
+	                		<group>
+	                			<field name="pm_system_id" readonly="1"/>
+	                			<!-- <field name="supply_or_return"/> -->
+	                		</group>
+	                    </group>
+					</sheet>
+					<footer>
+						<button name="add_airflow_return_component" string="Add" type="object" class="btn-primary"/>
+						<button string="Cancel" class="btn-secondary" special="cancel"/>
+					</footer>
+				</form>
+			</field>
+		</record>
+	</data>
+</odoo>

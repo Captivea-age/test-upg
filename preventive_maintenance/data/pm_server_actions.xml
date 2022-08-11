@@ -1,0 +1,251 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+        <record id="ir_pm_notification_generation" model="ir.actions.server">
+            <field name="name">PM: Notification generation</field>
+            <field name="model_id" ref="preventive_maintenance.model_preventive_maintenance_notification_board"/>
+            <field name="state">code</field>
+            <!-- <field name="filter_domain">[["health","=",False]]</field> -->
+            <field name="code">tls = record['low_skill_available']
+            ths = record['high_skill_available']
+            risk_treshold = record['risk_treshold']
+            pm_type = record['pm_type']
+            today = datetime.datetime.today()
+
+            def findInspections(pm_type,tls,ths,risk_treshold):
+                #Look for systems
+                systems = env['preventive_maintenance.system'].search([('notification_status','=','none'),('monstercare_covered','=',True)]).sorted(lambda s:s.maintenance_needed, reverse=True).sorted(lambda s:s.base_risk_score, reverse=True)
+                #Looking for tests specific to this inspection type
+                tests = env['preventive_maintenance.test.category'].search([(pm_type,'=',True)]).sorted(key=lambda t: t.test_weight, reverse=True)
+
+                #for each system, check if there's a late test
+                for system in systems :
+                    #Initialize
+                    skip = False
+                    scrap = False
+                    maintenance_needed = False
+                    inspection = False
+                    notification = False
+                    total_time_needed = 0
+                    high_skill_time_needed = 0
+                    low_skill_time_needed = 0
+                    risk_score = 0
+                    current_risk_score = 0
+
+                    #Getting all component ids for this system
+                    component_list = system.furnace_component_ids.furnace_component_name.ids
+                    component_list.extend(system.condenser_component_ids.condenser_component_name.ids)
+                    component_list.extend(system.evaporator_component_ids.evaporator_component_name.ids)
+                    component_list.extend(system.fancoil_component_ids.fancoil_component_name.ids)
+                    component_list.extend(system.thermostat_component_ids.thermostat_component_name.ids)
+                    component_list.extend(system.airflow_ducting_component_ids.airflow_ducting_component_name.ids)
+                    component_list.extend(system.blower_component_ids.blower_component_name.ids)
+                    component_list.extend(system.water_drainage_component_ids.water_drainage_component_name.ids)
+                    component_list.extend(system.iaq_component_ids.iaq_component_name.ids)
+
+                    #Check if there is time left
+                    if ths > 0 and (tls > 0):
+
+                        for hs_test in tests.filtered(lambda tests: tests.skill_id.level == 'hard') :
+                            #checks if scrapped and if system component is present
+                            if scrap == False and (hs_test.component_id.id in component_list):
+                                test_interval_months = hs_test.required_interval
+                                previous_task_limit = today-datetime.timedelta(days=test_interval_months*30)
+
+                                #Gets previous high skill test done with same system id / test type / date under previous_task_limit
+                                similar_hs_test = env['preventive_maintenance.test.records'].search([('date','>=',previous_task_limit),('test_type','=',hs_test.id),('system_id','=',system.id)])
+
+                                #if HS test not found, creates an inspection and notification
+                                #Also tries to check for the LS tests
+                                if len(similar_hs_test)==0:
+                                    current_risk_score += hs_test.test_weight
+
+                        for ls_test in tests.filtered(lambda ls:ls.skill_id.level == 'easy'):
+                            #checks if system component is present
+                            if (ls_test.component_id.id in component_list):
+                                test_interval_months = ls_test.required_interval
+                                previous_task_limit = today-datetime.timedelta(days=test_interval_months*30)
+
+                                #Looking for similar low skill task
+                                similar_ls_test = env['preventive_maintenance.test.records'].search([('date','>=',previous_task_limit),('test_type','=',ls_test.id),('system_id','=',system.id)])
+
+                                if len(similar_ls_test)==0 and tls >= ((ls_test.time_needed)/60):
+                                    current_risk_score += ls_test.test_weight
+
+                        if current_risk_score*system.base_risk_score >= risk_treshold :
+                            #Inspection creation
+                            if inspection == False and ths > 0:
+                                notification =  record.env['preventive_maintenance.notification'].create({
+                                    'name':'Notification for System :'+str(system.name),
+                                    'location_id':system.location_id.id,
+                                    'system_id':system.id,
+                                    'risk_score':system.base_risk_score,
+                                    'dashboard_id':record.id,
+                                })
+                                inspection = record.env['preventive_maintenance.maintenance'].create({
+                                    'name':'Automated preventive maintenance inspection : '+pm_type,
+                                    'system_id':system.id,
+                                    'pm_type':pm_type,
+                                    'date':today,
+                                    'state':'warning',
+                                    'notification_id':notification.id,
+                                })
+
+                        #check high skill tests
+                        #Will need to order by weight : test_weight .sorted(key=lambda r: r.name)
+                            for hs_test in tests.filtered(lambda tests: tests.skill_id.level == 'hard') :
+                                #checks if scrapped and if system component is present
+                                if scrap == False and (hs_test.component_id.id in component_list):
+                                    test_interval_months = hs_test.required_interval
+                                    previous_task_limit = today-datetime.timedelta(days=test_interval_months*30)
+
+                                    #Gets previous high skill test done with same system id / test type / date under previous_task_limit
+                                    similar_hs_test = env['preventive_maintenance.test.records'].search([('date','>=',previous_task_limit),('test_type','=',hs_test.id),('system_id','=',system.id)])
+
+                                    #if HS test not found, creates an inspection and notification
+                                    #Also tries to check for the LS tests
+                                    if len(similar_hs_test)==0:
+
+
+                                        #HS Test creation
+                                        if ths >= (hs_test.time_needed)/60:
+                                            env['preventive_maintenance.test.records'].create({
+                                              'system_id':system.id,
+                                              'maintenance_id':inspection.id,
+                                              'component_id':hs_test.component_id.id,
+                                              'date':today,
+                                              'test_type':hs_test.id,
+                                            })
+                                            #Adding to risk score
+                                            risk_score += hs_test.test_weight
+                                            #reducing THS available
+                                            # hours - (minutes)/60
+                                            ths = ths-(hs_test.time_needed)/60
+                                            high_skill_time_needed += hs_test.time_needed
+
+                                        #If not enough time, scrap intervention
+                                        elif ths < (hs_test.time_needed)/60:
+                                            scrap = True
+                                            maintenance_needed = True
+                                            skip = True
+
+
+                                        #To avoid having to go over easy tests and later tests each time we check a high skill test
+                                        #We also check if there enough tls time for LS tests
+                            if skip == False and tls > 0 and scrap == False:
+                                for ls_test in tests.filtered(lambda ls:ls.skill_id.level == 'easy'):
+                                    #checks if system component is present
+                                    if (ls_test.component_id.id in component_list):
+                                        test_interval_months = ls_test.required_interval
+                                        previous_task_limit = today-datetime.timedelta(days=test_interval_months*30)
+
+                                        #Looking for similar low skill task
+                                        similar_ls_test = env['preventive_maintenance.test.records'].search([('date','>=',previous_task_limit),('test_type','=',ls_test.id),('system_id','=',system.id)])
+
+                                        if len(similar_ls_test)==0 and tls >= ((ls_test.time_needed)/60):
+                                            #Test creation
+                                            env['preventive_maintenance.test.records'].create({
+                                              'system_id':system.id,
+                                              'maintenance_id':inspection.id,
+                                              'component_id':ls_test.component_id.id,
+                                              'date':today,
+                                              'test_type':ls_test.id,
+                                            })
+                                            #Adding to risk score
+                                            risk_score += ls_test.test_weight
+                                            #reducing TLS available
+                                            #hours - (minutes)/60
+                                            tls = tls-(ls_test.time_needed)/60
+                                            low_skill_time_needed += ls_test.time_needed
+
+                                        #If not enough time left for one of the tests, scrap the whole inspection.
+                                        elif len(similar_ls_test)==0 and tls < ((ls_test.time_needed)/60):
+                                                scrap = True
+                                                skip = True
+                                                maintenance_needed = True
+                                skip = True
+                                #Now adding the later tests that will have to be done (those not late, that will come in ~6months)
+                                if tls > 0:
+                                    for ls_future_test in tests.filtered(lambda ls:ls.skill_id.level == 'easy'):
+                                        #checks if system component is present
+                                        if ls_future_test.component_id.id in component_list:
+                                            # required interval + 6months
+                                            test_interval_months = ls_future_test.required_interval+6
+                                            future_limit = today-datetime.timedelta(days=test_interval_months*30)
+
+                                            #Looking for similar low skill task
+                                            similar_ls_future_test = env['preventive_maintenance.test.records'].search([('date','>=',future_limit),('test_type','=',ls_future_test.id),('system_id','=',system.id)])
+
+                                            if len(similar_ls_future_test)==0 and tls >= ((ls_future_test.time_needed)/60):
+                                                #Test creation
+                                                env['preventive_maintenance.test.records'].create({
+                                                  'system_id':system.id,
+                                                  'maintenance_id':inspection.id,
+                                                  'component_id':ls_future_test.component_id.id,
+                                                  'date':today,
+                                                  'test_type':ls_future_test.id,
+                                                })
+                                                #Adding to risk score
+                                                risk_score += ls_future_test.test_weight
+                                                #reducing TLS available
+                                                # hours - (minutes)/60
+                                                tls = tls-(ls_future_test.time_needed)/60
+                                                low_skill_time_needed += ls_future_test.time_needed
+
+                                #Adding the future high skill tests
+                                #At this point, we've done all LS tests and all HS tests + the Future LS tests
+                                # "if skip==True" ensures that at least 1 HS test was late and triggered the inspection
+                                if skip == True and ths > 0 and scrap ==False:
+                                    for hs_future_test in tests.filtered(lambda tests: tests.skill_id.level == 'hard'):
+                                        #checks if system component is present
+                                        if hs_future_test.component_id.id in component_list:
+                                            # required interval + 6months
+                                            test_interval_months = hs_future_test.required_interval+6
+                                            future_limit = today-datetime.timedelta(days=test_interval_months*30)
+
+                                            similar_hs_future_test = env['preventive_maintenance.test.records'].search([('date','>=',future_limit),('test_type','=',hs_future_test.id),('system_id','=',system.id)])
+
+                                            if len(similar_hs_future_test)==0 and ths >= ((hs_future_test.time_needed)/60):
+                                                #Test creation
+                                                env['preventive_maintenance.test.records'].create({
+                                                  'system_id':system.id,
+                                                  'maintenance_id':inspection.id,
+                                                  'component_id':hs_future_test.component_id.id,
+                                                  'date':today,
+                                                  'test_type':hs_future_test.id,
+                                                })
+                                                #Adding to risk score
+                                                risk_score += hs_future_test.test_weight
+                                                #reducing TLS available
+                                                # hours - (minutes)/60
+                                                ths = ths-(hs_future_test.time_needed)/60
+                                                high_skill_time_needed += hs_future_test.time_needed
+                    if notification != False and scrap == False:
+                        notification.write({
+                            'inspection_time_needed':((high_skill_time_needed+low_skill_time_needed)/60),
+                            'high_skill_time_needed':high_skill_time_needed/60,
+                            'low_skill_time_needed':low_skill_time_needed/60,
+                            'risk_score':risk_score*system.base_risk_score,
+                        })
+                        system.write({
+                            'notification_status':'pending',
+                            'health':'error',
+                        })
+                    elif notification != False and scrap == True:
+                        notification.unlink()
+                        inspection.unlink()
+                        system.write({
+                            'maintenance_needed':maintenance_needed,
+                            'health':'warning',
+                        })
+
+                    record.write({
+                        'high_skill_available':ths,
+                        'low_skill_available':tls,
+                    })
+            findInspections(pm_type,tls,ths,risk_treshold)
+
+
+            </field>
+        </record>

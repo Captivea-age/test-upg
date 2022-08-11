@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sale_order_fieldtech,sale.order.fieldtech,sale.model_sale_order,field_technician.group_field_technician,1,1,1,0
+access_account_move_fieldtech,account.move.fieldtech,account.model_account_move,field_technician.group_field_technician,1,1,1,0
+access_project_fieldtech,project.fieldtech,project.model_project_project,field_technician.group_field_technician,1,1,1,0
+access_employee_fieldtech,employee.fieldtech,hr.model_hr_employee,field_technician.group_field_technician,1,1,1,0
+access_expense_fieldtech,expense.fieldtech,hr_expense.model_hr_expense,field_technician.group_field_technician,1,1,1,0
+access_helpdesk_ticket_fieldtech,helpdesk_ticket.fieldtech,helpdesk.model_helpdesk_ticket,field_technician.group_field_technician,1,0,0,0
+access_task_fieldtech,task.fieldtech,project.model_project_task,field_technician.group_field_technician,1,1,0,0
+

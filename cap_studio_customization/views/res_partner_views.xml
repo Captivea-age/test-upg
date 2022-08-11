@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<record id="view_res_partner_form_customization" model="ir.ui.view">
+			<field name="name">view.res.partner.form.customization</field>
+			<field name="model">res.partner</field>
+			<field name="inherit_id" ref="base.view_partner_form"/>
+			<field name="priority">110</field>
+			<field name="arch" type="xml">
+
+				<xpath expr="//page[@name='internal_alerts']" position="after">
+                     <page string="Systems List" name="systems_list" attrs="{'invisible': [('partner_type', '=', 'person')]}">
+                        <button name="openSystemCreation" string="Add a system" class="btn btn-primary" type="object"/>
+                        <field name="systems_list_ids"/>
+                    </page>
+                </xpath>
+                <xpath expr="//field[@name='website']/..//label[@for='phone']" position="replace">
+                </xpath>
+                <xpath expr="//field[@name='website']/..//field[@name='phone']" position="replace">
+                </xpath>
+                <xpath expr="//field[@name='website']/..//label[@for='mobile']" position="replace">
+                </xpath>
+                <xpath expr="//field[@name='website']/..//field[@name='mobile']" position="replace">
+                </xpath>
+                <xpath expr="//field[@name='website']/..//label[@for='email']" position="replace">
+                </xpath>
+                <xpath expr="//field[@name='website']/..//field[@name='email']" position="replace">
+                </xpath>
+                <xpath expr="//field[@name='website']" position="before">
+                    <field name="mobile" widget="phone" string="Mobile"/>
+                    <field name="phone" widget="phone" string="Landline"/>
+                    <field name="email" widget="email"/>
+                </xpath>
+                <xpath expr="//field[@name='is_vendor']" position="attributes">
+                    <attribute name="attrs">{'invisible':[('partner_type','=','location')]}</attribute>
+                </xpath>
+                <xpath expr="//label[@for='is_vendor']" position="attributes">
+                    <attribute name="attrs">{'invisible':[('partner_type','=','location')]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='location_type_id']" position="attributes">
+                    <attribute name="attrs">{'invisible':[('partner_type','!=','location')]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='email']" position="attributes">
+                    <attribute name="attrs">{'required':['&amp;',('partner_type','!=','location'),('is_vendor', '!=', True)]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='partner_type']" position="attributes">
+                    <attribute name="required">0</attribute>
+                    <attribute name="attrs">{'required':[('is_vendor','!=',True)]}</attribute>
+                </xpath>
+			</field>
+		</record>
+        
+        <record id="view_res_partner_form_customization_google" model="ir.ui.view">
+			<field name="name">view.res.partner.form.customization.google</field>
+			<field name="model">res.partner</field>
+			<field name="inherit_id" ref="contacts_google_places_autocomplete.view_contacts_google_places_autocomplete_inherit"/>
+			<field name="priority">1001</field>
+			<field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="widget"></attribute>
+                </xpath>
+			</field>
+		</record>
+
+	</data>
+</odoo>  

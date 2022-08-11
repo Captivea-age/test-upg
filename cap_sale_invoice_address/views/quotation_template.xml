@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    <!-- Form view -->
+        <record id="sale_order_quotation_custom" model="ir.ui.view">
+            <field name="name">quotation_template_custom</field>
+            <field name="model">sale.order.template</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="sale_management.sale_order_template_view_form"/>
+            <field name="priority">100</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='company_id']" position="after">
+                    <field name="deposit_invoice_automation"/>
+                    <field name="deposit_dollar"  attrs="{'invisible':[('deposit_invoice_automation','=',False),('deposit_percentage','!=',0)]}"/>
+                    <field name="deposit_percentage" widget="percentage" attrs="{'invisible':[('deposit_invoice_automation','=',False),('deposit_dollar','!=',0)]}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

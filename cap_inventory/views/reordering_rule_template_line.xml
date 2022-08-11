@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_reordering_rule_template_line_tree" model="ir.ui.view">
+            <field name="name">view_reordering_rule_template_line_tree</field>
+            <field name="model">reordering.rule.template.line</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="roerdering_rule_template_id"/>
+                    <field name="product_id"/>
+                    <field name="product_min_qty"/>
+                    <field name="product_max_qty"/>
+                    <field name="qty_multiple"/>
+                </tree>
+            </field>
+        </record>
+    </data>
+</odoo>

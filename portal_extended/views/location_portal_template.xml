@@ -1,0 +1,655 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="portal_layout" name="Portal layout: locations menu entry" inherit_id="portal.portal_breadcrumbs"
+              priority="35">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'locations' or locations"
+                t-attf-class="breadcrumb-item #{'active' if not locations else ''}">
+                <t>Locations</t>
+            </li>
+        </xpath>
+    </template>
+
+    <template id="portal_my_home_locations" name="Show Locations" customize_show="True"
+              inherit_id="portal.portal_my_home" priority="45">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Locations</t>
+                <t t-set="url" t-value="'/my/locations'"/>
+                <t t-set="placeholder_count" t-value="'locations_count'"/>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="portal_my_locations" name="My Locations">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Locations</t>
+            </t>
+            <t t-if="not locations">
+                <div class="alert alert-warning mt8" role="alert">
+                    There are no locations.
+                </div>
+            </t>
+            <t t-if="locations">
+                <t t-call="portal.portal_table">
+                    <thead>
+                    </thead>
+                    <tbody>
+                        <div class="container">
+                            <div class="col-md-12">
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <table class="table table-condensed table-striped">
+                                            <tbody>
+                                                <t t-foreach="locations" t-as="location">
+                                                    <t t-set="collapseid" t-value="'idone' + str(location.id)"/>
+
+
+                                                    <tr data-toggle="collapse" t-att-data-target="'#'+collapseid"
+                                                        class="accordion-toggle">
+                                                        <td>
+                                                            <span t-esc="location.name"/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="hiddenRow">
+                                                            <div class="accordian-body collapse" t-att-id="collapseid">
+                                                                <table class="table table-striped">
+                                                                    <t t-set="nosystem" t-value="True"/>
+                                                                    <t t-foreach="location_system" t-as="system">
+                                                                        <t t-if="system.location_id.id == location.id">
+                                                                            <t t-set="nosystem" t-value="False"/>
+                                                                            <t t-set="collapseids"
+                                                                               t-value="'idtwo' + str(system.id)"/>
+                                                                            <tbody>
+
+                                                                                <tr data-toggle="collapse"
+                                                                                    class="accordion-toggle"
+                                                                                    t-att-data-target="'#'+collapseids">
+                                                                                    <td><span t-esc="system.name"/>
+                                                                                        - <span t-esc="system.health"/></td>
+                                                                                </tr>
+
+                                                                                <tr>
+                                                                                    <td class="hiddenRow">
+                                                                                        <div class="accordian-body collapse"
+                                                                                             t-att-id="collapseids">
+                                                                                            <table class="table table-striped">
+                                                                                                <tbody>
+                                                                                                    <t t-if="system.furnace_equipment_id and system.furnace_bool">
+                                                                                                        <t t-set="equipment1"
+                                                                                                           t-value="'idthree' + str(system.furnace_equipment_id.id)"/>
+
+                                                                                                        <tr data-toggle="collapse"
+                                                                                                            class="accordion-toggle"
+                                                                                                            t-att-data-target="'#'+equipment1">
+                                                                                                            <td><span
+                                                                                                                    t-esc="system.furnace_equipment_id.name"/></td>
+                                                                                                        </tr>
+                                                                                                        <tr>
+                                                                                                            <td class="hiddenRow">
+                                                                                                                <div class="accordian-body collapse"
+                                                                                                                     t-att-id="equipment1">
+                                                                                                                    <table class="table table-striped">
+                                                                                                                        <thead>
+                                                                                                                            <tr>
+                                                                                                                                <th>
+                                                                                                                                    Health</th>
+                                                                                                                                <th>
+                                                                                                                                    Name</th>
+                                                                                                                                <th>
+                                                                                                                                    Last
+                                                                                                                                    Service
+                                                                                                                                    Date</th>
+                                                                                                                                <th>
+                                                                                                                                    Service
+                                                                                                                                    Life</th>
+                                                                                                                            </tr>
+                                                                                                                        </thead>
+                                                                                                                        <tbody><tr></tr>
+                                                                                                                            <t t-foreach="system.furnace_component_ids"
+                                                                                                                               t-as="component">
+                                                                                                                                <tr>
+                                                                                                                                    <t t-if="component.component_state == 'good'">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:green;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <t t-if=" not component.component_state">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:green;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <t t-if="component.component_state == 'warning'">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:orange;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <t t-if="component.component_state == 'error'">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:red;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <td><span
+                                                                                                                                            t-esc="component.furnace_component_name.name"/></td>
+                                                                                                                                    <td><span
+                                                                                                                                            t-esc="component.last_test"/></td>
+                                                                                                                                    <td><span
+                                                                                                                                            t-esc="component.furnace_component_name.service_life"/></td>
+                                                                                                                                </tr>
+                                                                                                                            </t>
+                                                                                                                        </tbody>
+                                                                                                                    </table>
+
+                                                                                                                </div>
+                                                                                                            </td>
+                                                                                                        </tr>
+                                                                                                    </t>
+                                                                                                    <t t-if="system.condenser_equipment_id and system.condenser_bool">
+                                                                                                        <t t-set="equipment2"
+                                                                                                           t-value="'idfour' + str(system.condenser_equipment_id.id)"/>
+
+
+                                                                                                        <tr data-toggle="collapse"
+                                                                                                            class="accordion-toggle"
+                                                                                                            t-att-data-target="'#'+equipment2">
+                                                                                                            <td><span
+                                                                                                                    t-esc="system.condenser_equipment_id.name"/></td>
+                                                                                                        </tr>
+
+                                                                                                        <tr>
+                                                                                                            <td class="hiddenRow">
+                                                                                                                <div class="accordian-body collapse"
+                                                                                                                     t-att-id="equipment2">
+                                                                                                                    <table class="table table-striped">
+                                                                                                                        <thead>
+                                                                                                                            <tr>
+                                                                                                                                <th>
+                                                                                                                                    Health</th>
+                                                                                                                                <th>
+                                                                                                                                    Name</th>
+                                                                                                                                <th>
+                                                                                                                                    Last
+                                                                                                                                    Service
+                                                                                                                                    Date</th>
+                                                                                                                                <th>
+                                                                                                                                    Service
+                                                                                                                                    Life</th>
+                                                                                                                            </tr>
+                                                                                                                        </thead>
+                                                                                                                        <tbody><tr></tr>
+                                                                                                                            <t t-foreach="system.condenser_component_ids"
+                                                                                                                               t-as="component">
+                                                                                                                                <tr>
+                                                                                                                                    <t t-if="component.component_state == 'good'">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:green;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <t t-if=" not component.component_state">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:green;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <t t-if="component.component_state == 'warning'">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:orange;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <t t-if="component.component_state == 'error'">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:red;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <td><span
+                                                                                                                                            t-esc="component.condenser_component_name.name"/></td>
+                                                                                                                                    <td><span
+                                                                                                                                            t-esc="component.last_test"/></td>
+                                                                                                                                    <td><span
+                                                                                                                                            t-esc="component.condenser_component_name.service_life"/></td>
+                                                                                                                                </tr>
+                                                                                                                            </t>
+                                                                                                                        </tbody>
+                                                                                                                    </table>
+
+                                                                                                                </div>
+                                                                                                            </td>
+                                                                                                        </tr>
+                                                                                                    </t>
+                                                                                                    <t t-if="system.evaporator_equipment_id and system.evaporator_bool">
+                                                                                                        <t t-set="equipment5"
+                                                                                                           t-value="'idfive' + str(system.evaporator_equipment_id.id)"/>
+
+
+                                                                                                        <tr data-toggle="collapse"
+                                                                                                            class="accordion-toggle"
+                                                                                                            t-att-data-target="'#'+equipment5">
+                                                                                                            <td><span
+                                                                                                                    t-esc="system.evaporator_equipment_id.name"/></td>
+                                                                                                        </tr>
+
+                                                                                                        <tr><tr></tr>
+                                                                                                            <td class="hiddenRow">
+                                                                                                                <div class="accordian-body collapse"
+                                                                                                                     t-att-id="equipment5">
+                                                                                                                    <table class="table table-striped">
+                                                                                                                        <thead>
+                                                                                                                            <tr>
+                                                                                                                                <th>
+                                                                                                                                    Health</th>
+                                                                                                                                <th>
+                                                                                                                                    Name</th>
+                                                                                                                                <th>
+                                                                                                                                    Last
+                                                                                                                                    Service
+                                                                                                                                    Date</th>
+                                                                                                                                <th>
+                                                                                                                                    Service
+                                                                                                                                    Life</th>
+                                                                                                                            </tr>
+                                                                                                                        </thead>
+                                                                                                                        <tbody><tr></tr>
+                                                                                                                            <t t-foreach="system.evaporator_component_ids"
+                                                                                                                               t-as="component">
+                                                                                                                                <tr>
+                                                                                                                                    <t t-if="component.component_state == 'good'">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:green;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <t t-if=" not component.component_state">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:green;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <t t-if="component.component_state == 'warning'">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:orange;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <t t-if="component.component_state == 'error'">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:red;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <td><span
+                                                                                                                                            t-esc="component.evaporator_component_name.name"/></td>
+                                                                                                                                    <td><span
+                                                                                                                                            t-esc="component.last_test"/></td>
+                                                                                                                                    <td><span
+                                                                                                                                            t-esc="component.evaporator_component_name.service_life"/></td>
+                                                                                                                                </tr>
+                                                                                                                            </t>
+                                                                                                                        </tbody>
+                                                                                                                    </table>
+
+                                                                                                                </div>
+                                                                                                            </td>
+                                                                                                        </tr>
+
+                                                                                                    </t>
+                                                                                                    <t t-if="system.thermostat_equipment_id and system.thermostat_bool">
+                                                                                                        <t t-set="equipment6"
+                                                                                                           t-value="'idsix' + str(system.thermostat_equipment_id.id)"/>
+
+
+                                                                                                        <tr data-toggle="collapse"
+                                                                                                            class="accordion-toggle"
+                                                                                                            t-att-data-target="'#'+equipment6">
+                                                                                                            <td><span
+                                                                                                                    t-esc="system.thermostat_equipment_id.name"/></td>
+                                                                                                        </tr>
+
+                                                                                                        <tr>
+                                                                                                            <td class="hiddenRow">
+                                                                                                                <div class="accordian-body collapse"
+                                                                                                                     t-att-id="equipment6">
+                                                                                                                    <table class="table table-striped">
+                                                                                                                        <thead>
+                                                                                                                            <tr>
+                                                                                                                                <th>
+                                                                                                                                    Health</th>
+                                                                                                                                <th>
+                                                                                                                                    Name</th>
+                                                                                                                                <th>
+                                                                                                                                    Last
+                                                                                                                                    Service
+                                                                                                                                    Date</th>
+                                                                                                                                <th>
+                                                                                                                                    Service
+                                                                                                                                    Life</th>
+                                                                                                                            </tr>
+                                                                                                                        </thead>
+                                                                                                                        <tbody><tr></tr>
+                                                                                                                            <t t-foreach="system.thermostat_component_ids"
+                                                                                                                               t-as="component">
+                                                                                                                                <tr>
+                                                                                                                                    <t t-if="component.component_state == 'good'">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:green;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <t t-if=" not component.component_state">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:green;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <t t-if="component.component_state == 'warning'">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:orange;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <t t-if="component.component_state == 'error'">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:red;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <td><span
+                                                                                                                                            t-esc="component.thermostat_component_name.name"/></td>
+                                                                                                                                    <td><span
+                                                                                                                                            t-esc="component.last_test"/></td>
+                                                                                                                                    <td><span
+                                                                                                                                            t-esc="component.thermostat_component_name.service_life"/></td>
+                                                                                                                                </tr>
+                                                                                                                            </t>
+                                                                                                                        </tbody>
+                                                                                                                    </table>
+
+                                                                                                                </div>
+                                                                                                            </td>
+                                                                                                        </tr>
+
+                                                                                                    </t>
+                                                                                                    <t t-if="system.airflow_ducting_equipment_id and system.airflow_ducting_bool">
+                                                                                                        <t t-set="equipment7"
+                                                                                                           t-value="'idseven' + str(system.airflow_ducting_equipment_id.id)"/>
+
+
+                                                                                                        <tr data-toggle="collapse"
+                                                                                                            class="accordion-toggle"
+                                                                                                            t-att-data-target="'#'+equipment7">
+                                                                                                            <td><span
+                                                                                                                    t-esc="system.airflow_ducting_equipment_id.name"/></td>
+                                                                                                        </tr>
+
+                                                                                                        <tr>
+                                                                                                            <td class="hiddenRow">
+                                                                                                                <div class="accordian-body collapse"
+                                                                                                                     t-att-id="equipment7">
+                                                                                                                    <table class="table table-striped">
+                                                                                                                        <thead>
+                                                                                                                            <tr>
+                                                                                                                                <th>
+                                                                                                                                    Health</th>
+                                                                                                                                <th>
+                                                                                                                                    Name</th>
+                                                                                                                                <th>
+                                                                                                                                    Last
+                                                                                                                                    Service
+                                                                                                                                    Date</th>
+                                                                                                                                <th>
+                                                                                                                                    Service
+                                                                                                                                    Life</th>
+                                                                                                                            </tr>
+                                                                                                                        </thead>
+                                                                                                                        <tbody><tr></tr>
+                                                                                                                            <t t-foreach="system.airflow_ducting_component_ids"
+                                                                                                                               t-as="component">
+                                                                                                                                <tr>
+                                                                                                                                    <t t-if="component.component_state == 'good'">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:green;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <t t-if=" not component.component_state">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:green;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <t t-if="component.component_state == 'warning'">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:orange;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <t t-if="component.component_state == 'error'">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:red;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <td><span
+                                                                                                                                            t-esc="component.airflow_ducting_component_name.name"/></td>
+                                                                                                                                    <td><span
+                                                                                                                                            t-esc="component.last_test"/></td>
+                                                                                                                                    <td><span
+                                                                                                                                            t-esc="component.airflow_ducting_component_name.service_life"/></td>
+                                                                                                                                </tr>
+                                                                                                                            </t>
+                                                                                                                        </tbody>
+                                                                                                                    </table>
+
+                                                                                                                </div>
+                                                                                                            </td>
+                                                                                                        </tr>
+
+
+                                                                                                    </t>
+                                                                                                    <t t-if="system.blower_equipment_id and system.blower_bool">
+                                                                                                        <t t-set="equipment8"
+                                                                                                           t-value="'ideight' + str(system.blower_equipment_id.id)"/>
+
+
+                                                                                                        <tr data-toggle="collapse"
+                                                                                                            class="accordion-toggle"
+                                                                                                            t-att-data-target="'#'+equipment8">
+                                                                                                            <td><span
+                                                                                                                    t-esc="system.blower_equipment_id.name"/></td>
+                                                                                                        </tr>
+
+                                                                                                        <tr>
+                                                                                                            <td class="hiddenRow">
+                                                                                                                <div class="accordian-body collapse"
+                                                                                                                     t-att-id="equipment8">
+                                                                                                                    <table class="table table-striped">
+                                                                                                                        <thead>
+                                                                                                                            <tr>
+                                                                                                                                <th>
+                                                                                                                                    Health</th>
+                                                                                                                                <th>
+                                                                                                                                    Name</th>
+                                                                                                                                <th>
+                                                                                                                                    Last
+                                                                                                                                    Service
+                                                                                                                                    Date</th>
+                                                                                                                                <th>
+                                                                                                                                    Service
+                                                                                                                                    Life</th>
+                                                                                                                            </tr>
+                                                                                                                        </thead>
+                                                                                                                        <tbody><tr></tr>
+                                                                                                                            <t t-foreach="system.blower_component_ids"
+                                                                                                                               t-as="component">
+                                                                                                                                <tr>
+                                                                                                                                    <t t-if="component.component_state == 'good'">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:green;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <t t-if=" not component.component_state">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:green;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <t t-if="component.component_state == 'warning'">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:orange;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <t t-if="component.component_state == 'error'">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:red;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <td><span
+                                                                                                                                            t-esc="component.blower_component_name.name"/></td>
+                                                                                                                                    <td><span
+                                                                                                                                            t-esc="component.last_test"/></td>
+                                                                                                                                    <td><span
+                                                                                                                                            t-esc="component.blower_component_name.service_life"/></td>
+                                                                                                                                </tr>
+                                                                                                                            </t>
+                                                                                                                        </tbody>
+                                                                                                                    </table>
+
+                                                                                                                </div>
+                                                                                                            </td>
+                                                                                                        </tr>
+
+
+                                                                                                    </t>
+                                                                                                    <t t-if="system.water_drainage_equipment_id and system.water_drainage_bool">
+                                                                                                        <t t-set="equipment9"
+                                                                                                           t-value="'idnine' + str(system.water_drainage_equipment_id.id)"/>
+
+
+                                                                                                        <tr data-toggle="collapse"
+                                                                                                            class="accordion-toggle"
+                                                                                                            t-att-data-target="'#'+equipment9">
+                                                                                                            <td><span
+                                                                                                                    t-esc="system.water_drainage_equipment_id.name"/></td>
+                                                                                                        </tr>
+
+                                                                                                        <tr>
+                                                                                                            <td class="hiddenRow">
+                                                                                                                <div class="accordian-body collapse"
+                                                                                                                     t-att-id="equipment9">
+                                                                                                                    <table class="table table-striped">
+                                                                                                                        <thead>
+                                                                                                                            <tr>
+                                                                                                                                <th>
+                                                                                                                                    Health</th>
+                                                                                                                                <th>
+                                                                                                                                    Name</th>
+                                                                                                                                <th>
+                                                                                                                                    Last
+                                                                                                                                    Service
+                                                                                                                                    Date</th>
+                                                                                                                                <th>
+                                                                                                                                    Service
+                                                                                                                                    Life</th>
+                                                                                                                            </tr>
+                                                                                                                        </thead>
+                                                                                                                        <tbody><tr></tr>
+                                                                                                                            <t t-foreach="system.water_drainage_component_ids"
+                                                                                                                               t-as="component">
+                                                                                                                                <tr>
+                                                                                                                                    <t t-if="component.component_state == 'good'">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:green;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <t t-if=" not component.component_state">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:green;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <t t-if="component.component_state == 'warning'">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:orange;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <t t-if="component.component_state == 'error'">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:red;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <td><span
+                                                                                                                                            t-esc="component.water_drainage_component_name.name"/></td>
+                                                                                                                                    <td><span
+                                                                                                                                            t-esc="component.last_test"/></td>
+                                                                                                                                    <td><span
+                                                                                                                                            t-esc="component.water_drainage_component_name.service_life"/></td>
+                                                                                                                                </tr>
+                                                                                                                            </t>
+                                                                                                                        </tbody>
+                                                                                                                    </table>
+
+                                                                                                                </div>
+                                                                                                            </td>
+                                                                                                        </tr>
+
+
+                                                                                                    </t>
+                                                                                                    <t t-if="system.iaq_equipment_id and system.iaq_bool">
+                                                                                                        <t t-set="equipment10"
+                                                                                                           t-value="'idten' + str(system.iaq_equipment_id.id)"/>
+
+
+                                                                                                        <tr data-toggle="collapse"
+                                                                                                            class="accordion-toggle"
+                                                                                                            t-att-data-target="'#'+equipment10">
+                                                                                                            <td><span
+                                                                                                                    t-esc="system.water_drainage_equipment_id.name"/></td>
+                                                                                                        </tr>
+
+                                                                                                        <tr>
+                                                                                                            <td class="hiddenRow">
+                                                                                                                <div class="accordian-body collapse"
+                                                                                                                     t-att-id="equipment10">
+                                                                                                                    <table class="table table-striped">
+                                                                                                                        <thead>
+                                                                                                                            <tr>
+                                                                                                                                <th>
+                                                                                                                                    Health</th>
+                                                                                                                                <th>
+                                                                                                                                    Name</th>
+                                                                                                                                <th>
+                                                                                                                                    Last
+                                                                                                                                    Service
+                                                                                                                                    Date</th>
+                                                                                                                                <th>
+                                                                                                                                    Service
+                                                                                                                                    Life</th>
+                                                                                                                            </tr>
+                                                                                                                        </thead>
+                                                                                                                        <tbody><tr></tr>
+                                                                                                                            <t t-foreach="system.iaq_component_ids"
+                                                                                                                               t-as="component">
+                                                                                                                                <tr>
+                                                                                                                                    <t t-if="component.component_state == 'good'">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:green;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <t t-if=" not component.component_state">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:green;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <t t-if="component.component_state == 'warning'">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:orange;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <t t-if="component.component_state == 'error'">
+                                                                                                                                        <td><div
+                                                                                                                                                style="background-color:red;height:10px;width:50px;margin-top:7px"></div></td>
+                                                                                                                                    </t>
+                                                                                                                                    <td><span
+                                                                                                                                            t-esc="component.iaq_component_name.name"/></td>
+                                                                                                                                    <td><span
+                                                                                                                                            t-esc="component.last_test"/></td>
+                                                                                                                                    <td><span
+                                                                                                                                            t-esc="component.iaq_component_name.service_life"/></td>
+                                                                                                                                </tr>
+                                                                                                                            </t>
+                                                                                                                        </tbody>
+                                                                                                                    </table>
+
+                                                                                                                </div>
+                                                                                                            </td>
+                                                                                                        </tr>
+                                                                                                    </t>
+                                                                                                </tbody>
+                                                                                            </table>
+                                                                                        </div>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </t>
+                                                                    </t>
+                                                                    <t t-if="nosystem">
+                                                                        <div class="alert alert-warning mt8"
+                                                                             role="alert">
+                                                                            There are no system.
+                                                                        </div>
+                                                                    </t>
+                                                                </table>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </tbody>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

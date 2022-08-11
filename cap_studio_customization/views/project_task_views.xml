@@ -1,0 +1,555 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_project_task_form_custom" model="ir.ui.view">
+            <field name="name">view.project.task.custom.form</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_form2" ></field>
+            <field name="priority">105</field>
+            <field name="arch" type="xml">
+<!--                 <xpath expr="//button[@name='action_make_billable']" position="after">
+                    <button name="%(cap_studio_customization.action_cap_popup_generation)d" string="Review my points" type="action" class="oe_highlight" attrs="{'invisible' : [('stage_id', 'not in', [7,9])]}"/>
+                    <button name="%(cap_studio_customization.action_create_ticket_and_repair_from_task)d" string="SVC1 (Repair) Order" type="action"/>
+                    <button name="%(cap_studio_customization.action_create_ticket_and_repair_svc2_from_task)d" string="SVC2 (Major Repair) Order" type="action"/>
+                    <button name="%(cap_studio_customization.action_create_ticket_and_replacement_from_task)d" string="Replace Order" type="action"/>
+                    <button name="%(cap_studio_customization.action_create_ticket_and_maintenance_from_task)d" string="Rental Order" type="action"/>
+                </xpath> -->
+                <xpath expr="//field[@name='sale_order_id']" position="attributes">
+                    <attribute name="domain">['|', '|', ('partner_id', '=', partner_id), ('partner_id', 'child_of', commercial_partner_id), ('partner_id', 'parent_of', partner_id), ('cost_only_invoicing','!=',True)]</attribute>
+                </xpath>
+              
+                <field name="partner_id" position="replace"/>
+                <field name="tag_ids" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <xpath expr="//form[1]/sheet[1]/group[1]/group[1]/field[@name='project_id']" position="before">
+                    <field name="customer_name"/>
+                    <field name='customer_search_id' domain="[('partner_type', '!=', 'location')]" attrs=
+                    '{"invisible": ["&amp;",["customer_search_id","!=",False],["pick_the_location_id","=",False]], "readonly": ["&amp;","&amp;","&amp;",["stage_id","!=",1],["stage_id","!=",3],["stage_id","!=",False],["id","!=",10]]}'/>
+                    <field name="partner_id" class="o_task_customer_field" options="{'always_reload': True}" context="{'show_address': is_fsm}" attrs="{'required': [('is_fsm', '=', True)]}" can_create="true" can_write="true" domain="[('partner_type','!=','location')]" id="partner_id" string="Job Location"/>
+                    <field name="pick_the_location_id" string="Pick the location" domain="[['contact_id.id','=',partner_id]]" context="{'default_contact_id':partner_id}"/>
+                    <span class="o_form_label o_td_label" name="address_name"/>
+                    <div class="o_address_format">
+                        <field name="street" class="o_address_street" string="Street" placeholder="Street..." widget="char"/>
+                        <field name="street2" class="o_address_street" string="Street2" placeholder="Street 2..."/>
+                        <field name="city" class="o_address_city" string="City" placeholder="City"/>
+                        <field name="zip" class="o_address_zip" string="Zip Code" placeholder="ZIP"/>
+                        <field name="country_id" class="o_address_country" string="Country" placeholder="Country" invisible="1"/>
+                    </div>
+                    <field name="followup_needed" widget="toggle_boolean" attrs="{'invisible':[('stage_id','!=',7)]}"/>
+                    <field name="followup_department" attrs="{'invisible':[('stage_id','!=',7)]}" widget="many2many_tags" />
+                    <field name="followup_notes" attrs="{'invisible':[('stage_id','!=',7)]}"/>
+                    <field name="location_type_related"/>
+                    <field name="helpdesk_tag_ids" widget="many2many_tags" string="Tags"/>
+                </xpath>
+                <xpath expr="//form[1]/sheet[1]/group[1]/group[1]/field[@name='project_id']" position="after">
+                    <field name="job_confirmed" string='Job Confirmed' groups='helpdesk.group_helpdesk_manager' widget='boolean_toggle' attrs="{'invisible': [('is_fsm', '!=', True)]}"/>
+                    <field name="emergency" string="Emergency" groups="helpdesk.group_helpdesk_user" widget="boolean_toggle"  attrs="{'invisible': [('is_fsm', '!=', True)]}"/>
+                </xpath>
+                <label for="planned_date_begin" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </label>
+                <field name="planned_hour_start" position="replace"/>
+                <field name="planned_hour_end" position="replace"/>
+                <xpath expr="//field[@name='active']" position="before">
+                    <field name="location_type_id" string="Location Type" options="{'no_open':True,'no_create': True, 'no_create_edit':True, 'no_quick_create': True}" attrs="{'invisible': [('is_fsm', '!=', True)]}"/>
+                    <field name="department_id" string="Department " options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True, 'no_open':True,}" attrs="{'invisible': [('is_fsm', '!=', True)]}"/>
+                    <field name="job_type_id" string="Job Type " options="{&quot;no_create&quot;:true,&quot;no_open&quot;:true}" domain="[['department_id','=',department_id]]" attrs="{'invisible': [('is_fsm', '!=', True)]}"/>
+                    <field name="id" string="Job ID" attrs="{'invisible': [('is_fsm', '!=', True)]}"/>
+                    <xpath expr="//form[1]/sheet[1]/group[1]/group[1]/field[@name='user_id']" position="move"/>
+                    <field name="user_id" position="attributes" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True, 'no_open':True,}" attrs="{'invisible': [('is_fsm', '!=', True)]}"/>
+                    <field name="technician_team_ids" widget="many2many_tags" attrs="{'invisible': [('is_fsm', '!=', True)]}"/>
+                    <label for="start_date" string="Start Date"/>
+
+                        <field name="start_date"/>
+<!--                         <button class="ml32 btn-primary" attrs="{'invisible': [('job_type_id', '=', False)]}" name="%(field_service_appointment_wizard_action)d" type="action" string="Find Appointment no context"/> -->
+                       
+
+                    <field name="arrival_window" attrs="{'invisible': [('is_fsm', '!=', True)]}"/>
+                    <label for="planned_date_begin" string="Scheduled for" attrs="{'invisible': [('display_fsm_dates', '=', False)]}"/>
+                    <div>
+                        <field name="planned_hour_start" widget="selection"/>
+                        <field name="planned_hour_end" widget="selection"/>
+                    </div>
+                </xpath>
+                <xpath expr="//field[@name='sale_line_id']" position="attributes">
+                    <attribute name="attrs">{}</attribute>
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <!-- <field name="partner_phone" position="replace"/>
+                <field name="user_id" position="attributes" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True, 'no_open':True,}">
+                    <attribute name="string">Technician Lead</attribute>
+                    <attribute name="attrs">{'invisible': [('is_fsm', '!=', True)]}</attribute>
+                </field> -->
+                <xpath expr="//group[1]" position="after">
+                    <group>
+                        <group>
+                            <field name="phone_numbers_ids">
+                                <tree>
+                                    <field name="phone"/>
+                                    <field name="type"/>
+                                    <field name="tags" widget="many2many_tags"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="preferred_contact_method_1" string="Preferred Contact Method" widget="many2many_checkboxes"/>
+                        </group>
+                        <group>
+                            <field name="customers_phone" widget="phone"/>
+                            <field name="customers_mobile"/>
+                            <field name="partner_phone" string='Location Phone'/>
+                            <field name="extra_phone_name" string="Extra Phone Name"/>
+                            <field name="extra_phone" widget="phone"/>
+<!--                             <field name="partner_email" position="move"/> -->
+                        </group>
+                    </group>
+                </xpath>
+                <page name="description_page" position="attributes">
+                    <attribute name="string">Summary</attribute>
+                    <attribute name="invisible">True</attribute>
+                </page>
+                <xpath expr="//page[@name='description_page']/field[@name='description']" position="after">
+                    <group>
+                        <group>
+                            <field name="send_notification" widget="boolean_toggle"/>
+                            <field name="notification_sent"/>
+                            <field name="schedule_ready"/>
+                        </group>
+                    </group>
+                </xpath>
+                <field name="planned_hours" position="after">
+                    <field name="start_drive" readonly="1" force_save="1"/>
+                    <field name="end_drive" readonly="1" force_save="1"/>
+                    <field name="arrived_at_location" force_save="1"/>
+                    <field name="start_job" readonly="1" force_save="1"/>
+                    <field name="end_job" readonly="1" force_save="1"/>
+                    <field name="job_finished" force_save="1"/>
+                </field>
+                <field name="date_last_stage_update" position="after">
+                    <field name="sale_order_id"/>
+                    <field name="invoice_payment_status" readonly="1" string="Invoice Payment Status"/>
+                </field>
+                <page name="extra_info" position="after">
+                    <page string="Contacts" name="addtional_contact_location">
+                        <field name="location_contacts_ids" string="Location Contacts">
+                            <tree>
+                                <field name="relationship_type"/>
+                                <field name="contact_roles_ids" widget="many2many_tags" options="{&quot;no_create&quot;:true}"/>
+                                <field name="contact_id"/>
+                                <field name="contact_email"/>
+                                <field name="contact_phone"/>
+                                <field name="preferred_contact_method_ids" widget="many2many_tags" options="{&quot;no_create&quot;:true}"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page invisible="1" string="Historical Pictures" name="historical_pictures">
+                        <field name="job_picture_history_ids"/>
+                    </page>
+                    <page invisible="1" string="Historical Job Notes" name="historical_job_notes">
+                        <field name="job_task_history_ids"/>
+                    </page>
+                    <page invisible="1" string="Attached Pictures" name="attachment_picture">
+<!--                         <group>
+                            <group>
+                                <field name="pic_1" options="{&quot;size&quot;:[0,90]}" widget="image"/>
+                                <field name="pic_3" options="{&quot;size&quot;:[0,90]}" widget="image" attrs="{&quot;invisible&quot;: [[&quot;pic_2&quot;,&quot;=&quot;,False]]}"/>
+                                <field widget="image" options="{&quot;size&quot;: [0, 90]}" name="pic_5" string="Pic 5" attrs="{&quot;invisible&quot;: [[&quot;pic_4&quot;,&quot;=&quot;,False]]}"/>
+                            </group>
+                            <group>
+                                <field name="pic_2" options="{&quot;size&quot;:[0,90]}" widget="image" attrs="{&quot;invisible&quot;: [[&quot;pic_1&quot;,&quot;=&quot;,False]]}"/>
+                                <field name="pic_4" options="{&quot;size&quot;:[0,90]}" widget="image" attrs="{&quot;invisible&quot;: [[&quot;pic_3&quot;,&quot;=&quot;,False]]}"/>
+                                <field widget="image" options="{&quot;size&quot;: [0, 90]}" name="pic_6" string="Pic 6" attrs="{&quot;invisible&quot;: [[&quot;pic_5&quot;,&quot;=&quot;,False]]}"/>
+                            </group>
+                        </group> -->
+                    </page>
+                    <page string="Job Completion Form" name="job_notes" attrs="{}">
+                        <group>
+                            <group>
+                                <field name="job_notes"/>
+                                <field name="did_you_invoice"/>
+                                <field name="reason_for_not_invoicing" attrs="{&quot;invisible&quot;: [[&quot;did_you_invoice&quot;,&quot;!=&quot;,&quot;No, other reason&quot;]]}"/>
+                                <field name="did_you_get_payment" attrs="{&quot;invisible&quot;: [[&quot;did_you_invoice&quot;,&quot;!=&quot;,&quot;Yes&quot;]]}"/>
+                                <field name="reason_for_no_payment" attrs="{&quot;invisible&quot;: [[&quot;did_you_get_payment&quot;,&quot;!=&quot;,&quot;No, other reason&quot;]]}"/>
+                                <field name="did_you_properly_track_your_materials"/>
+                                <field name="no_tracking_reason" attrs="{&quot;invisible&quot;: [[&quot;did_you_properly_track_your_materials&quot;,&quot;!=&quot;,&quot;No, other reason&quot;]]}"/>
+                            </group>
+                                <!-- Change, maybe need more fields -->
+                            <group>
+                                <field name="pic_1" options="{&quot;size&quot;:[0,90]}" widget="image"/>
+                                <field name="pic_3" options="{&quot;size&quot;:[0,90]}" widget="image" attrs="{&quot;invisible&quot;: [[&quot;pic_2&quot;,&quot;=&quot;,False]]}"/>
+                                <field widget="image" options="{&quot;size&quot;: [0, 90]}" name="pic_5" string="Pic 5" attrs="{&quot;invisible&quot;: [[&quot;pic_4&quot;,&quot;=&quot;,False]]}"/>
+                            </group>
+                            <group>
+                                <field name="pic_2" options="{&quot;size&quot;:[0,90]}" widget="image" attrs="{&quot;invisible&quot;: [[&quot;pic_1&quot;,&quot;=&quot;,False]]}"/>
+                                <field name="pic_4" options="{&quot;size&quot;:[0,90]}" widget="image" attrs="{&quot;invisible&quot;: [[&quot;pic_3&quot;,&quot;=&quot;,False]]}"/>
+                                <field widget="image" options="{&quot;size&quot;: [0, 90]}" name="pic_6" string="Pic 6" attrs="{&quot;invisible&quot;: [[&quot;pic_5&quot;,&quot;=&quot;,False]]}"/>
+                            </group>
+                            <!-- end Change -->
+                        </group>
+                    </page>
+                    <!-- <page string="Follow Up" name="page_followup" attrs="{&quot;invisible&quot;: [[&quot;stage_id&quot;,&quot;!=&quot;,7]]}">
+                        <group>
+                            <field name="does_this_customer_require_a_follow_up_1" string="Does this customer require a follow up?"/>
+                            <field name="department_id"/>
+                        </group>
+                    </page> -->
+                </page>
+                
+                <!-- Modif Display/CSS -->
+                <!-- begin : change tabs -->
+                <xpath expr="//field[@name='worksheet_template_id']" position="attributes">
+                    <attribute name="attrs">{}</attribute>
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//page[@id='timesheets_tab']" position="attributes">
+                    <attribute name="string">Timesheets</attribute>
+                </xpath>
+                <xpath expr="//page[@name='addtional_contact_location']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//page[@name='extra_info']" position="before">
+                    <page string="Systems &#38; Maintenance" name="system_maintenance">
+                        <field name="systems_list_ids" />
+                    </page>
+                    <page string="Actions" name="system_maintenance">
+                        <button name="%(cap_studio_customization.action_cap_popup_generation)d" string="Review my points" type="action" class="oe_highlight" attrs="{'invisible' : [('stage_id', 'not in', [7,9])]}"/>
+                        <button name="%(cap_studio_customization.action_create_ticket_and_repair_from_task)d" string="SVC1 (Repair) Order" type="action"/>
+                        <button name="%(cap_studio_customization.action_create_ticket_and_repair_svc2_from_task)d" string="SVC2 (Major Repair) Order" type="action"/>
+                        <button name="%(cap_studio_customization.action_create_ticket_and_replacement_from_task)d" string="Replace Order" type="action"/>
+                        <button name="%(cap_studio_customization.action_create_ticket_and_maintenance_from_task)d" string="Rental Order" type="action"/>
+                        <button name="customerCreation" string="Generate Quotation Builder" type="object" attrs="{'invisible': [('button_job_service_titan', '!=', False)]}"/>
+                        <field name='button_job_service_titan' widget='html' readonly="1"/>
+                    </page>
+                    <xpath expr="//page[@name='job_notes']" position="move"/>
+                       <page string="Location History" name="location_history">
+                        <group>
+                           <field name='service_titan_id' readonly="1" />
+                            <field name='service_titan_link' readonly="1" widget="html"/>
+                            <field name="historical_job_notes_list"/>
+                        </group>
+                    </page>
+                </xpath>
+                <xpath expr="//page[@name='system_maintenance']" position="after">
+                    <xpath expr="//page[@id='timesheets_tab']" position="move"/>
+                </xpath>
+                <xpath expr="//page[@name='extra_info']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <!-- end -->
+                <!-- begin : change title display -->
+                <xpath expr="//field[@name='name']/ancestor::group" position="attributes">
+                    <attribute name="name">to_supp_1</attribute>
+                </xpath>
+                <xpath expr="//img[@src='/cap_helpdesk/static/src/img/tablet.png']" position="attributes">
+                    <attribute name="attrs">{}</attribute>
+                    <attribute name="style">width:10%;</attribute>
+                </xpath>
+                <xpath expr="//field[@name='id']/.." position="replace">
+                </xpath>
+                <xpath expr="//field[@name='name']" position="before">
+                    <span style="margin-left: 10px;margin-right:10px">#J<field name="id" options="{'format': 0}" readonly="1"/> at </span>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="style">font-weight:bold;</attribute>
+                </xpath>
+                <!-- end -->
+                <!-- begin : create new group with css modifications -->
+                <xpath expr="//field[@name='name']/.." position="after">
+                    <group name="contact_and_location" style="border: 1px solid black;font-size:1.08333333rem;padding-left:10px;margin-top: 25px;">
+                      <legend style="max-width:100%;width: 174px;position: relative;top: -13px;margin-left: 10px;padding-left: 2px;background: white;">
+                                Contact and Location
+                            </legend>
+                      <group name="contact_and_location_1" style="float:left;margin-right: -15px;">
+                            </group>
+                      <group name="contact_and_location_2" style="float:left">
+                            </group>
+                    </group>
+                </xpath>
+                <xpath expr="//group[@name='contact_and_location']" position="after">
+                    <group name="ticket_info" style="border: 1px solid black;font-size:1.08333333rem;padding-left:10px;margin-top: 25px;min-height:240px;">
+                      <legend style="max-width:100%;width: 150px;position: relative;top: -13px;margin-left: 10px;padding-left: 2px;background: white;">
+                                Ticket Information
+                            </legend>
+                    </group>
+                </xpath>
+                <!-- end -->
+                <!-- begin : move groups/fields -->
+                <xpath expr="//group[@name='contact_and_location_1']" position="inside">
+                    <xpath expr="//field[@name='customer_search_id']" position="move"/>
+                    <xpath expr="//field[@name='partner_id']" position="move"/>
+                    <xpath expr="//field[@name='pick_the_location_id']" position="move"/>
+                    <xpath expr="//field[@name='location_type_related']" position="move"/>
+<!--                     <xpath expr="//field[@name='location_type_id']" position="move"/>
+ -->			   </xpath>
+                <xpath expr="//group[@name='contact_and_location_2']" position="inside">
+                    <xpath expr="//field[@name='customer_name']" position="move"/>
+                    <xpath expr="//field[@name='preferred_contact_method_1']" position="move" readonly="1"/>
+                    <xpath expr="//field[@name='customers_phone']" position="move"/>
+                    <xpath expr="//field[@name='customers_mobile']" position="move"/>
+                    <xpath expr="//field[@name='partner_phone']" position="move"/>
+                    <xpath expr="//field[@name='extra_phone_name']" position="move"/>
+                    <xpath expr="//field[@name='extra_phone']" position="move"/>
+                    <xpath expr="//field[@name='partner_email']" position="move"/>
+                    <field name="partner_email" invisible="1"/>
+                    <field name="customer_email" readonly="1"/>
+                    <xpath expr="//field[@name='phone_numbers_ids']" position="move"/>
+			   </xpath>
+                <xpath expr="//group[@name='ticket_info']" position="inside">
+                    <xpath expr="//field[@name='helpdesk_tag_ids']/ancestor::group/*" position="move"/>
+                    <xpath expr="//field[@name='department_id']/ancestor::group/*" position="move"/>
+			   </xpath>
+                <!-- end -->
+                <!-- begin : destroy groups useless -->
+                <xpath expr="//group[@name='ticket_info']/../following-sibling::group" position="replace">
+                </xpath>
+                <xpath expr="//group[@name='ticket_info']/../following-sibling::group" position="replace">
+                </xpath>
+                <xpath expr="//group[@name='ticket_info']/../following-sibling::group" position="replace">
+                </xpath>
+                <!-- end -->
+                <!-- begin : move/invisible/readonly fields -->
+                <xpath expr="//field[@name='customer_search_id']" position="before">
+                    <xpath expr="//field[@name='pick_the_location_id']" position="move"/>
+                    <xpath expr="//field[@name='partner_id']" position="move"/>
+<!--                     <xpath expr="//field[@name='location_type_id']" position="move"/>
+ -->                    <!-- begin : fake field -->
+                    <xpath expr="//field[@name='location_type_related']" position="move"/>
+                    <!-- end -->
+                </xpath>
+                <xpath expr="//field[@name='customer_name']" position="after">
+                    <xpath expr="//field[@name='preferred_contact_method_1']" position="move" readonly="1"/>
+                </xpath>
+                <xpath expr="//field[@name='helpdesk_tag_ids']" position="before">
+                    <xpath expr="//field[@name='priority']" position="move"/>
+                    <!--<xpath expr="//field[@name='job_notes']" position="move"/> -->
+                    <xpath expr="//field[@name='description']" position="move"/>
+                </xpath>
+                <!-- end -->
+                <!-- begin : fake field -->
+                <xpath expr="//field[@name='location_type_related']" position="replace">
+                    <field name="zone" options="{'no_open':True,'no_create': True, 'no_create_edit':True, 'no_quick_create': True}"/>
+                </xpath>
+                <!-- end -->
+                <!-- begin : add infos/fields -->
+                <xpath expr="//field[@name='planned_hour_start']" position="after">
+                    <span style="margin-left:5px;margin-right:5px;" attrs="{'invisible': [('is_fsm', '!=', True)]}">to</span>
+                </xpath>
+                <xpath expr="//field[@name='planned_hour_end']/.." position="after">
+                    <field name="job_duration_display" attrs="{'invisible': [('is_fsm', '!=', True)]}"/>
+                </xpath>
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button class="d-none d-md-inline oe_stat_button" type="object" name="action_view_so" icon="fa-dollar" string="Sales Order" />
+                </xpath>
+                <!-- end -->
+                <!-- begin : change attributes of fields -->
+                <xpath expr="//field[@name='pick_the_location_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="string">Location</attribute>
+                </xpath>
+                <xpath expr="//field[@name='partner_id']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                    <attribute name="string">Location address</attribute>
+                </xpath>
+                <xpath expr="//field[@name='customer_name']" position="attributes">
+                    <attribute name="string">Location Contact</attribute>
+                </xpath>
+<!--                 <xpath expr="//field[@name='department_id']" position="replace">
+                    <field name='department_id' options="{'no_create': True}" open="False" />
+                </xpath> -->
+<!--                 <xpath expr="//field[@name='department_id']" position="attributes">
+                    <attribute name="options">{'no_quick_create':True,'no_create':true,'no_create_edit':1,'no_open':1}</attribute>
+                    <attribute name="create">False</attribute>
+                    <attribute name="edit">False</attribute>
+                    <attribute name="open">false</attribute>
+                </xpath> -->
+                <!-- end --> 
+                <!-- begin : make fields useless invisible --> 
+                <xpath expr="//field[@name='street']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='customer_search_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='customers_phone']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='customers_mobile']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='partner_phone']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='extra_phone_name']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='extra_phone']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='phone_numbers_ids']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+<!--                 <xpath expr="//field[@name='helpdesk_tag_ids']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath> -->
+                <xpath expr="//field[@name='project_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='user_id']" position="replace">
+                    
+                </xpath>
+                <xpath expr="//field[@name='user_id']" position="attributes">
+                    <attribute name="string">Technician Lead</attribute>
+                </xpath>
+                <xpath expr="//field[@name='sale_order_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_fsm_navigate']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='job_type_id']" position="attributes">
+                    <attribute name="domain">[['department_id','=',department_id]]</attribute>
+                    <attribute name="attrs">{'required': [('is_fsm', '=', True)]}</attribute>
+
+                </xpath>
+                <xpath expr="//field[@name='arrival_window']" position="attributes">
+                    <attribute name="domain">[['department','=',department_id]]</attribute>
+                </xpath>
+                <xpath expr="//page[@name='system_maintenance']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <!-- seems two buttons exists, and the first is select by the first xpath, second by second xpath -->
+                <xpath expr="//button[@name='action_preview_worksheet']" position="replace">
+                </xpath>
+                <xpath expr="//button[@name='action_preview_worksheet']" position="replace">
+                </xpath>
+                <xpath expr="//button[@name='action_fsm_validate']" position="replace">
+                </xpath>
+                <xpath expr="//button[@name='action_fsm_validate']" position="replace">
+                </xpath>
+                <xpath expr="//button[@name='action_timer_start']" position="replace">
+                </xpath>
+                <xpath expr="//button[@name='action_timer_start']" position="replace">
+                </xpath>
+                <!-- end weirds buttons -->
+                <!-- end --> 
+            </field>
+        </record>
+<!-- 
+        <record id="tech_view_custom" model="ir.ui.view">
+            <field name="name">view.tech.view.additions</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="cap_field_service.technician_view_form" />
+            <field name="priority">2</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="job_type_id" readonly="1" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True, 'no_open':True,}" class="ml32"/>
+                    <field name="location_type_id" readonly="1" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True, 'no_open':True,}" class="ml32"/>
+                </xpath>
+                <xpath expr="//page[@name='job_notes']" position="inside">
+                    <group>
+                        <field name="job_notes"/>
+                        <field name="did_you_invoice"/>
+                        <field name="reason_for_not_invoicing" attrs="{&quot;invisible&quot;: [[&quot;did_you_invoice&quot;,&quot;!=&quot;,&quot;No, other reason&quot;]]}"/>
+                        <field name="did_you_get_payment" attrs="{&quot;invisible&quot;: [[&quot;did_you_invoice&quot;,&quot;!=&quot;,&quot;Yes&quot;]]}"/>
+                        <field name="reason_for_no_payment" attrs="{&quot;invisible&quot;: [[&quot;did_you_get_payment&quot;,&quot;!=&quot;,&quot;No, other reason&quot;]]}"/>
+                        <field name="did_you_properly_track_your_materials"/>
+                        <field name="no_tracking_reason" attrs="{&quot;invisible&quot;: [[&quot;did_you_properly_track_your_materials&quot;,&quot;!=&quot;,&quot;No, other reason&quot;]]}"/>
+                    </group>
+                </xpath>
+
+                <xpath expr="//page[@name='follow_ups_needed']" position="inside">
+                    <group>
+                            <field name="followup_needed" widget="toggle_boolean"/>
+                            <field name="followup_department" widget="many2many_tags" />
+                            <field name="followup_notes"  />
+                    </group>
+                </xpath>
+
+                <xpath expr="//page[@name='timesheets']" position="inside">
+                            <field name="start_drive" readonly="1" force_save="1"/>
+                            <field name="end_drive" readonly="1" force_save="1"/>
+                            <field name="arrived_at_location" force_save="1"/>
+                            <field name="start_job" readonly="1" force_save="1"/>
+                            <field name="end_job" readonly="1" force_save="1"/>
+                            <field name="job_finished" force_save="1"/>
+                </xpath>
+            </field>
+        </record> -->
+        <record id="view_project_task_form_custom_last" model="ir.ui.view">
+            <field name="name">view.project.task.custom.form.last</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_form2" ></field>
+            <field name="priority">1000</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='arrival_window']" position="attributes">
+                    <attribute name="options">{&quot;no_create&quot;:true,&quot;no_open&quot;:true}</attribute>
+                    <attribute name="attrs">{'invisible': [('is_fsm', '!=', True)]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='technician_team_ids']" position="attributes">
+                    <attribute name="options">{&quot;no_create&quot;:true,&quot;no_open&quot;:true}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='helpdesk_tag_ids']" position="attributes">
+                    <attribute name="widget">many2many_tags</attribute>
+                </xpath>
+<!--                 <xpath expr="//button[@name='action_make_billable']" position="after">
+                    <button name="customerCreation" string="Generate Quotation Builder" type="object" />
+                    <field name="button_job_service_titan" widget='html' />
+                </xpath> -->
+                <xpath expr="//button[@name='action_assign_to_me']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='progress']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//group[@name='timesheet_error']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//button[@name='1178']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//group[@name='ticket_info']//field[@name='street2']" position="replace">
+
+                </xpath>
+                <xpath expr="//group[@name='ticket_info']//field[@name='city']" position="replace">
+
+                </xpath>
+                <xpath expr="//group[@name='ticket_info']//field[@name='zip']" position="replace">
+
+                </xpath>
+                <xpath expr="//field[@name='emergency']" position="after">
+                    <field name='service_titan_id' readonly="1" attrs="{'invisible':[('service_titan_id','=',0)]}" />
+                    <field name='service_titan_link' widget="html" attrs="{'invisible':[('service_titan_id','=',0)]}" />
+                </xpath>
+                <xpath expr="//field[@name='job_duration_display']" position="after">
+
+                        <label for="send_notification" string="Send notifications ?" />
+                        <span>
+                            <field name="send_notification" widget="boolean_toggle" style="width: 50%"/>
+                            <button name="%(cap_studio_customization.action_validate_schedule_and_notify)d" type="action" string="Schedule" class="btn btn-primary" style="width: 50%"/>
+                        </span>
+                </xpath>
+                <xpath expr="//field[@name='start_date']" position="after">
+                    <span>
+                    <br/>
+                      <button class="btn btn-secondary" attrs="{'invisible': ['|',('job_type_id', '=', False),('start_date','=',False)]}" name="wizard_app" type="object" string="Find Appointment"/>
+                    </span>
+                </xpath>
+                <xpath expr="//field[@name='technician_team_ids']" position="attributes">
+                    <attribute name="domain">[('technician_bool','=',True)]</attribute>
+                </xpath>
+                <xpath expr="//field[@name='stage_id']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                    <attribute name="options">{'clickable': '0'}</attribute>
+                </xpath>
+                 <!-- <xpath expr="//field[@name='service_titan_link']" position="after">
+                    <field name="button_job_service_titan" widget='html' />
+                </xpath> -->
+            </field>
+        </record>
+    </data>
+</odoo>

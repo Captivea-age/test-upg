@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="group_cap_helpdesk" model="res.groups">
+            <field name="name">Helpdesk</field>
+        </record>
+
+        <record id="employee_rule_helpdesk" model="ir.rule">
+            <field name="name">Technician Employee</field>
+            <field name="model_id" ref="hr.model_hr_employee"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('cap_helpdesk_access.group_cap_helpdesk'))]"/>
+        </record>
+
+        <record id="expense_rule_helpdesk" model="ir.rule">
+            <field name="name">Technician Expense</field>
+            <field name="model_id" ref="hr_expense.model_hr_expense"/>
+            <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('cap_helpdesk_access.group_cap_helpdesk'))]"/>
+        </record>
+
+    </data>
+
+</odoo>

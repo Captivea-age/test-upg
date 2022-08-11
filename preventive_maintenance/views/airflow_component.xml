@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_pm_airflow_component_form" model="ir.ui.view">
+            <field name="name">view.pm.airflow.component.form</field>
+            <field name="model">pm.component.airflow</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+	                    <group>
+	                    	<group>
+	                    		<field name="name"/>
+	                    	</group>
+	                    	<group>
+                                <field name="airflow_component_type" />
+                                <field name="cfm" />
+                                <field name="filter_coefficient" />
+	                    	</group>
+	                    </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+        <record id="view_pm_airflow_component_tree" model="ir.ui.view">
+            <field name="name">view.pm.airflow.component.tree</field>
+            <field name="model">pm.component.airflow</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="airflow_component_type"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="view_pm_airflow_component_type_tree" model="ir.ui.view">
+            <field name="name">view.pm.airflow.component.type.tree</field>
+            <field name="model">pm.component.airflow.type</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="supply_or_return"/>
+                </tree>
+            </field>
+        </record>
+
+        
+        <record id="view_pm_airflow_component_record_tree" model="ir.ui.view">
+            <field name="name">view.pm.airflow.component.record.tree</field>
+            <field name="model">pm.component.airflow.record</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <!-- <field name="name"/> -->
+                    <field name="airflow_component"/>
+                    <field name="pm_system_id" readonly="1"/>
+                    <!-- <field name="supply_or_return"/> -->
+                </tree>
+            </field>
+        </record>
+
+        
+        <record id="view_pm_airflow_component_record_form" model="ir.ui.view">
+            <field name="name">view.pm.airflow.component.record.form</field>
+            <field name="model">pm.component.airflow.record</field>
+            <field name="arch" type="xml">
+				<form>
+					<sheet>
+						<group>
+							<group>
+								<!-- <field name="name" /> -->
+								<field name="airflow_component" />
+								
+							</group>
+							<group>
+								<field name="pm_system_id" readonly="1"/>
+								<!-- <field name="supply_or_return" /> -->
+							</group>
+						</group>
+					</sheet>
+				</form>
+            </field>
+        </record>
+
+
+        <record id="pm_component_airflow_record_action" model="ir.actions.act_window">
+            <field name="name">Airflow Components</field>
+            <field name="res_model">pm.component.airflow.record</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        
+
+        <record id="pm_component_airflow_action" model="ir.actions.act_window">
+            <field name="name">Airflow Components</field>
+            <field name="res_model">pm.component.airflow</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        
+        
+        <record id="pm_component_airflow_type_action" model="ir.actions.act_window">
+            <field name="name">Airflow Components Type</field>
+            <field name="res_model">pm.component.airflow.type</field>
+            <field name="view_mode">tree</field>
+        </record>
+        
+
+    </data>
+</odoo>

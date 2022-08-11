@@ -1,0 +1,632 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+    <record id="action_create_ticket_and_repair_from_task" model="ir.actions.server">
+        <field name="name">Create SVC1 repair from task</field>
+        <field name="model_id" ref="project.model_project_task"/>
+        <field name="binding_model_id" ref="project.model_project_task"/>
+        <field name="state">code</field>
+        <field name="code">
+template = env['sale.order.template'].search([('name','=','Default Service')],limit=1)
+sale = env['sale.order'].search([('task_id','=',record.id),'|',('sale_order_template_id', '=',template.id),('tech_manual_quotation','=',False)],limit=1)
+
+if not sale:
+    sale=env['sale.order'].create({
+      'partner_id':record['partner_id']['id'],
+      'partner_invoice_id':record['partner_id']['id'],
+      'partner_shipping_id':record['pick_the_location_id']['location_id'].id,
+      'warehouse_id': 1,
+      'sale_order_template_id':template.id,
+      'task_id':record['id'],
+      'tech_manual_quotation':True,
+    })
+
+    sale.onchange_partner_id()
+
+    if sale.sale_order_template_id:
+        sale.onchange_sale_order_template_id()
+            
+record['sale_order_id'] = sale.id
+            
+action = {
+  'res_model':'sale.order',
+  'res_id': sale['id'],
+  'type': 'ir.actions.act_window',
+  'view_type': 'form',
+  'view_mode': 'form',
+  'target':'current',
+}     
+        
+        </field>
+    </record>
+    <record id="action_create_ticket_and_repair_svc2_from_task" model="ir.actions.server">
+        <field name="name">Create repair SVC2 from task</field>
+        <field name="model_id" ref="project.model_project_task"/>
+        <field name="binding_model_id" ref="project.model_project_task"/>
+        <field name="state">code</field>
+        <field name="code">
+
+template = env['sale.order.template'].search([('name','=','SVC2 Major Repair')],limit=1)
+#sale = env['sale.order'].search([('task_id','=',record.id),('sale_order_template_id', '=',template.id),('tech_manual_quotation','=',True)],limit=1)
+###
+### Adding helpdesk SVC2 premade Sale order
+###
+if record.helpdesk_ticket_id.sale_order_id:
+  sale = record.helpdesk_ticket_id.sale_order_id
+else :
+  sale = env['sale.order'].search([('task_id','=',record.id),('sale_order_template_id', '=',template.id),('tech_manual_quotation','=',True)],limit=1)
+
+
+
+
+#Getting all the customer that have the "Bill to" for this location
+customer_list = env['contact.location.relationship'].search([
+    ('location_id', '=', record.partner_id.id),
+    ('contact_roles_ids', 'in', env['contact.role'].search([('name', '=', 'Bill to')]).ids)])
+
+#If no one to invoice, invoice the actual customer
+if len(customer_list) == 0:
+    partner_invoice_id = record.partner_id.id
+    #Else invoice the last person tagged as "Bill to"
+else:
+    partner_invoice_id = customer_list[0].contact_id.id
+
+if not sale:
+    sale=env['sale.order'].create({
+      'partner_id':record['partner_id']['id'],
+      'partner_invoice_id':partner_invoice_id,
+      'partner_shipping_id':record['pick_the_location_id']['location_id'].id,
+      'warehouse_id': 1,
+      'sale_order_template_id':template.id,
+      'task_id':record['id'],
+      'tech_manual_quotation':True,
+    })
+
+    sale.onchange_partner_id()
+
+    if sale.sale_order_template_id:
+        sale.onchange_sale_order_template_id()
+
+    ticket=env['helpdesk.ticket'].create({
+      'partner_id':record['partner_id']['id'],
+      'pick_the_location_id':record['pick_the_location_id']['id'],
+      'team_id':3,
+      'sale_order_id':sale['id'], 
+      'create_from_the_task_id' : record['id'],
+    })
+    
+    sale.update({
+      'helpdesk_ticket_id': ticket.id,
+    })
+
+action = {
+  'res_model':'sale.order',
+  'res_id': sale['id'],
+  'type': 'ir.actions.act_window',
+  'view_type': 'form',
+  'view_mode': 'form',
+  'target':'current',
+}
+        
+        </field>
+    </record>
+
+    <record id="action_create_ticket_and_replacement_from_task" model="ir.actions.server">
+        <field name="name">Create ticket and replacement from task</field>
+        <field name="model_id" ref="project.model_project_task"/>
+        <field name="binding_model_id" ref="project.model_project_task"/>
+        <field name="state">code</field>
+        <field name="code">
+pick_location = record['pick_the_location_id']
+
+customer_list = env['contact.location.relationship'].search([('location_id','=',pick_location['location_id'].id),('contact_roles_ids','=',[2])])
+
+if len(customer_list)==0:
+  partner_invoice_id = record['customer_name'].id
+else:
+  # for customer_to_bill in customer_list:
+  partner_invoice_id = customer_list[0]['contact_id'].id
+
+template = env['sale.order.template'].search([('name','=','AOR Replacement')],limit=1)
+sale = env['sale.order'].search([('task_id','=',record.id),('sale_order_template_id', '=',template.id)],limit=1)
+if not sale:        
+    sale=env['sale.order'].create({
+      'task_id':record.id,
+      'partner_id':record['partner_id']['id'],
+      'partner_invoice_id':partner_invoice_id,
+      'partner_shipping_id':record['pick_the_location_id']['location_id'].id,
+      'warehouse_id': 1,
+      'sale_order_template_id':template.id,
+      'task_id':record['id'],
+      'tech_manual_quotation':True,
+    })
+
+    sale.onchange_partner_id()
+
+    if sale.sale_order_template_id:
+        sale.onchange_sale_order_template_id()
+    
+record['sale_order_id'] = sale.id
+
+ticket=env['helpdesk.ticket'].create({
+  'partner_id':record['partner_id']['id'],
+  'pick_the_location_id':record['pick_the_location_id']['id'],
+  'location_id':record['location_id']['id'],
+  'team_id':4,
+  'product_id':1058,
+  'sale_order_id':sale['id'],
+  'create_from_the_task_id' : record['id'],
+  'customer_name':record['customer_name'].id,
+})
+
+sale.update({
+  'helpdesk_ticket_id': ticket.id,
+})
+
+action = {
+  'res_model':'sale.order',
+  'res_id': sale['id'],
+  'type': 'ir.actions.act_window',
+  'view_type': 'form',
+  'view_mode': 'form',
+  'target':'current',
+}
+        </field>
+    </record>
+    
+    <record id="action_create_ticket_and_rental_from_task" model="ir.actions.server">
+        <field name="name">Create ticket and rental from task</field>
+        <field name="model_id" ref="project.model_project_task"/>
+        <field name="binding_model_id" ref="project.model_project_task"/>
+        <field name="state">code</field>
+        <field name="code">
+pick_location = record['pick_the_location_id']
+
+customer_list = env['contact.location.relationship'].search([('location_id','=',pick_location['location_id'].id),('contact_roles_ids','=',[2])])
+
+if len(customer_list)==0:
+  partner_invoice_id = record['customer_name'].id
+else:
+  # for customer_to_bill in customer_list:
+  partner_invoice_id = customer_list[0]['contact_id'].id
+template = env['sale.order.template'].search([('name','=','Portable Heat/Cool Rental Template')],limit=1)
+sale = env['sale.order'].search([('task_id','=',record.id),('sale_order_template_id', '=',template.id)],limit=1)
+if not sale:
+    sale=env['sale.order'].create({
+      'task_id':record.id,
+      'partner_id':record['partner_id']['id'],
+      'partner_invoice_id':partner_invoice_id,
+      'partner_shipping_id':record['pick_the_location_id']['location_id'].id,
+      'warehouse_id': 1,
+      'sale_order_template_id': template.id,
+      'task_id':record['id'],
+      'tech_manual_quotation':True,
+#      'tasks_ids': [(4,record.id)],
+    })
+            
+#record['sale_orders_ids'] = [(4,sale['id'])]
+record['sale_order_id'] = sale.id
+
+ticket=env['helpdesk.ticket'].create({
+  'partner_id':record['partner_id']['id'],
+  'pick_the_location_id':record['pick_the_location_id']['id'],
+  'location_id':record['location_id']['id'],
+  'team_id':4,
+  'product_id':5771,
+  'sale_order_id':sale['id'],
+  'create_from_the_task_id' : record['id'],
+  'customer_name':record['customer_name'].id,
+})
+
+ticket.update({
+  'helpdesk_ticket_id': sale.id,
+})
+
+action = {
+  'res_model':'sale.order',
+  'res_id': sale['id'],
+  'type': 'ir.actions.act_window',
+  'view_type': 'form',
+  'view_mode': 'form',
+  'target':'current',
+}
+        </field>
+    </record>
+
+    <record id="action_create_ticket_and_maintenance_from_task" model="ir.actions.server">
+        <field name="name">Create ticket and maintenance from task</field>
+        <field name="model_id" ref="project.model_project_task"/>
+        <field name="binding_model_id" ref="project.model_project_task"/>
+        <field name="state">code</field>
+        <field name="code">
+#template = env['sale.order.template'].search([('name','=','Default Service')],limit=1)
+#sale = env['sale.order'].search([('task_id','=',record.id),('sale_order_template_id', '=',template.id)],limit=1)
+#if not sale:
+#    sale=env['sale.order'].create({
+#      'partner_id':record['partner_id']['id'],
+#      'partner_invoice_id':record['partner_id']['id'],
+#      'partner_shipping_id':record['pick_the_location_id']['location_id'].id,
+#      'warehouse_id': 1,
+#      'task_id':record['id'],
+    #  'tasks_ids': [(4,record.id)],
+#    })
+#record['sale_orders_ids'] = [(4,sale['id'])]
+#record['sale_order_id'] = sale.id
+#ticket=env['helpdesk.ticket'].create({
+#  'partner_id':record['partner_id']['id'],
+#  'pick_the_location_id':record['pick_the_location_id']['id'],
+#  'location_id':record['location_id']['id'],
+#  'team_id':5,
+#  'product_id':5726,
+#  'sale_order_id':sale['id'], 
+#  'create_from_the_task_id' : record['id'],
+#})
+
+#action = {
+#  'res_model':'sale.order',
+#  'res_id': sale['id'],
+#  'type': 'ir.actions.act_window',
+#  'view_type': 'form',
+#  'view_mode': 'form',
+#  'target':'current',
+#}
+        </field>
+    </record>
+    <record id="action_cap_popup_generation" model="ir.actions.server">
+        <field name="name">CAP_ Popup generation</field>
+        <field name="model_id" ref="project.model_project_task"/>
+        <field name="binding_model_id" ref="project.model_project_task"/>
+        <field name="state">code</field>
+        <field name="code">
+old_wizard = env['cap.popup'].search([('task_id','=',record.id)])
+if len(old_wizard)!=1:
+    #raise Warning("No popup")
+    wizard = env['cap.popup'].create({
+        'name':record['display_name'],
+        'task_id':record.id,
+    })
+else:
+    wizard = old_wizard
+
+action ={
+  'res_model':'x_popup',
+  'res_id':wizard.id,
+  'type':'ir.actions.act_window',
+  'view_type':'form',
+  'view_mode':'form',
+  'views': [(False, 'form')],
+  'target':'new',
+  }
+        </field>
+    </record>
+    <record id="action_create_invoice_deposite" model="ir.actions.server">
+        <field name="name">Create Invoice (Deposit)</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="state">code</field>
+        <field name="code">
+sale_journal = env['account.journal'].search([('type', '=', 'sale')]) 
+
+if record.deposit_to_be_paid:
+  if record.deposit_to_be_paid == '25%':
+    inv_line_amount = (record.amount_total * 25)/100
+    inv_line_label = "25% Deposit Amount."
+    percent = 25
+  if record.deposit_to_be_paid == '50%':
+    inv_line_amount = (record.amount_total * 50)/100
+    inv_line_label = "50% Deposit Amount."
+    percent = 50
+  if record.deposit_to_be_paid == '75%':
+    inv_line_amount = (record.amount_total * 75)/100
+    inv_line_label = "75% Deposit Amount."
+    percent = 75  
+else:
+  raise Warning('Please set Deposit % to create invoice')
+
+account = env['account.account'].search([('code', '=', '4005')])
+if not account:
+  raise Warning('Account code 4005 not found! \n \n Please create one if not exist.')
+
+inv = env['account.move']
+
+payment = env['sale.advance.payment.inv'].create({
+            'advance_payment_method': 'percentage',
+            'amount': percent,
+            'deposit_account_id': account.id
+        })
+payment.create_invoices()
+        </field>
+    </record>
+    <record id="action_open_note_creator" model="ir.actions.server">
+        <field name="name">Open note creator</field>
+        <field name="model_id" ref="project.model_project_task"/>
+        <field name="binding_model_id" ref="project.model_project_task"/>
+        <field name="state">code</field>
+        <field name="code">
+if not record['location_id']:
+  raise Warning("No location set!")
+
+wiz=env['historical.notes'].create({
+  'location_id':record['location_id']['id'],
+  'origin':record['id']
+})
+
+action = {
+    'res_model':'historical.notes',
+    'res_id': wiz['id'],
+    'type': 'ir.actions.act_window',
+    'view_type': 'form',
+    'view_mode': 'form',
+    'target':'new',
+  }
+        </field>
+    </record>
+    <record id="action_create_ticket_and_replacement_from_helpdesk" model="ir.actions.server">
+        <field name="name">Create ticket and replacement from helpdesk</field>
+        <field name="model_id" ref="helpdesk.model_helpdesk_ticket"/>
+        <field name="binding_model_id" ref="helpdesk.model_helpdesk_ticket"/>
+        <field name="state">code</field>
+        <field name="code">
+pick_location = record['pick_the_location_id']
+
+#Getting all the customer that have the "Bill to" for this location
+customer_list = env['contact.location.relationship'].search([('location_id','=',pick_location['location_id'].id),('contact_roles_ids','=',[2])])
+#If no one to invoice, invoice the actual customer
+if len(customer_list)==0:
+  partner_invoice_id = record['customer_name'].id
+#Else invoice the last person tagged as "Bill to"
+else:
+  # for customer_to_bill in customer_list:
+  partner_invoice_id = customer_list[0]['contact_id'].id
+
+sale=env['sale.order'].create({
+  'partner_id':record['partner_id']['id'],
+  'partner_invoice_id':partner_invoice_id,
+  'partner_shipping_id':record['pick_the_location_id']['location_id'].id,
+  'warehouse_id': 1,
+  'helpdesk_ticket_id':record.id
+})
+sol=env['sale.order.line'].create({
+  'order_id':sale['id'],
+  'product_id':1058
+})
+
+record.update({
+  'team_id':4,
+  'product_id':1058,
+  'sale_order_id':sale['id'],
+})
+
+action = {
+  'res_model':'sale.order',
+  'res_id': sale['id'],
+  'type': 'ir.actions.act_window',
+  'view_type': 'form',
+  'view_mode': 'form',
+  'target':'current',
+}
+        </field>
+    </record>
+    <record id="action_open_sale_order" model="ir.actions.act_window">
+        <field name="context">{'search_default_helpdesk_ticket_id': active_id,'default_helpdesk_ticket_id': active_id}</field>
+        <field name="domain">[('helpdesk_ticket_id', '=', active_id)]</field>
+        <field name="name">Sales Orders</field>
+        <field name="res_model">sale.order</field>
+        <field name="target">current</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_open_sale_order_from_task" model="ir.actions.act_window">
+        <field name="context">{'search_default_filtered_task_id': active_id,'default_filtered_task_id': active_id}</field>
+        <field name="domain">[('filtered_task_id', '=', active_id)]</field>
+        <field name="name">Sales Orders</field>
+        <field name="res_model">sale.order</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_open_purchase_order" model="ir.actions.act_window">
+        <field name="context">{'search_default_helpdesk_ticket_id': active_id,'default_helpdesk_ticket_id': active_id}</field>
+        <field name="domain">[('helpdesk_ticket_id', '=', active_id)]</field>
+        <field name="name">Purchases</field>
+        <field name="res_model">purchase.order</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_job_duration_calculation" model="ir.actions.server">
+        <field name="name">CAP_ Job duration calculation</field>
+        <field name="model_id" ref="project.model_project_task"/>
+        <field name="binding_model_id" ref="project.model_project_task"/>
+        <field name="state">code</field>
+        <field name="code">
+record['job_duration_display'] = 'The intervention is scheduled for : '
+if record['planned_date_begin'] != False and record['planned_date_end'] != False:
+    times = str(record['planned_date_end']-record['planned_date_begin']).split(':')
+    
+    record['job_duration_display'] = record['job_duration_display']+times[0]+'h'+times[1]
+        </field>
+    </record>
+
+    <record id="action_add_followers_to_sale" model="ir.actions.server">
+        <field name="name">CAP_ Add Followers to sale</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="state">code</field>
+        <field name="code">
+if len(record['portal_access_ids'])>0:
+    record.message_subscribe(partner_ids=record['portal_access_ids'].ids)
+        </field>
+    </record>
+
+    <record id="action_install_truck_selection" model="ir.actions.server">
+        <field name="name">CAP_ Install truck selection</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="state">code</field>
+        <field name="code">
+if record['task_id']!=False and record['task_id']['truck_assigned'] !=False:
+    for line in record['order_line']:
+      line['multi_warehouse_id'] = record['task_id']['truck_assigned'].id
+        </field>
+    </record>
+
+    <record id="action_pick_contact_based_on_location" model="ir.actions.server">
+        <field name="name">(CAP) Pick the Primary Contact based on the Location</field>
+        <field name="model_id" ref="helpdesk.model_helpdesk_ticket"/>
+        <field name="binding_model_id" ref="helpdesk.model_helpdesk_ticket"/>
+        <field name="state">code</field>
+        <field name="code">
+if record['partner_id']['name'] != record['pick_the_location_id']['location_id']['name']:
+  
+    record['customer_search_id'] = False
+    record['location_id'] = record['partner_id']['id']
+  
+    location_relationships = env['contact.location.relationship'].search([('location_id', '=', record['partner_id']['id'])])
+  
+    primary_relationship = location_relationships.filtered(lambda rel: 1 in rel['contact_roles_ids'].ids)
+    if primary_relationship:
+        record['pick_the_location_id'] = primary_relationship[0]['id']
+    else:
+        record['pick_the_location_id'] = False
+        </field>
+    </record>
+
+    <record id="action_planned_hours_check" model="ir.actions.server">
+        <field name="name">CAP_ Planned hours check (arrival)</field>
+        <field name="model_id" ref="project.model_project_task"/>
+        <field name="binding_model_id" ref="project.model_project_task"/>
+        <field name="state">code</field>
+        <field name="code">
+now_est = datetime.datetime.now() - datetime.timedelta(hours=4) #this is time in EST (GMT-4)
+
+if record['planned_date_begin'] != False and record['planned_date_end'] != False:
+    record_start_time = record['planned_date_begin'] - datetime.timedelta(hours=4)
+    record_end_time = record['planned_date_end'] - datetime.timedelta(hours=4)
+    float_start = record_start_time.hour+record_start_time.minute/60.0
+    float_end = record_end_time.hour+record_end_time.minute/60.0
+
+    ######################
+    #ARRIVAL WINDOW CHECK#
+    ######################
+    if record['arrival_window']:
+        arrival_start = record['arrival_window']['start_time']
+        arrival_end = record['arrival_window']['end_time']
+    
+    if (float_end > arrival_end) or (float_end &lt; arrival_start) or (float_start &lt; arrival_start) or (float_start > arrival_end):
+        record['out_of_hours_arrival'] = True
+    else:
+        record['out_of_hours_arrival'] = False
+
+        </field>
+    </record>
+
+    <record id="action_location_name_from_street" model="ir.actions.server">
+        <field name="name">CAP_ Location name from street</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="state">code</field>
+        <field name="code">
+if record['partner_type']=="location":
+    if record['street']:
+        record['name']=record['street']
+        </field>
+    </record>
+
+    <record id="action_job_description_update" model="ir.actions.server">
+        <field name="name">CAP_ Job Description Update</field>
+        <field name="model_id" ref="project.model_project_task"/>
+        <field name="binding_model_id" ref="project.model_project_task"/>
+        <field name="state">code</field>
+        <field name="code">
+text = ""
+if record.helpdesk_ticket_id:
+    if record.helpdesk_ticket_id.description:
+        text += record.helpdesk_ticket_id.description
+if record.job_type_id:
+    if record.job_type_id.description:
+        text += record.job_type_id.description.replace("\n", " ")
+record['description'] = text
+        </field>
+    </record>
+
+    <record id="action_deep_link_generator" model="ir.actions.server">
+        <field name="name">CAP_ Deep link generator</field>
+        <field name="model_id" ref="project.model_project_task"/>
+        <field name="binding_model_id" ref="project.model_project_task"/>
+        <field name="state">code</field>
+        <field name="code">
+STCustname = record['partner_id']['name']
+CSTJobID = str(record['id'])
+CSTCustaddress1 = str(record['location_street'])
+CSTcustcity = record['location_city']
+CSTcustzip = str(record['location_zip'])
+CSTcustemail = str(record['partner_id']['email'])
+CqwSTJobID = str(record['id'])
+
+raw_link = "formsonfire://PMappform?STCustname:"+STCustname+"%7CSTJobID:"+CSTJobID+"%7CSTCustaddress1:"+CSTCustaddress1+"%7CSTcustcity:"+CSTcustcity+"%7CSTcustzip:"+CSTcustzip+"%7CSTcustemail:"+CSTcustemail+"%7CqwSTJobID:"+CqwSTJobID
+clean_link = raw_link.replace(" ","\n")
+
+record['deep_link'] = "FormsOnFire link :'+clean_link+'"
+        </field>
+    </record>
+
+    <record id="action_fill_location_when_task_created" model="ir.actions.server">
+        <field name="name">Fill out Location fields in Task when created from Ticket</field>
+        <field name="model_id" ref="project.model_project_task"/>
+        <field name="binding_model_id" ref="project.model_project_task"/>
+        <field name="state">code</field>
+        <field name="code">
+ticket = record['helpdesk_ticket_id']
+
+if ticket['pick_the_location_id']:
+    record['pick_the_location_id'] = ticket['pick_the_location_id']
+  
+if ticket['location_id']:
+    record['location_id'] = ticket['location_id'] 
+
+ticket['sale_order_id']['task_id'] = record['id']
+ticket['sale_order_id']['filtered_task_id'] = record['id']
+
+## Brings the description from helpdesk ticket
+
+if ticket:
+    record['description'] = ticket['description']
+        </field>
+    </record>
+
+    <record id="action_validate_schedule_and_notify" model="ir.actions.server">
+        <field name="name">Validate Schedule and send notifications</field>
+        <field name="model_id" ref="project.model_project_task"/>
+        <field name="binding_model_id" ref="project.model_project_task"/>
+        <field name="state">code</field>
+        <field name="code">
+if not record.start_date:
+    raise Warning("No start date has been specified")
+
+if not record.planned_hour_start or not record.planned_hour_end:
+    raise Warning("No start/end hour has been specified")
+
+if not record.user_id:
+    raise Warning("No Technician has been specified")
+
+if not record.arrival_window:
+    raise Warning("No arrival window has been specified")
+
+begin_date = datetime.datetime(record.start_date.year, record.start_date.month, record.start_date.day)
+begin = begin_date+datetime.timedelta(minutes=record.planned_hour_start.minutes+(4*60)) #4h schedule change
+end =  begin_date+datetime.timedelta(minutes=record.planned_hour_end.minutes+(4*60)) #4h schedule change
+
+scheduling_integer = record.scheduling_integer+1
+
+record.update({
+    'planned_date_begin':begin,
+    'planned_date_end':end,
+    'stage_id':3, #Scheduled stage
+    'scheduling_integer' : scheduling_integer,
+})
+
+        </field>
+    </record>
+
+</odoo>

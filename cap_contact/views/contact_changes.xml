@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<record id="view_res_partner_form_custom" model="ir.ui.view">
+			<field name="name">view.res.partner.custom.form</field>
+			<field name="model">res.partner</field>
+			<field name="inherit_id" ref="base.view_partner_form"/>
+			<field name="priority">100</field>
+			<field name="arch" type="xml">
+				<xpath expr="//form[1]/sheet[1]/notebook[1]/page[1]" position="before">
+					<field name="partner_type" invisible="True"/>
+					<page name="location_page" string="Locations" attrs="{'invisible':[('partner_type','=','location')]}">
+						<button type="object" name="openLocationPopup" string="Add a Location" class="btn btn-primary"/>
+						<field name="location_list_ids">
+							<tree create="false">
+							  <field name="location_id" domain="[[&quot;partner_type&quot;,&quot;=&quot;,&quot;location&quot;]]"/>
+							  <field name="location_zip"/>
+							  <field name="location_city"/>
+							  <field name="relationship_type"/>
+							  <button name="%(ticket_creation_from_relation)d" type="action" string="Create Ticket" class="btn btn-primary"/>
+							</tree>
+						</field>
+					</page>
+				</xpath>
+
+				<xpath expr="//form[1]/sheet[1]/notebook[1]/page[1]" position="before">
+					<page name="contacts_page" string="Contacts" attrs="{'invisible':[('partner_type','!=','location')]}">
+						<button type="object" name="openContactPopup" string="Add a Contact" class="btn btn-primary"/>
+						 <field class="custom-line-height" name="contact_list_ids" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True}" string="Contact list">
+	 						<tree>
+							  <field name="contact_id" class="bold-name"/>
+							  <field name="relationship_type"/>
+							  <field name="location_id" domain="[[&quot;partner_type&quot;,&quot;=&quot;,&quot;location&quot;]]"/>
+							  <field name="contact_roles_ids" widget="many2many_tags"/>
+							  <field name="contact_phone"/>
+							  <field name="contact_mobile"/>
+							  <field name="contact_email"/>
+							  <button name="%(ticket_creation_from_relation)d" type="action" string="Create Ticket" class="btn btn-primary"/>
+							</tree>
+						</field>
+					</page>
+				</xpath>
+
+				<xpath expr="//page[@name='contact_addresses']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+				<xpath expr="//field[@name='company_type']" position="attributes">
+					<attribute name="attrs">{'invisible':True}</attribute>
+ 				</xpath>
+                <xpath expr="//field[@name='company_type']" position="after">
+                    <label for="is_vendor">Vendor</label>
+					<field name="is_vendor"/>
+                    <label for="eligible" attrs="{'invisible':[('is_vendor','=',False)]}">1099 Eligible</label>
+                    <field name="eligible" attrs="{'invisible':[('is_vendor','=',False)]}"/>
+ 				</xpath>
+
+				<xpath expr="//form[1]/sheet[1]/group[1]/group[2]" position="attributes">
+					<attribute name="attrs">{'invisible':[('partner_type','=','location')]}</attribute>
+ 				</xpath>				
+ 				<xpath expr="//form[1]/sheet[1]/group[1]/group[1]" position="inside">
+					<field name="category_id" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}" placeholder="Tags..." attrs="{'invisible':[('partner_type','!=','location')]}"/>
+					<field name="phone_number_ids" readonly="0" options="{'no_open':True, 'no_quick_create': True,'no_create':True, 'no_create_edit':True}" create="0"/>
+				 </xpath>
+				<xpath expr="//field[@name='contact_list_ids']" position="attributes">
+					<attribute name="no_create">1</attribute>
+      			</xpath>
+      			<xpath expr="//form[1]/sheet[1]/group[1]/group[1]/field[@name='type']" position="before">
+      				<field name="partner_type" string="Record Type" attrs="{&quot;readonly&quot;: [&quot;&amp;&quot;,[&quot;partner_type&quot;,&quot;=&quot;,&quot;location&quot;],[&quot;id&quot;,&quot;!=&quot;,False]]}" required="1" widget="radio" options="{&quot;horizontal&quot;:true}"/>
+      				<field name="location_type_id" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True}"/>
+      			</xpath>
+				<xpath expr="//field[@name='function']" position="attributes">
+					<attribute name="attrs">{'invisible':True}</attribute>
+ 				</xpath>
+				<xpath expr="//field[@name='title']" position="attributes">
+					<attribute name="attrs">{'invisible':True}</attribute>
+ 				</xpath>
+				<xpath expr="//page[7]" position="after">
+					<page name="history" string="History">
+						<field name="job_task_history_ids"/>
+					</page>
+                </xpath>
+			</field>
+		</record>
+        
+        <record id="view_contact_search_custom" model="ir.ui.view">
+            <field name="name">view.contact.search.custom</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <filter name="type_person" position="replace">
+                    <filter name="partner_type" string="Person" domain="[('partner_type', '=', 'person')]"/>
+                    <filter name="partner_type" string="Location" domain="[('partner_type', '=', 'location')]"/>
+					<filter name="partner_type" string="Vendor" domain="[('is_vendor', '=', True)]"/>
+                </filter>
+                <filter name="type_company" position="replace">
+                </filter>
+            </field>
+        </record>
+
+
+
+	</data>
+</odoo>  

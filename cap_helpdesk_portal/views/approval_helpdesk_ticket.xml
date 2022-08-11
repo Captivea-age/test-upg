@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <template id="assets_frontend" inherit_id="web.assets_frontend">
+        <xpath expr="script[last()]" position="after">
+            <script type="text/javascript" src="/cap_helpdesk_portal/static/src/js/approval_helpdesk_ticket_portal.js"></script>
+        </xpath>
+    </template>
+
+    <template id="helpdesk_ticket_approval" name="Helpdesk Ticket Approval">
+        <t t-call="website.layout">
+            <div class="o_portal_helpdesk_ticket" style="margin-bottom: 15px; margin-top: 15px;">
+
+                <div class="container">
+                    <div class="row" style="margin-top: 15px;">
+                        <span><b>Address: </b></span>
+                        <span t-field="ticket.partner_id"
+                              t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
+                    </div>
+                    <div class="row text-center" style="margin-top: 15px;">
+                        <div class="col-lg-12" style="margin-bottom: 15px;margin-top: 15px;">
+                            <span>Do you want to close the ticket assigned to this location?</span>
+                            <div class="col-lg-6" style="margin-left: 286px;margin-top: 20px;">
+                                <button id="close" class="btn btn-success float-left" t-att-data-ticket_id="ticket.id">Close</button>
+                                <button id="keep_open" class="btn btn-danger float-right">Keep Open</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row div_open" style="margin-top: 15px;display: none;">
+                        <div class="col-lg-12" style="margin-top: 15px;">
+                            <label>Tell us why you need to keep it open:</label>
+                            <textarea id="description" name="description" style="min-height: 120px" class="form-control">
+                            </textarea>
+                        </div>
+                        <div class="col-lg-12 text-center" style="margin-top: 15px;">
+                            <button id="send_feedback" class="btn btn-danger" t-att-data-ticket_id="ticket.id">Send Feedback</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="approval_thanks">
+        <t t-call="website.layout">
+            <div class="s_website_form_end_message">
+                <div class="oe_structure">
+                    <section class="s_text_block pt64 pb64 o_colored_level o_cc o_cc2" data-snippet="s_text_block" data-name="Text">
+                        <div class="container">
+                            <h2 class="text-center">
+                                <span class="fa fa-check-circle" data-original-title="" title="" aria-describedby="tooltip709101"/>
+                                Your Feedback has been submitted. <br/><br/>
+                            </h2>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </t>
+    </template>
+
+     <template id="approval_done">
+        <t t-call="website.layout">
+            <div class="s_website_form_end_message">
+                <div class="oe_structure">
+                    <section class="s_text_block pt64 pb64 o_colored_level o_cc o_cc2" data-snippet="s_text_block" data-name="Text">
+                        <div class="container">
+                            <h2 class="text-center">
+                                <span class="fa fa-check-circle" data-original-title="" title="" aria-describedby="tooltip709101"/>
+                                Feedback has already been sent. <br/><br/>
+                            </h2>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="approval_send_feedback">
+        <t t-call="website.layout">
+            <div class="s_website_form_end_message">
+                <div class="oe_structure">
+                    <section class="s_text_block pt64 pb64 o_colored_level o_cc o_cc2" data-snippet="s_text_block" data-name="Text">
+                        <div class="container">
+                            <h2 class="text-center">
+                                <span class="fa fa-check-circle" data-original-title="" title="" aria-describedby="tooltip709101"/>
+                                Your feedback has been submitted. Someone will reach out to you shortly. <br/><br/>
+                            </h2>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

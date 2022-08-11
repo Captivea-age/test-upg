@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem id="menu_technician_view" name="Tech view" action="technician_view_action" />
+        <menuitem id="menu_followup_department" name="Followup department" action="followup_department_action" />
+        <menuitem id="menu_time_selection" name="Time table" action="time_selection_action" />
+        <menuitem id="menu_team_color" name="Team color" action="team_color_action" />
+        <menuitem id="menu_zip_list" name="Zip list" action="zip_list_action" />
+    </data>
+</odoo>

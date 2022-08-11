@@ -1,0 +1,12 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_phone_number,access_phone_number,model_phone_number,base.group_user,1,1,1,1
+access_phone_number_tag,access_phone_number_tag,model_phone_number_tag,base.group_user,1,1,1,1
+access_search_popup,access_search_popup,model_search_popup,base.group_user,1,1,1,1
+access_internal_alert,access_internal_alert,model_internal_alert,base.group_user,1,1,1,1
+access_contact_method,access_contact_method,model_contact_method,base.group_user,1,1,1,1
+access_contact_role,access_contact_role,model_contact_role,base.group_user,1,1,1,1
+access_location_type,access_location_type,model_location_type,base.group_user,1,1,1,1
+access_contact_location_relationship,access_contact_location_relationship,model_contact_location_relationship,base.group_user,1,1,1,1
+access_cap_department,access_cap_department,model_cap_department,base.group_user,1,1,1,1
+access_historical_notes,access_historical_notes,model_historical_notes,base.group_user,1,1,1,1
+access_historical_pictures,access_historical_pictures,model_historical_pictures,base.group_user,1,1,1,1

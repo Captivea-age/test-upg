@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sale_order_helpdesk,sale.order.helpdesk,sale.model_sale_order,cap_helpdesk_access.group_cap_helpdesk,1,1,1,0
+access_account_move_helpdesk,account.move.helpdesk,account.model_account_move,cap_helpdesk_access.group_cap_helpdesk,1,1,1,0
+access_project_helpdesk,project.helpdesk,project.model_project_project,cap_helpdesk_access.group_cap_helpdesk,1,1,1,0
+access_employee_helpdesk,employee.helpdesk,hr.model_hr_employee,cap_helpdesk_access.group_cap_helpdesk,1,1,1,0
+access_expense_helpdesk,expense.helpdesk,hr_expense.model_hr_expense,cap_helpdesk_access.group_cap_helpdesk,1,1,1,0
+access_helpdesk_ticket_helpdesk,helpdesk_ticket.helpdesk,helpdesk.model_helpdesk_ticket,cap_helpdesk_access.group_cap_helpdesk,1,0,0,0
+access_task_helpdesk,task.helpdesk,project.model_project_task,cap_helpdesk_access.group_cap_helpdesk,1,1,0,0
+access_stage_helpdesk,helpdesk.stage,helpdesk.model_helpdesk_stage,cap_helpdesk_access.group_cap_helpdesk,1,0,0,0
+access_tag_helpdesk,helpdesk.tag,helpdesk.model_helpdesk_tag,cap_helpdesk_access.group_cap_helpdesk,1,1,1,0

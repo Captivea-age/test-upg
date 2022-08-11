@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+        <record id="view_order_form_inherit_sale_custom_2" model="ir.ui.view">
+            <field name="name">sale.order.form.sale.custom.2</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+<!--                <xpath expr="//field[@name='payment_term_id']" position="after">
+                     <field name="x_studio_void" string=" " force_save="True" attrs="{}" readonly="1"/>
+                    <field name="deposit_to_be_paid" string="Deposit to be Paid" attrs="{'invisible':[('sale_order_template_id', '!=', 1)]}"/>
+                    <button name="691" string="Create Repair Deposit Invoice" type="action" class="oe_highlight" attrs="{'invisible':[('sale_order_template_id', '!=', 1)]}"/>
+                    <button name="1057" string="Create $500 Deposit Invoice" type="action" class="oe_highlight" attrs="{'invisible':[('sale_order_template_id', '!=', 3)]}"/>
+                </xpath> -->
+                <xpath expr="//tree/field[@name='tax_id']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <xpath expr="//tree/field[@name='discount']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <xpath expr="//tree/field[@name='product_id']" position="attributes">
+                    <attribute name="domain">[('type', '=', 'service'),('sale_ok', '=', True),'|',('company_id', '=', False), ('company_id', '=', parent.company_id)]</attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_confirm']" position="replace">
+                    
+                </xpath>
+                <xpath expr="//button[@name='action_confirm']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+               <xpath expr="//field[@name='sale_order_template_id']" position="after">
+                    <field name="helpdesk_ticket_id" attrs="{'invisible':[('helpdesk_ticket_id', '=', False)], 'readonly': True}" />
+                </xpath>
+                <xpath expr="//field[@name='validity_date']" position="after">
+                    <field name="task_id" attrs="{'readonly': True}" />
+                </xpath>
+           </field>
+        </record>
+<!--          <record id="view_order_line_tree_inherit_sale_custom" model="ir.ui.view">
+            <field name="name">sale.order.line.tree.sale.custom</field>
+            <field name="model">sale.order.line</field>
+            <field name="inherit_id" ref="sale.view_order_line_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='tax_id']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+            </field>
+        </record> -->
+    </data>
+</odoo>

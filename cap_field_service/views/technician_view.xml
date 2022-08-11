@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+      <!-- Kanban view -->
+      <record id="technician_view_kanban" model="ir.ui.view">
+        <field name="name">Technician view Kanban</field>
+          <field name="model">project.task</field>
+          <field name="type">kanban</field>
+          <field name="arch" type="xml">
+            <kanban create="0" default_order="planned_date_begin" default_group_by="stage_id" class="o_kanban_small_column o_kanban_project_tasks" on_create="quick_create" quick_create_view="project.quick_create_task_form" examples="project" js_class="project_kanban" sample="1">
+                    <field name="color"/>
+                    <field name="priority"/>
+                    <field name="stage_id" options="{&quot;group_by_tooltip&quot;: {&quot;description&quot;: &quot;Description&quot;}}"/>
+                    <field name="user_id"/>
+                    <field name="partner_id"/>
+                    <field name="sequence"/>
+                    <field name="is_closed"/>
+                    <field name="partner_is_company"/>
+                    <field name="displayed_image_id"/>
+                    <field name="active"/>
+                    <field name="legend_blocked"/>
+                    <field name="legend_normal"/>
+                    <field name="legend_done"/>
+                    <field name="activity_ids"/>
+                    <field name="activity_state"/>
+                    <field name="rating_last_value"/>
+                    <field name="rating_ids"/>
+                    <progressbar field="kanban_state" colors="{&quot;done&quot;: &quot;success&quot;, &quot;blocked&quot;: &quot;danger&quot;, &quot;normal&quot;: &quot;muted&quot;}"/>
+                    <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="{{!selection_mode ? 'oe_kanban_color_' + kanban_getcolor(record.color.raw_value) : ''}} oe_kanban_card oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                        <field name="name"/></strong><br />
+                                        <field name="stage_id" /><br />
+                                        <field name="planned_date_begin" widget="datetime" /><br />
+                                        <span invisible="context.get('default_project_id', False) or context.get('fsm_mode', False)"><br/><field name="project_id" required="1"/></span>
+                                        <br/>
+                                        <!-- <t t-if="record.partner_id.value">
+                                            <span t-if="!record.partner_is_company.raw_value">
+                                                <field name="commercial_partner_id"/>
+                                            </span>
+                                            <span t-else="">
+                                                <field name="partner_id"/>
+                                            </span>
+                                        </t>
+                                        <t t-else="record.email_from.raw_value"><span><field name="email_from"/></span></t> -->
+                                    </div>
+                                    <div class="o_dropdown_kanban dropdown" t-if="!selection_mode" groups="base.group_user">
+                                        <a role="button" class="dropdown-toggle o-no-caret btn" data-toggle="dropdown" data-display="static" href="#" aria-label="Dropdown menu" title="Dropdown menu">
+                                            <span class="fa fa-ellipsis-v"/>
+                                        </a>
+                                        <div class="dropdown-menu" role="menu">
+                                            <a t-if="widget.editable" role="menuitem" type="set_cover" class="dropdown-item" data-field="displayed_image_id">Set Cover Image</a>
+                                            <a name="190" role="menuitem" type="action" class="dropdown-item">Share</a>
+                                            <a t-if="widget.editable" role="menuitem" type="edit" class="dropdown-item">Edit</a>
+                                            <a t-if="widget.editable" role="menuitem" class="dropdown-item" name="toggle_active" type="object">
+                                                <t t-if="record.active.raw_value">Archive</t>
+                                                <t t-if="!record.active.raw_value">Restore</t>
+                                            </a>
+                                            <a t-if="widget.deletable" role="menuitem" type="delete" class="dropdown-item">Delete</a>
+                                            <div role="separator" class="dropdown-divider"/>
+                                            <ul class="oe_kanban_colorpicker" data-field="color"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" invisible="context.get('fsm_mode', False)"/>
+                                    <div t-if="record.displayed_image_id.value">
+                                        <field name="displayed_image_id" widget="attachment_image"/>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_bottom" t-if="!selection_mode">
+                                    <div class="oe_kanban_bottom_left">
+                                        <field name="priority" widget="priority"/>
+                                        <field name="activity_ids" widget="kanban_activity"/>
+                                        <b t-if="record.rating_ids.raw_value.length">
+                                            <span style="font-weight:bold;" class="fa fa-fw mt4 fa-smile-o text-success" t-if="record.rating_last_value.value == 5" title="Latest Rating: Satisfied" role="img" aria-label="Happy face"/>
+                                            <span style="font-weight:bold;" class="fa fa-fw mt4 fa-meh-o text-warning" t-if="record.rating_last_value.value == 3" title="Latest Rating: Not Satisfied" role="img" aria-label="Neutral face"/>
+                                            <span style="font-weight:bold;" class="fa fa-fw mt4 fa-frown-o text-danger" t-if="record.rating_last_value.value == 1" title="Latest Rating: Higly Dissatisfied" role="img" aria-label="Sad face"/>
+                                        </b>
+                                        <div name="date_deadline" attrs="{'invisible': [('is_closed', '=', True)]}">
+                                            <field name="date_deadline" widget="remaining_days"/>
+                                        </div>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right" t-if="!selection_mode">
+                                        <field name="kanban_state" widget="state_selection" groups="base.group_user" invisible="context.get('fsm_mode', False)"/>
+                                        <field name="user_id" widget="many2one_avatar_user"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="oe_clear"/>
+                        </div>
+                    </t>
+                    </templates>
+                </kanban>
+          </field>
+      </record>
+
+      <!-- Form view -->
+      <record id="technician_view_form" model="ir.ui.view">
+        <field name="name">Technician view form</field>
+          <field name="model">project.task</field>
+          <field name="type">form</field>
+          <field name="arch" type="xml">
+            <form create="0" string="Job" class="o_form_project_tasks">
+                <field name="allow_subtasks" invisible="1"/>
+                <field name="is_closed" invisible="1"/>
+                <field name="allow_recurring_tasks" invisible="1"/>
+                <field name="repeat_show_dow" invisible="1"/>
+                <field name="repeat_show_day" invisible="1"/>
+                <field name="repeat_show_week" invisible="1"/>
+                <field name="repeat_show_month" invisible="1"/>
+                <field name="recurrence_id" invisible="1"/>
+                <field name="is_fsm" invisible="1" on_change="1" modifiers="{'invisible':true,'readonly':true}" id="is_fsm"/>
+
+                <header>
+                    <field name="stage_id" invisible="1" widget="statusbar" options="{'fold_field': 'fold'}" attrs="{'invisible': [('project_id', '=', False)]}"/>
+
+                </header>
+                <sheet string="Task">
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" name="action_fsm_view_material"
+                            type="object" icon="fa-cart-plus">
+                            <div class="o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="material_line_product_count" widget="statinfo" string="Products" class="mr-1"/>
+                                </span>
+                                <field name="material_line_total_price" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                <field name="currency_id" invisible="True"/>
+                            </div>
+                        </button>
+                        <field string="Tickets" name="helpdesk_ticket_id" invisible="1" />
+                        <button
+                            string="Helpdesk"
+                            class="oe_stat_button"
+                            name="action_view_ticket"
+                            type="object"
+                            icon="fa-life-ring"
+                            attrs="{'invisible': [('helpdesk_ticket_id', '=', False)]}"
+                            groups="helpdesk.group_helpdesk_user"
+                            help="Ticket from this task"/>
+                        <field name='commercial_partner_id' invisible='1'/>
+                        <field name='sale_order_id' invisible='1'/>
+<!--                         <button class="d-none d-md-inline oe_stat_button" type="object" name="action_view_so" icon="fa-dollar" attrs="{'invisible': [('sale_order_id', '=', False)]}" string="Sales Order" /> -->
+                        <button class="d-none d-md-inline oe_stat_button" type="object" name="action_view_so" icon="fa-dollar" string="Sales Order" />
+
+
+                    </div>
+
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+                    <div class="oe_title ">
+                        <h1 class="oe_inline purple_text">
+                            Job # <field name="id" options="{'format': 0}"></field>
+                            <field name="name" invisible="1" class="ml32"/>
+                            <field name="monstercare_member" invisible="1"/>
+                            <img id="purple_heart" attrs="{'invisible': [('monstercare_member', '=', False)]}"/>
+                            <field name="priority" readonly="1" widget="priority" class="float-right"/>
+                        </h1>
+                    </div>
+                    <div class="oe_title ">
+                        <h2 class="pink_text">
+                            <field name="start_date" readonly="1"></field>
+                            , <field name="planned_hour_start"  readonly="1" class="pink_text" options="{'no_open': True}"></field>
+                            Arrival window: <field name="arrival_window"  readonly="1" class="pink_text" options="{'no_open': True}"></field>
+                        </h2>
+                    </div>
+                    <div class="mt16">
+                        <field name="helpdesk_tag_ids" readonly="1" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}"/>
+                    </div>
+                    <group>
+                        <group name="group_service_location">
+                            <table>
+                                <tr>
+                                    <td style="padding-left:15px;">
+                                        <h2 class="purple_text">Service location</h2><br/>
+                                        <field  nolabel="1" name="partner_id" context="{'show_address': True}" domain="[['partner_type','=','location']]" class="o_task_customer_field" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True, 'no_open':True,}" readonly="1"/>
+                                        <button name="action_fsm_navigate" icon="fa-map-marker" string="Map" type="object" class="oe_highlight ml32" style="border-radius: 12px;"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="o_address_format" style="padding-left:15px;">
+<!--                                             <field name="street1" class="o_address_street" string="Street" placeholder="Street..." widget="char"/> -->
+                                            <field name="street2" class="o_address_street" string="Street2" placeholder="Street 2..."/>
+                                            <field name="city" class="o_address_city no_margin" string="City" placeholder="City"/>,
+                                            <field name="state" class="o_state_zip" string="State" placeholder="State"/>,
+                                            <field name="zip" class="o_address_zip" string="Zip Code" placeholder="ZIP"/>
+                                            <field name="country_id" class="o_address_country" string="Country" placeholder="Country" invisible="1"/>
+                                    </td> 
+                                </tr>
+                                <tr style="height:25px">
+                                    <td style="padding:15px;">
+                                        <div class="partner_age">
+                                            <field name="partner_age" readonly="1"/> Years
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:15px;">
+                                        <button name="%(action_manual_next_stage)d" icon="fa-truck" string="Dispatch" type="action" class="oe_highlight" attrs="{'invisible' : [('stage_id', '!=', 3)]}"/>
+
+                                        <button name="%(action_move_previous_stage)d" string="Cancel Dispatch" type="action" class="btn-danger" attrs="{'invisible' : [('stage_id', '!=', 4)]}"/>
+                                        <button name="%(action_manual_next_stage)d" icon="fa-truck" string=" Start working" type="action" class="oe_highlight ml64" attrs="{'invisible' : [('stage_id', '!=', 4)]}"/>
+
+                                        <button name="%(action_move_previous_stage)d" string="Cancel Arrival" type="action" class="btn-danger" attrs="{'invisible' : [('stage_id', '!=', 5)]}"/>
+                                        <button name="%(action_manual_next_stage)d" icon="fa-truck" string=" Invoice / collection"  type="action" class="oe_highlight ml64" attrs="{'invisible' : [('stage_id', '!=', 5)]}"/>
+
+                                        <button name="%(action_move_previous_stage)d" string="Go back to Working" type="action" class="btn-danger" attrs="{'invisible' : [('stage_id', '!=', 2)]}"/>
+                                        <button name="%(action_manual_next_stage)d" icon="fa-truck" confirm="Did you record the material used during the intervention?" string="Job complete" type="action" class="oe_highlight ml64" attrs="{'invisible' : [('stage_id', '!=', 2)]}"/>
+
+                                        <button name="%(action_move_previous_stage)d" string="Uncomplete" type="action" class="btn-danger" attrs="{'invisible' : [('stage_id', '!=', 7)]}"/>
+                                        
+                                        <!-- <button name="%(action_manual_next_stage)d" icon="fa-truck" string=" Audit" type="action" class="oe_highlight ml64" attrs="{'invisible' : [('stage_id', '!=', 7)]}"/> -->
+
+                                        <button name="%(action_manual_next_stage)d" string="In progress" type="action" class="oe_highlight" attrs="{'invisible' : [('stage_id', '!=', 10)]}"/>
+
+                                        <button name="%(action_manual_next_stage)d" string="Done" type="action" class="oe_highlight" attrs="{'invisible' : [('stage_id', '!=', 11)]}"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </group>
+                        <group >
+                            <div style="padding:15px;">
+                                <h2 class="purple_text">Contacts</h2>
+                            <div>
+                                <field name="send_notification" widget="boolean_toggle"/><label for="send_notification" string="Job Notifications"/>
+                            </div>
+                            <br/>
+                                <field name="all_contact_info" widget="html" readonly="1"/>
+                                <field name="phone_numbers_ids" readonly="1" nolabel="1" domain="[['display_in_job','=',True]]">
+                                    <tree>
+                                        <field name="phone" widget="phone" />
+                                        <field name="type" />
+                                        <field name="tags" widget="many2many_tags" />
+                                    </tree>
+                                </field>
+                                <field name="project_id" required="1" attrs="{'invisible': [('project_id', '=', 2)]}" domain="[('active', '=', True), ('company_id', '=', company_id)]"/>
+                                <field name="user_id" class="o_task_user_field" invisible="1" domain="[('share', '=', False)]"/>
+                                
+                                <field name="active" invisible="1"/>
+
+                            </div>
+                        </group>
+                    </group>
+
+
+
+                    <div class="text-center alert alert-danger mt32" role="alert"><!-- attrs="{'invisible': ['|', ('recurring_task', '=', False), ('recurrence_id', '=', False)]}"> -->
+                        <field name="display_error" widget="html"/>
+                    </div>
+                    <div class="text-center alert alert-warning" role="alert"><!-- attrs="{'invisible': ['|', ('ribbon_message', '=', False), ('ribbon_message', '=', '')]}">-->
+                        <field name="display_warning" widget="html"/>
+                    </div>
+                    <div class="text-center alert alert-info" role="alert"><!-- attrs="{'invisible': ['|', ('recurring_task', '=', False), ('recurrence_id', '=', False)]}"> -->
+                        <field name="display_info" widget="html"/>
+                    </div>
+                    
+                    <notebook>
+                        <page name="job_description" string="Job Description">
+                            <field name="description" readonly="1" type="html"/>
+                        </page>
+                        <page name="job_notes" string="Job Notes">
+                            
+                        </page>
+                        <page name="follow_ups_needed" string="Follow-ups Needed">
+                            
+                        </page>
+                        <page name="actions_page" string="Actions">
+                            <button name="%(cap_studio_customization.action_create_ticket_and_repair_from_task)d" string="SVC1 (Repair) Order" type="action"/>
+                            <button name="%(cap_studio_customization.action_create_ticket_and_repair_svc2_from_task)d" string="SVC2 (Major Repair) Order" type="action"/>
+                            <button name="%(cap_studio_customization.action_create_ticket_and_replacement_from_task)d" string="Replace Order" type="action"/>
+                            <button name="%(cap_studio_customization.action_create_ticket_and_rental_from_task)d" string="Rental Order" type="action"/>
+                    
+<!--                     <button string="Rental Order" /> -->
+<!--                             <button string="Purple site Quotation" /> -->
+                            <button id='purple_button' name="customerCreation" string="Generate Quotation Builder" type="object" />
+                        </page>
+                        <page name="timesheets" string="Timesheets">
+                            <field name="analytic_account_active" invisible="1"/>
+                            <field name="timesheet_ids" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True, 'no_open':True,}" attrs="{'invisible': [('analytic_account_active', '=', False)]}" context="{'default_project_id': project_id, 'default_name':''}">
+                                <tree string="Timesheet Activities" default_order="date">
+                                    <field name="date"/>
+                                    <field name="user_id" invisible="1"/>
+                                    <field name="employee_id" required="1" widget="many2one_avatar_employee"/>
+                                    <field name="name" required="0"/>
+                                    <field name="unit_amount" widget="timesheet_uom" decoration-danger="unit_amount &gt; 24"/>
+                                    <field name="project_id" invisible="1"/>
+                                    <field name="task_id" invisible="1"/>
+                                    <field name="company_id" invisible="1"/>
+                                </tree>
+                            </field>
+
+                        </page>
+
+                    </notebook>
+
+                    <notebook>
+                        <page name="history_page" string="Location History">
+                            
+                            <!-- <field name='service_titan_id' readonly="1"/>
+                            <field name='service_titan_link' readonly="1" widget="html"/>
+                            <field name="historical_job_notes_list"/> -->
+                        </page>
+                        <page name="systems_page" string="Membership &amp; Systems">
+                            <div class="oe_clear"/>
+                            <button name="openSystemCreation" type="object" string="Create a system"/><br/>
+                        
+                            <field name="system_ids" readonly="0"/>
+                            <label for="system_selection">System Selection</label>
+                            <field name="system_selection" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True, 'no_open':True,}" domain="['&amp;',('location_id','=',partner_id),('id','in', system_ids)]"/>
+                            
+                            <button name="openTestListPopup" attrs="{'invisible': [('system_selection', '=', False)]}" type="object" string="Generate tests"/><br/>
+
+                            <h3>Tests to perform</h3>
+                            <field name="test_ids" class="phone_view_invisible desktop_view_visible" >
+                                  <tree>
+                                    <field name="system_id"/>
+                                        <field name="maintenance_id"/>
+                                            <field name="component_id"/>
+                                            <field name="test_type"/>
+
+                                            <field name="date"/>
+                                            <field name="value"/>
+                                            <field name="result"/>
+                                            <button name="testPass" type="object" string="Pass"/>
+                                            <button name="testWarning" type="object" string="Warning"/>
+                                            <button name="testFail" type="object" string="Fail"/>
+                                </tree>
+                            </field>
+
+                            <field name="test_ids_smartphone" class="phone_view_visible desktop_view_invisible" >
+                                <tree>
+                                    <field name="test_type"/>
+                                    <field name="value"/>
+                                    <field name="result"/>
+                                    <button name="testPass" type="object" string="P"/>
+                                    <button name="testWarning" type="object" string="W"/>
+                                    <button name="testFail" type="object" string="F"/>
+                                </tree>
+                            </field>                
+                            Show sleeping list : <field name="sleeping_list_invisible" widget="boolean_toggle"/>
+                            <h3  attrs="{'invisible':[('sleeping_list_invisible','=',False)]}">Available tests</h3>                        
+                            <field name="sleeping_test_ids" attrs="{'invisible':[('sleeping_list_invisible','=',False)]}">
+                                  <tree>
+                                    <field name="system_id"/>
+                                        <field name="maintenance_id"/>
+                                            <field name="component_id"/>
+                                            <field name="test_type"/>
+
+                                            <field name="date"/>
+                                            <field name="value"/>
+                                            <field name="result"/>
+                                            <button name="testPass" type="object" string="Pass"/>
+                                            <button name="testWarning" type="object" string="Warning"/>
+                                            <button name="testFail" type="object" string="Fail"/>
+                                </tree>
+                            </field>
+                        </page>
+                        
+                        <page name="estimates_page" string="Estimates">
+                            <div class="oe_clear"/>
+                        </page>
+                        <page name="invoices_page" string="Invoices">
+                            <div class="oe_clear"/>
+                        </page>
+                        <page name="materials_page" string="Materials">
+                                <button name="openMaterialPopup" type="object" string="Material" />
+                                <field name="material_list_ids" readonly="1" >
+                                    <tree>
+                                        <field name="product_id" />
+                                        <field name="name" />
+                                        <field name="product_uom_qty" />
+                                    </tree>
+                                </field>
+                            <div class="oe_button_box" name="button_box">
+                                <button class="oe_stat_button" name="action_fsm_view_material"
+                                    type="object" icon="fa-cart-plus">
+                                    <div class="o_stat_info">
+                                        <span class="o_stat_value">
+                                            <field name="material_line_product_count" widget="statinfo" string="Products" class="mr-1"/>
+                                        </span>
+                                        <field name="material_line_total_price" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                        <field name="currency_id" invisible="True"/>
+                                    </div>
+                                </button>
+                            </div>
+                        <div class="oe_clear"/>
+                        </page>
+                        <page name="extra_info" string="Extra Info" groups="base.group_no_one">
+                            <group>
+                                <group>
+                                    <field name="sequence" groups="base.group_no_one"/>
+                                    <field name="email_from" invisible="1"/>
+                                    <field name="email_cc" groups="base.group_no_one"/>
+                                    <field name="project_privacy_visibility" groups="base.group_no_one"/>
+                                    <field name="allowed_user_ids" widget="many2many_tags" groups="base.group_no_one" attrs="{'invisible': [('project_privacy_visibility', 'not in', ('followers', 'portal'))]}"/>
+                                    <field name="child_ids" invisible="1"/>
+                                    <field name="subtask_project_id" invisible="1"/>
+                                    <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                                    <field name="displayed_image_id" groups="base.group_no_one"/>
+                                </group>
+                                <group>
+                                    <field name="date_assign" groups="base.group_no_one"/>
+                                    <field name="date_last_stage_update" groups="base.group_no_one"/>
+                                </group>
+                                <group string="Working Time to Assign" attrs="{'invisible': [('working_hours_open', '=', 0.0)]}">
+                                    <field name="working_hours_open" string="Hours"/>
+                                    <field name="working_days_open" string="Days"/>
+                                </group>
+                                <group string="Working Time to Close" attrs="{'invisible': [('working_hours_close', '=', 0.0)]}">
+                                    <field name="working_hours_close" string="Hours"/>
+                                    <field name="working_days_close" string="Days"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                                        <style>
+                        .o_ChatterTopbar_buttonSendMessage, .o_ChatterTopbar_buttonLogNote  {
+                            display:none!important;
+                        }
+                        .o_ChatterTopbar_buttonAttachments {
+                                            position:relative;
+                                            right:93%!important;
+                                            }
+                    </style>
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="mail_attachment" string="Attachments"/>
+                    </div>
+                </sheet>
+              </form>
+          </field>
+      </record>
+
+      <!-- Tree view -->
+      <record id="technician_view_tree" model="ir.ui.view">
+          <field name="model">project.task</field>
+          <field name="type">tree</field>
+          <field name="arch" type="xml">
+              <field name="name"></field>
+              <field name="company_id" invisible="1"></field>
+              <field name="partner_id"></field>
+              <field name="project_id"></field>
+          </field>
+      </record>
+
+    <record id="technician_view_search" model="ir.ui.view">
+        <field name="name">Technician view search</field>
+        <field name="model">project.task</field>
+        <field name="arch" type="xml">
+            <search string="Tech View">
+                <filter name="planned_date_begin" string="Today" domain="[('planned_date_begin', '!=', False)]"/>
+                <group expand="0" string="Group By...">
+                    <filter name="group_by_user" string="Assigned To" domain="[]" context="{'group_by':'user_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    </data>
+</odoo>

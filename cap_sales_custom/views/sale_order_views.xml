@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+        <record id="view_order_form_inherit_sale_custom" model="ir.ui.view">
+            <field name="name">sale.order.form.sale.custom</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+            	<xpath expr="//field[@name='partner_shipping_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_cancel']" position="attributes">
+                    <attribute name="string">Cancel the Quotation</attribute>
+                </xpath>
+                <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='order_lines']/field[@name='order_line']/tree[1]/field[@name='sequence']" position="after">
+                    <field name='location_id' invisible="1"/>
+                    <field name='system_id'  options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True}" domain="[('location_id','=',location_id)]" required="1" create="0"/>
+                </xpath>
+
+           </field>
+        </record>
+
+        <record id="email_compose_message_wizard_form_custom" model="ir.ui.view">
+            <field name="name">mail.compose.message.form.custom</field>
+            <field name="model">mail.compose.message</field>
+            <field name="inherit_id" ref="mail.email_compose_message_wizard_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_ids']" position="after">
+                    <field name="contact_ids" invisible="1" />
+                </xpath>
+            	<xpath expr="//field[@name='partner_ids']" position="attributes">
+                    <attribute name="widget">many2many_tags</attribute>
+                    <attribute name="domain">[('id', 'in', contact_ids)]</attribute>
+                    <attribute name="options">{'no_create': True, 'no_create_edit':True}</attribute>
+                </xpath>
+           </field>
+        </record>
+    </data>
+</odoo>

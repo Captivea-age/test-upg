@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+      <record id="arrival_window_tree_view" model="ir.ui.view">
+          <field name="model">arrival.window</field>
+          <field name="type">tree</field>
+          <field name="arch" type="xml">
+            <tree>
+              <field name="name"/>
+              <field name="department"/>
+              <field name="start_time" />
+              <field name="end_time" />
+            </tree>
+          </field>
+      </record>
+      <record id="arrival_window_form_view" model="ir.ui.view">
+          <field name="model">arrival.window</field>
+          <field name="type">form</field>
+          <field name="arch" type="xml">
+            <form>
+              <sheet>
+                <group>
+                  <field name="name"/>
+                  <field name="department"/>
+                  <field name="start_time"/>
+                  <field name="end_time" />
+                  <field name="time_to_add" />
+                </group>
+              </sheet>
+            </form>
+          </field>
+      </record>
+
+      <record id="arrival_window_action" model="ir.actions.act_window">
+        <field name="name">Arrival windows</field>
+        <field name="res_model">arrival.window</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain"></field>
+        <field name="context"></field>
+      </record>
+
+      <menuitem id="menu_arrival_window" name="Arrival windows" action="arrival_window_action" />
+    </data>
+
+</odoo>

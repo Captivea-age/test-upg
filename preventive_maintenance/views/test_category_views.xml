@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_pm_test_category_form" model="ir.ui.view">
+            <field name="name">view.pm.test.category.form</field>
+            <field name="model">preventive_maintenance.test.category</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                    <group>
+                    	<group>
+                    		<field name="name"/>
+                    		<field name="component_id"/>
+                    		<field name="required_interval"/>
+                    		<field name="margin"/>
+                    		<field name="skill_id"/>
+                    		<field name="time_needed"/>
+                    		<field name="test_weight" widget="percentage"/>
+                    	</group>
+                    	<group>
+                    		<field name="section_id"/>
+                    		<field name="test_type_id"/>
+                            <field name="test_list_ids" widget="many2many_tags"/>
+                    		<field name="first_test"/>
+                    		<field name="winter_pm"/>
+                    		<field name="inspection_pm"/>
+                    		<field name="post_install_pm"/>
+                    		<field name="summer_pm"/>
+                    		<field name="certified_pm"/>
+                    	</group>
+                    </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_pm_test_category_tree" model="ir.ui.view">
+            <field name="name">view.pm.test.category.tree</field>
+            <field name="model">preventive_maintenance.test.category</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="section_id"/>
+                    <field name="component_id"/>
+                    <field name="test_type_id"/>
+                    <field name="test_weight" widget="percentage"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="pm_test_category_action" model="ir.actions.act_window">
+            <field name="name">Test Category</field>
+            <field name="res_model">preventive_maintenance.test.category</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+    </data>
+</odoo>

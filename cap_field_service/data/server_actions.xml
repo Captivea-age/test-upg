@@ -1,0 +1,196 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+        <record id="action_manual_next_stage" model="ir.actions.server">
+            <field name="name">Manual next stage</field>
+            <field name="model_id" ref="project.model_project_task"/>
+            <field name="binding_model_id" ref="project.model_project_task"/>
+            <field name="state">code</field>
+            <field name="code">
+def inventory_adjust(line):
+  company_id = env.user.company_id.id
+  date = datetime.datetime.now()
+  name = "Inventory replenishement for "+env.user.name
+  prefill_counted_quantity = "counted"
+
+  #Stock.inventory.lines required fields
+  location_id = env.user.property_warehouse_id.lot_stock_id.id
+  
+  product = line['product_id']
+  product_id = product.id
+  product_uom_id = product['uom_id'].id
+  product_qty = 1
+  
+  inventory_adjustment = env['stock.inventory'].create({
+      'company_id':company_id,
+      'date':date,
+      'name':name,
+      'prefill_counted_quantity':prefill_counted_quantity,
+      'location_ids':(6,location_id),
+  })
+
+  inventory_adjustment.action_start()
+  
+  inventory_adjustment_line = env['stock.inventory.line'].create({
+      'location_id':location_id,
+      'product_id':product_id,
+      'product_uom_id':product_uom_id,
+      'product_qty':product_qty,
+      'inventory_id':inventory_adjustment.id
+  })
+  inventory_adjustment.action_validate()
+  
+  return True
+  
+  
+  #########
+  #
+  # Sets the next stage
+  #
+  #########
+
+all_stages = env['project.task.type'].search([('project_ids', 'in', [record.project_id.id])])#search({('', 'in', [])})
+
+list_stages = []
+for x in all_stages:
+  list_stages.append(x.id)
+
+start_idx = list_stages.index(record.stage_id.id)
+next_Val = list_stages[start_idx+1 : start_idx+2]
+
+
+#set the stage ID 
+record['stage_id'] = next_Val[0]
+
+
+  
+  #########
+  #
+  # If closing stage, merges the SO, creates DOs and invoices
+  #
+  #########
+  
+  
+
+if next_Val[0] == 2:
+  
+  
+  #Merge sale order lines onto original SO
+
+  # sale=env['sale.order'].search([('task_id','=',record['task_id']['id']),('id','!=',record['id'])])
+  sale=env['sale.order'].search([('task_id','=',record['id']),('invoice_status','=','to invoice')],order='id asc',limit=1)
+  if len(sale)==0:
+    sale=env['sale.order'].search([('task_id','=',record['id']),('invoice_status','=','invoiced')],order='id asc',limit=1)
+    
+  records=env['sale.order'].search([('task_id','=',record['id']),('id','!=',sale['id'])])
+  if len(records)>0:
+      for record in records:
+        if len(sale)==1:
+          sale.update_prices()
+          #If already confirmed, make stock moves or invoices
+          if sale['state']=='sale':
+            if record['state']!='done' and record['state']!='cancel' :
+              record.action_confirm()
+            record['order_line'].write({
+              'order_id':sale['id']
+            })
+            #Confirm deliveries
+            for delivery in record['picking_ids'].filtered(lambda x: x['state']!='done'):
+              delivery['sale_id']=sale['id']
+              delivery.action_assign()
+              
+              for line in delivery['move_ids_without_package'] :
+                
+                line['quantity_done']=line['product_uom_qty']
+                #for each line where the qty != done qty
+              try:
+                delivery.button_validate()
+              except:
+                #raise Warning("done:"+str(line['quantity_done'])+"# uom:"+str(line['product_uom_qty']))
+                if line['quantity_done'] != line['product_uom_qty']:
+                  
+                  inventory_adjust(line['product_line'])
+                  #Re-adding the quantities to the transfer
+                  line['quantity_done']=line['product_uom_qty']
+                  # raise Warning("done:"+str(line['quantity_done'])+"# uom:"+str(line['product_uom_qty']))
+                  
+                  # raise Warning("couldnt make the automated inventory adjustment")
+                  # log('Created an automated inventory adjustment', level="WARNING")
+                     
+              #After all lines done, validate delivery
+                  delivery.button_validate()
+              
+            #Create the invoices      
+            if record['invoice_status']=="to invoice":
+                record._create_invoices()
+                  
+              
+          
+            for invoice in record['invoice_ids']:
+              if invoice['state']!="posted" or "cancel":
+                invoice.action_post()
+              
+          
+          
+          #Delete current SO
+          record.action_cancel()
+          record.unlink()
+  else:
+      if len(sale)==1:
+        sale.update_prices()
+        #If already confirmed, make stock moves or invoices
+        if sale['state']=='sale':
+          
+          #Confirm deliveries
+          for delivery in sale['picking_ids'].filtered(lambda x: x['state']!='done'):
+            delivery.action_assign()
+            for line in delivery['move_ids_without_package'] :
+              
+              line['quantity_done']=line['product_uom_qty']
+              #for each line where the qty != done qty
+            try:
+              delivery.button_validate()
+            except:
+              #raise Warning("done:"+str(line['quantity_done'])+"# uom:"+str(line['product_uom_qty']))
+              if line['quantity_done'] != line['product_uom_qty']:
+                
+                inventory_adjust(line['product_line'])
+                #Re-adding the quantities to the transfer
+                line['quantity_done']=line['product_uom_qty']
+                # raise Warning("done:"+str(line['quantity_done'])+"# uom:"+str(line['product_uom_qty']))
+                
+                # raise Warning("couldnt make the automated inventory adjustment")
+                # log('Created an automated inventory adjustment', level="WARNING")
+                   
+            #After all lines done, validate delivery
+                delivery.button_validate()
+            
+          #Create the invoices      
+          if sale['invoice_status']=="to invoice":
+              sale._create_invoices()
+
+          for invoice in sale['invoice_ids']:
+            if invoice['state']!="posted" or "cancel":
+              invoice.action_post()
+            </field>
+        </record>
+
+        <record id="action_move_previous_stage" model="ir.actions.server">
+            <field name="name">Move to Previous Stage</field>
+            <field name="model_id" ref="project.model_project_task"/>
+            <field name="binding_model_id" ref="project.model_project_task"/>
+            <field name="state">code</field>
+            <field name="code">
+all_stages = env['project.task.type'].search([('project_ids', 'in', record.project_id.id)])
+list_stages = []
+for x in all_stages:
+    list_stages.append(x.id)
+
+start_idx = list_stages.index(record.stage_id.id)
+next_Val = list_stages[start_idx-1 : start_idx+2]
+
+record['stage_id'] = next_Val[0]
+            </field>
+        </record>
+    </data>
+</odoo>

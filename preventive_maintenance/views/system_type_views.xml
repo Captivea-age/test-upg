@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_pm_system_type_form" model="ir.ui.view">
+            <field name="name">view.pm.system.type.form</field>
+            <field name="model">preventive_maintenance.system_type</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+	                    <group>
+	                    	<group>
+	                    		<field name="name"/>
+	                    		<field name="category"/>
+	                    	</group>
+	                    	<group>
+	                    		<field name="abbreviation"/>
+	                    	</group>
+	                    </group>
+	                    <group>
+	                        <group>
+	                            <field name="furnace_bool"/>
+	                            <field name="evaporator_bool"/>
+	                            <field name="thermostat_bool"/>
+	                            <field name="blower_bool"/>
+	                            <field name="iaq_bool"/>
+	                        </group>
+	                        <group>
+	                        	<field name="condenser_bool"/>
+	                        	<field name="fancoil_bool"/>
+	                        	<field name="airflow_ducting_bool"/>
+	                        	<field name="water_drainage_bool"/>
+	                        </group>
+	                    </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+        <record id="view_pm_system_type_tree" model="ir.ui.view">
+            <field name="name">view.pm.system.type.tree</field>
+            <field name="model">preventive_maintenance.system_type</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="abbreviation"/>
+                    <field name="category"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="pm_system_type_action" model="ir.actions.act_window">
+            <field name="name">System Type</field>
+            <field name="res_model">preventive_maintenance.system_type</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_field_service_appointment_form" model="ir.ui.view">
+            <field name="name">view.field.service.appointment.form</field>
+            <field name="model">field.service.appointment</field>
+            <field name="arch" type="xml">
+                <form string='Field Service Appointment'>
+                    <group>
+                        <group>
+                            <field name="field_technician_id" options="{'no_open':True, 'no_quick_create': True,'no_create':True, 'no_create_edit':True}" domain="[('technician_bool','=',True)]" />
+                            <field name="date"/>
+                            <field name="service_task_id" invisible="1" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="department_id" required="1" readonly="1"/>
+                            <field name="job_type_id" readonly="1" domain="[('department_id', '=', department_id)]" required="1"/>
+                        </group>
+                    </group>
+                    <field name="service_task_ids" invisible="1">
+                        <tree>
+                            <field name="name"/>
+                            <field name="project_id"/>
+                            <field name="user_id"/>
+                            <field name="planned_hour_start"/>
+                            <field name="planned_hour_end"/>
+                        </tree>
+                    </field>
+                    <footer>
+                        <button name="find_appointment" type="object" string='Find Appointment'/>
+                        <button class="btn-secondary" special="cancel" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_appointment_selection_tree" model="ir.ui.view">
+            <field name="name">view.appointment.selection.form</field>
+            <field name="model">appointment.selection</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="location_distance"/>
+                    <field name="start_time_id"/>
+                    <field name="end_time_id"/>
+                    <field name="user_id"/>
+                    <field name="service_task_id"/>
+                    <field name="date"/>
+                    <button name="select_appointment" type="object" string="Select"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_appointment_selection_wizard_tree" model="ir.ui.view">
+            <field name="name">view.appointment.selection.wizardform</field>
+            <field name="model">appointment.selection.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <group>
+                            <field name="field_technician_id" options="{'no_open':True, 'no_quick_create': True,'no_create':True, 'no_create_edit':True}" domain="[('technician_bool','=',True)]" />
+                        </group>
+                        <group>
+                            <field name="date"/>
+                            <field name="is_appoinment_available" invisible="1"/>
+                        </group>
+                    </group>
+
+                    <div class="text-center alert alert-danger" attrs="{'invisible': [('is_appoinment_available', '!=', False)]}">Appointment not available for a day</div>
+
+                    <field name="appointment_selection_ids" readonly="1" force_save="1">
+                        <tree>
+                            <field name="location_distance"/>
+                            <field name="start_time_id"/>
+                            <field name="end_time_id"/>
+                            <field name="user_id"/>
+                            <field name="service_task_id"/>
+                            <field name="date"/>
+                            <button name="select_appointment" type="object" string="Select"/>
+                        </tree>
+                    </field>
+                    <footer>
+                        <button class="btn-primary" name="goBack" type="object" string="Go back"/>
+                        <button class="btn-secondary" special="cancel" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="field_service_appointment_wizard_action" model="ir.actions.act_window">
+            <field name="name">Field Service Appointment</field>
+            <field name="res_model">field.service.appointment</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">
+                {
+                'default_service_task_id': active_id,
+                }
+            </field>
+        </record>
+    </data>
+</odoo>

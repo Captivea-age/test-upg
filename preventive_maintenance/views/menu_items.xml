@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<menuitem id="menu_pm_root" name="Preventive Maintenance"
+		sequence="1" groups="base.group_user" />
+
+	<menuitem id="menu_pm_component" name="Component" sequence="2"
+		action="preventive_maintenance.pm_component_action"
+		parent="preventive_maintenance.menu_pm_root" groups="base.group_user" />
+		
+	<menuitem id="menu_pm_component_airflow" name="Airflow" sequence="2"
+		action="preventive_maintenance.pm_component_airflow_action"
+		parent="preventive_maintenance.menu_pm_root" groups="base.group_user" />
+		
+	<menuitem id="menu_pm_component_airflow_type" name="Airflow component types" sequence="2"
+		action="preventive_maintenance.pm_component_airflow_type_action"
+		parent="preventive_maintenance.menu_pm_root" groups="base.group_user" />
+		
+	<menuitem id="menu_pm_component_airflow_record" name="Airflow component record" sequence="2"
+		action="preventive_maintenance.pm_component_airflow_record_action"
+		parent="preventive_maintenance.menu_pm_root" groups="base.group_user" />
+
+	<menuitem id="menu_pm_equipment" name="Equipment" sequence="2"
+		action="preventive_maintenance.pm_equipment_action"
+		parent="preventive_maintenance.menu_pm_root" groups="base.group_user" />
+
+	<menuitem id="menu_pm_maintenance" name="Inspection"
+		sequence="3" action="preventive_maintenance.pm_maintenance_action"
+		parent="preventive_maintenance.menu_pm_root" groups="base.group_user" />
+
+	<menuitem id="menu_pm_section" name="Section" sequence="4"
+		action="preventive_maintenance.pm_section_action"
+		parent="preventive_maintenance.menu_pm_root" groups="base.group_user" />
+
+	<menuitem id="menu_pm_skill" name="Skill" sequence="5"
+		action="preventive_maintenance.pm_skill_action"
+		parent="preventive_maintenance.menu_pm_root" groups="base.group_user" />
+
+	<menuitem id="menu_pm_system_location" name="System Location"
+		sequence="6" action="preventive_maintenance.pm_system_location_action"
+		parent="preventive_maintenance.menu_pm_root" groups="base.group_user" />
+
+	<menuitem id="menu_pm_system_type" name="System Type"
+		sequence="7" action="preventive_maintenance.pm_system_type_action"
+		parent="preventive_maintenance.menu_pm_root" groups="base.group_user" />
+
+	<menuitem id="menu_pm_system" name="System" sequence="8"
+		action="preventive_maintenance.pm_system_action"
+		parent="preventive_maintenance.menu_pm_root" groups="base.group_user" />
+
+	<menuitem id="menu_pm_test_category" name="Test Category"
+		sequence="9" action="preventive_maintenance.pm_test_category_action"
+		parent="preventive_maintenance.menu_pm_root" groups="base.group_user" />
+
+	<menuitem id="menu_pm_test_list" name="Test List"
+		sequence="10" action="preventive_maintenance.pm_test_list_action"
+		parent="preventive_maintenance.menu_pm_root" groups="base.group_user" />
+
+	<menuitem id="menu_pm_test_records" name="Test Records"
+		sequence="10" action="preventive_maintenance.pm_test_records_action"
+		parent="preventive_maintenance.menu_pm_root" groups="base.group_user" />
+
+	<menuitem id="menu_pm_test" name="Test" sequence="11"
+		action="preventive_maintenance.pm_test_action"
+		parent="preventive_maintenance.menu_pm_root" groups="base.group_user" />
+
+	<menuitem id="menu_notification" name="Notifications" sequence="1"
+		action="preventive_maintenance.notification_dashboard_action"
+		parent="preventive_maintenance.menu_pm_root" groups="base.group_user" />
+
+	<menuitem id="menu_notification_dashboard" name="Notifications" sequence="1"
+		action="preventive_maintenance.notification_dashboard_action"
+		parent="preventive_maintenance.menu_notification" groups="base.group_user" />
+
+	<menuitem id="menu_notification_records" name="Notifications records" sequence="2"
+		action="preventive_maintenance.notification_action"
+		parent="preventive_maintenance.menu_notification" groups="base.group_user" />
+
+
+</odoo>

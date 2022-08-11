@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0" >
+        <record id="view_project_task_form_custom" model="ir.ui.view">
+            <field name="name">view.project.task.custom.form</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_form2" ></field>
+            <field name="priority">101</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="before">
+                    <img width="128px" alt='Tablet' height="128px" src="/cap_helpdesk/static/src/img/tablet.png"/>
+                </xpath>
+<!--                 <xpath expr="//field[@name='name']" position="after">
+                    <span style="margin-left: 10px;"> - #J<field name="id" readonly="1"  options="{'format': 0}"/></span>
+                </xpath> -->
+                <!-- <xpath expr="/form[1]/sheet[1]/group[1]/group[1]/field[4]" position="after">
+                    <field name="followup_needed" widget="toggle_boolean" attrs="{'invisible':[('stage_id','!=',7)]}"/>
+                </xpath>
+                <xpath expr="/form[1]/sheet[1]/group[1]/group[1]/field[5]" position="after">
+                    <field name="followup_department" widget="many2many_tags" attrs="{'invisible':[('stage_id','!=',7)]}"/>
+                </xpath>
+                <xpath expr="/form[1]/sheet[1]/group[1]/group[1]/field[6]" position="after">
+                    <field name="followup_notes" attrs="{'invisible':[('stage_id','!=',7)]}"/>
+                    <field name='service_titan_id'/>
+                    <field name='service_titan_link'/>
+                </xpath> -->
+                <xpath expr="//field[@name='planned_date_begin']" position="after">
+                    <field name="planned_hour_start" widget="selection" /><br/>
+                </xpath>
+                <xpath expr="//field[@name='planned_date_end']" position="after">
+                    <field name="planned_hour_end" widget="selection"/>
+                </xpath>
+                <xpath expr="//field[@name='planned_date_begin']" position="attributes">
+                     <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='planned_date_end']" position="attributes">
+                     <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='description']" position="after">
+                    <field name="helpdesk_tag_ids" widget="many2many_tags"/>
+                </xpath>
+
+                <xpath expr="//header" position="after">
+                    <div class="text-center alert alert-danger" role="alert">
+                        <field name="display_error" nolabel="1" widget="html"/>
+                    </div>
+                    <div class="text-center alert alert-warning" role="alert">
+                        <field name="display_warning" nolabel="1" widget="html"/>
+                    </div>
+                    <div class="text-center alert alert-info" role="alert">
+                        <field name="display_info" nolabel="1" widget="html"/>
+                    </div>
+                </xpath>
+          </field>
+      </record>
+    </data>
+</odoo>

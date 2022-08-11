@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<record id="view_contact_location_relationship_tree" model="ir.ui.view">
+		<field name="name">view.contact.location.relationship.tree</field>
+		<field name="model">contact.location.relationship</field>
+		<field name="arch" type="xml">
+			<tree>
+				<field name="sequence" widget="handle"/>
+				<field name="name"/>
+			</tree>
+		</field>
+	</record>
+
+	<record id="view_contact_location_relationship_form" model="ir.ui.view">
+		<field name="name">view.contact.location.relationship.form</field>
+		<field name="model">contact.location.relationship</field>
+		<field name="arch" type="xml">
+			<form>
+				<header/>
+  				<sheet string="Contact Location Relationship">
+    				<widget name="web_ribbon" text="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+    				<field name="active" invisible="1"/>
+    				<div class="oe_title">
+		                <h1>
+		                    <field name="name" required="1" placeholder="Name..."/>
+		                </h1>
+            		</div>
+    				<group>
+    					<group>
+    						<h1>
+      							<i>Customer information</i>
+						    </h1>
+						    <field name="contact_id" string="Contact " attrs="{}" required="1" options="{}" domain="[[&quot;partner_type&quot;,&quot;!=&quot;,&quot;location&quot;]]"/>
+						    <span class="o_form_label o_td_label" name="address_name">
+						      	<b>Contact address</b>
+						    </span>
+						    <div class="o_address_format">
+							    <field name="contact_street" class="o_address_street" string="Street" placeholder="Street..." attrs="{&quot;required&quot;: [[&quot;pick_a_location&quot;,&quot;=&quot;,&quot;New Location&quot;]]}"/>
+							    <field name="contact_street_2" class="o_address_street" string="Street2" placeholder="Street 2..." attrs="{}"/>
+							    <field name="contact_city" class="o_address_city" string="City" placeholder="City" attrs="{&quot;required&quot;: [[&quot;pick_a_location&quot;,&quot;=&quot;,&quot;New Location&quot;]]}"/>
+							    <field name="contact_state_id" class="o_address_state" domain="[[&quot;country_id.name&quot;,&quot;=&quot;,&quot;United States&quot;]]" string="State" attrs="{&quot;required&quot;: [[&quot;pick_a_location&quot;,&quot;=&quot;,&quot;New Location&quot;]]}" placeholder="State"/>
+							    <field name="contact_zip" class="o_address_zip" string="Zip Code" placeholder="ZIP" attrs="{&quot;required&quot;: [[&quot;pick_a_location&quot;,&quot;=&quot;,&quot;New Location&quot;]]}"/>
+							    <field name="contact_country_id" class="o_address_country" string="Country" placeholder="Country" attrs="{&quot;required&quot;: [[&quot;pick_a_location&quot;,&quot;=&quot;,&quot;New Location&quot;]]}" invisible="1"/>
+						    </div>
+						    <field name="contact_phone" string="Contact Phone"/>
+						    <field name="contact_mobile" string="Contact Mobile" attrs="{}"/>
+						    <field name="contact_email2" string="Contact Email2" attrs="{}" invisible="1"/>
+						    <field name="contact_email" string="Contact Email" attrs="{}"/>
+      					</group>
+      					<group>
+      						<h1>
+      							<i>Location information</i>
+    						</h1>
+						    <!--<h3>Address</h3>-->
+						    <field name="location_type_1" string="Location Type" attrs="{}" invisible="1"/>
+						    <field name="pick_a_location" string="Pick a location" widget="radio" options="{&quot;horizontal&quot;:false}" attrs="{&quot;invisible&quot;: [[&quot;location_id&quot;,&quot;!=&quot;,False]]}"/>
+						    <field name="location_name" string="Location name" placeholder="Will default to street address if empty"/>
+						    <field name="location_id" string="Location" options="{}" domain="[[&quot;partner_type&quot;,&quot;=&quot;,&quot;location&quot;]]" attrs="{&quot;invisible&quot;: [[&quot;pick_a_location&quot;,&quot;!=&quot;,&quot;Existing Location&quot;]], &quot;required&quot;: [[&quot;pick_a_location&quot;,&quot;=&quot;,&quot;Existing Location&quot;]]}"/>
+						    <span class="o_form_label o_td_label" name="address_name" attrs="{'invisible': [['pick_a_location','!=','Existing Location']]}">
+						      <b>Location address</b>
+						    </span>
+						    <div class="o_address_format" attrs="{'invisible': [['pick_a_location','!=','Existing Location']]}">
+							    <field name="location_street" class="o_address_street" string="Street" placeholder="Street..." attrs="{&quot;required&quot;: [[&quot;pick_a_location&quot;,&quot;=&quot;,&quot;Existing Location&quot;]]}"/>
+							    <field name="location_street_2" class="o_address_street" string="Street2" placeholder="Street 2..." attrs="{}"/>
+							    <field name="location_city" class="o_address_city" string="City" placeholder="City" attrs="{&quot;required&quot;: [[&quot;pick_a_location&quot;,&quot;=&quot;,&quot;Existing Location&quot;]]}"/>
+							    <field name="location_state_id" class="o_address_state" string="State" attrs="{&quot;required&quot;: [[&quot;pick_a_location&quot;,&quot;=&quot;,&quot;Existing Location&quot;]]}" placeholder="State" options="{&quot;no_create&quot;:true}"/>
+							    <field name="location_zip" class="o_address_zip" string="Zip Code" placeholder="ZIP" attrs="{&quot;required&quot;: [[&quot;pick_a_location&quot;,&quot;=&quot;,&quot;Existing Location&quot;]]}"/>
+							    <field name="location_country_id" class="o_address_country" string="Country" placeholder="Country" attrs="{&quot;required&quot;: [[&quot;pick_a_location&quot;,&quot;=&quot;,&quot;Existing Location&quot;]]}" invisible="1"/>
+						    </div>
+						    <span class="o_form_label o_td_label" name="address_name" attrs="{'invisible': [['pick_a_location','!=','New Location']]}">
+						      <b>New Location address</b>
+						    </span>
+						    <div class="o_address_format" attrs="{'invisible': [['pick_a_location','!=','New Location']]}">
+							    <field name="new_location_street" class="o_address_street" string="Street" placeholder="Street..." attrs="{&quot;required&quot;: [[&quot;pick_a_location&quot;,&quot;=&quot;,&quot;New Location&quot;]]}"/>
+							    <field name="new_location_street_2" class="o_address_street" string="Street2" placeholder="Street 2..." attrs="{}"/>
+							    <field name="new_location_city" class="o_address_city" string="City" placeholder="City" attrs="{&quot;required&quot;: [[&quot;pick_a_location&quot;,&quot;=&quot;,&quot;New Location&quot;]]}"/>
+							    <field name="new_location_state_id" class="o_address_state" string="State" attrs="{&quot;required&quot;: [[&quot;pick_a_location&quot;,&quot;=&quot;,&quot;New Location&quot;]]}" placeholder="State" domain="[[&quot;country_id.name&quot;,&quot;=&quot;,&quot;United States&quot;]]" options="{&quot;no_create&quot;:true}"/>
+							    <field name="new_location_zip" class="o_address_zip" string="Zip Code" placeholder="ZIP" attrs="{&quot;required&quot;: [[&quot;pick_a_location&quot;,&quot;=&quot;,&quot;New Location&quot;]]}"/>
+							    <field name="new_location_country_id" class="o_address_country" string="Country" placeholder="Country" attrs="{&quot;required&quot;: [[&quot;pick_a_location&quot;,&quot;=&quot;,&quot;New Location&quot;]]}"/>
+						    </div>
+      					</group>
+      					<group style="width:100%;">
+					      	<group>
+						        <field name="relationship_type" string="Relationship Type" attrs="{}" required="1"/>
+						        <field name="contact_roles_ids" string="Contact Roles" widget="many2many_checkboxes" attrs="{}" required="1"/>
+					      	</group>
+					      	<group>
+						        <field name="preferred_contact_method_ids" widget="many2many_checkboxes" attrs="{}" required="1"/>
+						        <field name="location_type_2" string="Location type" help="Related contact type (should default to location)" attrs="{}" invisible="1"/>
+					      	</group>
+					    </group>
+    				</group>
+  				</sheet>
+  				<div class="oe_chatter">
+				    <field name="message_follower_ids"/>
+				    <field name="activity_ids"/>
+				    <field name="message_ids"/>
+    			</div>
+			</form>
+		</field>
+	</record>
+
+	<record id="view_contact_role_tree" model="ir.ui.view">
+		<field name="name">view.contact.role.tree</field>
+		<field name="model">contact.role</field>
+		<field name="arch" type="xml">
+			<tree>
+				<field name="sequence" widget="handle"/>
+				<field name="name"/>
+			</tree>
+		</field>
+	</record>
+
+	<record id="view_contact_role_form" model="ir.ui.view">
+		<field name="name">view.contact.role.form</field>
+		<field name="model">contact.role</field>
+		<field name="arch" type="xml">
+			<form>
+				<sheet>
+					<h1><field name="name"/></h1>
+				</sheet>
+			</form>
+		</field>
+	</record>
+
+	<record id="view_contact_method_tree" model="ir.ui.view">
+		<field name="name">view.contact.method.tree</field>
+		<field name="model">contact.method</field>
+		<field name="arch" type="xml">
+			<tree>
+				<field name="sequence" widget="handle"/>
+				<field name="name"/>
+			</tree>
+		</field>
+	</record>
+
+	<record id="view_contact_method_form" model="ir.ui.view">
+		<field name="name">view.contact.method.form</field>
+		<field name="model">contact.method</field>
+		<field name="arch" type="xml">
+			<form>
+				<sheet>
+					<h1><field name="name"/></h1>
+				</sheet>
+			</form>
+		</field>
+	</record>
+
+	<record id='action_contact_location_relationship' model='ir.actions.act_window'>
+		 <field name="name">Contact Location Relationship</field>
+		 <field name="res_model">contact.location.relationship</field>
+		 <field name="view_mode">tree,form</field>
+	</record>
+
+	<record id='action_contact_role' model='ir.actions.act_window'>
+		 <field name="name">Contact Role</field>
+		 <field name="res_model">contact.role</field>
+		 <field name="view_mode">tree,form</field>
+	</record>
+
+	<record id='action_contact_method' model='ir.actions.act_window'>
+		 <field name="name">Contact Method</field>
+		 <field name="res_model">contact.method</field>
+		 <field name="view_mode">tree,form</field>
+	</record>
+
+	<menuitem name="Contact Location Relationship" id="menu_contact_location_relationship" parent="contacts.menu_contacts" action="action_contact_location_relationship" sequence="3"/>
+
+	<menuitem name="Contact Role" id="menu_contact_role" parent="contacts.res_partner_menu_config" action="action_contact_role" sequence="7"/>
+
+	<menuitem name="Contact Method" id="menu_contact_method" parent="contacts.res_partner_menu_config" action="action_contact_method" sequence="8"/>
+	
+</odoo>

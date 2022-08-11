@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_pm_system_form" model="ir.ui.view">
+            <field name="name">view.pm.system.form</field>
+            <field name="model">preventive_maintenance.system</field>
+            <field name="arch" type="xml">
+                <form>
+<!--                     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"/>
+                    <script>
+                      $(".o_field_date, .o_field_date_component").html(function(index, value) {
+                      if (value != "") {
+                          return moment(value, "DD/MM/YYYY").format("MM/YYYY");
+                             }
+                      });
+                    </script> -->
+                    <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" required="1"/>
+                        </h1>
+                    </div>
+                        <group name='system_characteristics' string="System Characteristics">
+	                    	<group>
+	                    		<field name="location_id" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True}" readonly="1"/>
+	                    		<field name="service_area"/>
+	                    		<field name="service_area_custom" attrs="{'invisible':[('service_area','!=','other')]}"/>
+	                    		<field name="system_location_id" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True}"/>	                    		
+	                    		<field name="next_service"/>
+	                    		<field name="tons"/>
+	                    	</group>
+	                    	<group>
+	                    		<field name="system_type_id" attrs='{"readonly": ["&amp;",["system_type_id","!=",False],"|","|","|","|","|",
+								["furnace_equipment_id","!=",False],["condenser_equipment_id","!=",False],["evaporator_equipment_id","!=",False],
+								["fancoil_equipment_id","!=",False],["thermostat_equipment_id","!=",False],["blower_equipment_id","!=",False]]}'
+								options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True}"/>          
+	                    		<field name="first_install"/>
+	                    		<field name="month_install" attrs="{'required': [('system_type_id','!=',False)]}"/>
+	                    		<field name="year_install" attrs="{'required': [('system_type_id','!=',False)]}"/>
+	                    		<field name="system_age"/>
+	                    		<field name="last_service"/>
+	                    		<field name="health"/>
+	                    		<field name="subscription_id" domain="[('partner_id', '=', location_id)]" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True}"/>
+	                    	</group>
+                    	</group>
+                    	<group name='maintenance_criteria' invisible="1">
+                    		<group>
+	                    	    <field name="maintenance_soon_needed" invisible="1"/>
+	                    	    <field name="maintenance_created" invisible="1"/>
+	                    	</group>
+	                    	<group>
+	                    		<field name="maintenance_needed" invisible="1"/>
+	                    	</group>
+                    	</group>
+                        <notebook>
+                    	    <page name="test_result" string="Test Result" attrs="{'invisible': [('id', '=', False)]}">
+                    	        <field name="test_results">
+                    	            <tree create="false" edit="false">
+                    	                <field name="system_id" options="{'no_create':True}"/>
+					                    <field name="maintenance_id"/>
+					                    <field name="component_id"/>
+					                    <field name="test_type"/>
+					                    <field name="date"/>
+					                    <field name="value"/>
+					                    <field name="result"/>
+					                    <button name="testPass" type="object" string="Pass"/>
+					                    <button name="testWarning" type="object" string="Warning"/>
+					                    <button name="testFail" type="object" string="Fail"/>
+                    	            </tree>
+                    	            <form>
+					                    <sheet>
+						                    <group>
+						                    	<group>
+						                    		<field name="system_id"/>
+						                    		<field name="component_id"/>
+						                    		<field name="test_type"/>
+						                    	</group>
+						                    	<group>
+						                    		<field name="maintenance_id"/>
+						                    		<field name="date"/>
+						                    		<field name="result"/>
+						                    	</group>
+						                    </group>
+					                    </sheet>
+					                </form>
+                    	        </field>
+                    	    </page>
+                    	    <page name="maintenance_ids" string="Maintenance" attrs="{'invisible': [('id', '=', False)]}">
+                    	        <field name="maintenance_ids">
+                    	            <tree create="false" edit="false">
+                    	                <field name="system_id"/>
+					                    <field name="date"/>
+					                    <field name="pm_type"/>
+					                    <field name="state"/>
+                    	            </tree>
+                    	            <form>
+					                    <sheet>
+						                    <group>
+						                    	<group>
+						                    		<field name="system_id"/>
+						                    		<field name="pm_type"/>
+						                    	</group>
+						                    	<group>
+						                    		<field name="date"/>
+						                    		<field name="state"/>
+						                    	</group>
+						                   	</group>
+					                    	<group>
+					                    	    <field name="tests_done">
+					                    	        <tree>
+					                    	            <field name="system_id"/>
+									                    <field name="maintenance_id"/>
+									                    <field name="component_id"/>
+									                    <field name="date"/>
+					                    	        </tree>
+					                    	        <form>
+					                    	            <sheet>
+						                    	            <group>
+										                    	<group>
+										                    		<field name="system_id"/>
+										                    		<field name="component_id"/>
+										                    		<field name="test_type"/>
+										                    	</group>
+										                    	<group>
+										                    		<field name="maintenance_id"/>
+										                    		<field name="date"/>
+										                    		<field name="result"/>
+										                    	</group>
+										                   	</group>
+									                    </sheet>
+					                    	        </form>
+					                    	    </field>
+					                    	</group>
+					                    </sheet>
+					                </form>
+                    	        </field>
+                    	    </page>
+                    	</notebook>
+                        
+                    	<field name="hid_furnace_bool" invisible="1"/>
+                    	<group name='furnace' string="Furnace" attrs="{'invisible': [('hid_furnace_bool','=',False)]}">
+                    		<group>
+                    			<field name="furnace_bool" attrs="{'invisible': [('hid_furnace_bool','=',False)]}"/>
+                    			<field name="furnace_equipment_id" attrs="{'invisible': [('furnace_bool','=',False)]}" context="{'furnace_eqp_id':id}" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True}"/>
+                    			<field name="furnace_equipment_brand_id" attrs="{'invisible': [('furnace_bool','=',False)]}" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True}"/>
+                    			<field name="furnace_equipment_model_id" attrs="{'invisible': [('furnace_bool','=',False)]}" />
+                    			<field name="furnace_equipment_serial_number" attrs="{'invisible': [('furnace_bool','=',False)]}" />
+                    			<field name="furnace_equipment_install_date" attrs="{'invisible': [('furnace_bool','=',False)]}" />
+                    			<field name="furnace_equipment_month_install" attrs="{'invisible': [('furnace_bool','=',False)], 'required': [('furnace_equipment_id','!=',False)]}" />
+                    			<field name="furnace_equipment_year_install" attrs="{'invisible': [('furnace_bool','=',False)], 'required': [('furnace_equipment_id','!=',False)]}" />
+                    		</group>
+                    		<!-- <group>
+                    			<field name="furnace_component_name" attrs="{'invisible': [('furnace_bool','=',False)]}"/>
+                    	        <field name="furnace_section_id" attrs="{'invisible': [('furnace_bool','=',False)]}"/>
+                    	        <field name="furnace_component_sub_category" attrs="{'invisible': [('furnace_bool','=',False)]}"/>
+                    	        <field name="furnace_service_life" attrs="{'invisible': [('furnace_bool','=',False)]}"/>
+                    		</group> -->
+                    	</group>
+                    	<group name="furnace_system_comp" attrs="{'invisible': [('furnace_equipment_id','=',False)]}">
+                    	    <field name="furnace_component_ids" context="{'default_furnace_equipment_id': furnace_equipment_id, 'default_furnace_bool': furnace_bool}" attrs="{'readonly': True,}">
+                    	        <tree>
+                    	        	<field name="furnace_component_name"/>
+                    	        	<field name="furnace_section_id"/>
+                    	        	<field name="furnace_component_sub_category"/>
+                    	        	<field class="o_field_date_component" name="last_test"/>
+	                    			<field class="o_field_date_component" name="install_date"/>
+	                    			<field name="brand_id"/>
+<!-- 	                    			<field name="model_id"/>
+	                    			<field name="serial_number"/> -->
+                                <field name="component_state"/>
+                    	        </tree>
+                    	        <form>
+	                    	        <group>
+	                    	            <group>
+	                    	            	<field name="furnace_component_name"/>
+	                    	        		<field name="furnace_component_sub_category"/>
+	                    	        		<field name="furnace_equipment_id" invisible="1"/>
+	                    	            </group>
+	                    	            <group>
+	                    	            	<field name="furnace_section_id"/>
+	                    	        		<field name="furnace_service_life"/>
+	                    	        		<field name="furnace_bool" invisible="1"/>
+	                    	            </group>
+	                    	        </group>
+                    	        </form>
+                    	    </field>
+                    	</group>
+                    	<field name="hid_condenser_bool" invisible="1"/>
+                    	<group name='condenser' string="Condenser" attrs="{'invisible': [('hid_condenser_bool','=',False)]}">
+                    		<group>
+                    			<field name="condenser_bool" attrs="{'invisible': [('hid_condenser_bool','=',False)]}"/>
+                    			<field name="condenser_equipment_id" attrs="{'invisible': [('condenser_bool','=',False)]}" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True}"/>
+                    			<field name="condenser_equipment_brand_id" attrs="{'invisible': [('condenser_bool','=',False)]}" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True}"/>
+                    			<field name="condenser_equipment_model_id" attrs="{'invisible': [('condenser_bool','=',False)]}" />
+                    			<field name="condenser_equipment_serial_number" attrs="{'invisible': [('condenser_bool','=',False)]}" />
+                    			<field name="condenser_equipment_install_date" attrs="{'invisible': [('condenser_bool','=',False)]}" />
+                    			<field name="condenser_equipment_month_install" attrs="{'invisible': [('condenser_bool','=',False)], 'required': [('condenser_equipment_id','!=',False)]}" />
+                    			<field name="condenser_equipment_year_install" attrs="{'invisible': [('condenser_bool','=',False)], 'required': [('condenser_equipment_id','!=',False)]}" />
+                    		</group>
+                    		<!-- <group>
+                    			<field name="condenser_component_name" attrs="{'invisible': [('condenser_bool','=',False)]}"/>
+                    	        <field name="condenser_section_id" attrs="{'invisible': [('condenser_bool','=',False)]}"/>
+                    	        <field name="condenser_component_sub_category" attrs="{'invisible': [('condenser_bool','=',False)]}"/>
+                    	        <field name="condenser_service_life" attrs="{'invisible': [('condenser_bool','=',False)]}"/>
+                    		</group> -->
+                    	</group>
+                    	<group attrs="{'invisible': [('condenser_equipment_id','=',False)]}">
+                    	    <field name="condenser_component_ids" context="{'default_condenser_equipment_id': condenser_equipment_id, 'default_evaporator_bool': evaporator_bool}" attrs="{'readonly': True,}">
+                    	        <tree>
+                    	        	<field name="condenser_component_name"/>
+                    	        	<field name="condenser_section_id"/>
+                    	        	<field name="condenser_component_sub_category"/>
+                    	        	<field class="o_field_date_component" name="last_test"/>
+                                <field name="component_state"/>
+                    			<field class="o_field_date_component" name="install_date"/>
+                    			<field name="brand_id"/>
+<!--                     			<field name="model_id"/>
+                    			<field name="serial_number"/> -->
+
+                    	        </tree>
+                    	        <form>
+                    	        	<group>
+	                    	            <group>
+	                    	            	<field name="condenser_component_name"/>
+	                    	        		<field name="condenser_component_sub_category"/>
+	                    	        		<field name="condenser_equipment_id" invisible="1"/>
+	                    	            </group>
+	                    	            <group>
+	                    	            	<field name="condenser_section_id"/>
+	                    	        		<field name="condenser_service_life"/>
+	                    	        		<field name="condenser_bool" invisible="1"/>
+	                    	            </group>
+                    	            </group>
+                    	        </form>
+                    	    </field>
+                    	</group>
+                    	<field name="hid_evaporator_bool" invisible="1"/>
+                    	<group name='evaporator' string="Evaporator" attrs="{'invisible': [('hid_evaporator_bool','=',False)]}">
+                    		<group>
+                    			<field name="evaporator_bool" attrs="{'invisible': [('hid_evaporator_bool','=',False)]}"/>
+                    			<field name="evaporator_equipment_id" attrs="{'invisible': [('evaporator_bool','=',False)]}" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True}"/>
+                    			<field name="evaporator_equipment_brand_id" attrs="{'invisible': [('evaporator_bool','=',False)]}" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True}"/>
+                    			<field name="evaporator_equipment_model_id" attrs="{'invisible': [('evaporator_bool','=',False)]}" />
+                    			<field name="evaporator_equipment_serial_number" attrs="{'invisible': [('evaporator_bool','=',False)]}" />
+                    			<field name="evaporator_equipment_install_date" attrs="{'invisible': [('evaporator_bool','=',False)]}" />
+                    			<field name="evaporator_equipment_month_install" attrs="{'invisible': [('evaporator_bool','=',False)], 'required': [('evaporator_equipment_id','!=',False)]}" />
+                    			<field name="evaporator_equipment_year_install" attrs="{'invisible': [('evaporator_bool','=',False)], 'required': [('evaporator_equipment_id','!=',False)]}" />
+                    		</group>
+                    		<!-- <group>
+                    			<field name="evaporator_component_name" attrs="{'invisible': [('evaporator_bool','=',False)]}"/>
+                    	        <field name="evaporator_section_id" attrs="{'invisible': [('evaporator_bool','=',False)]}"/>
+                    	        <field name="evaporator_component_sub_category" attrs="{'invisible': [('evaporator_bool','=',False)]}"/>
+                    	        <field name="evaporator_service_life" attrs="{'invisible': [('evaporator_bool','=',False)]}"/>
+                    		</group> -->
+                    	</group>
+                    	<group attrs="{'invisible': [('evaporator_equipment_id','=',False)]}">
+                    	    <field name="evaporator_component_ids" context="{'default_evaporator_equipment_id': evaporator_equipment_id, 'default_evaporator_bool': evaporator_bool}" attrs="{'readonly': True,}">
+                    	        <tree>
+                    	        	<field name="evaporator_component_name"/>
+                    	        	<field name="evaporator_section_id"/>
+                    	        	<field name="evaporator_component_sub_category"/>
+                    	        	<field class="o_field_date_component" name="last_test"/>
+                                <field name="component_state"/>
+                    			<field class="o_field_date_component" name="install_date"/>
+                    			<field name="brand_id"/>
+<!--                     			<field name="model_id"/>
+                    			<field name="serial_number"/> -->
+                    	        </tree>
+                    	        <form>
+	                    	        <group>
+	                    	            <group>
+	                    	            	<field name="evaporator_component_name"/>
+	                    	        		<field name="evaporator_component_sub_category"/>
+	                    	        		<field name="evaporator_equipment_id" invisible="1"/>
+	                    	            </group>
+	                    	            <group>
+	                    	            	<field name="evaporator_section_id"/>
+	                    	        		<field name="evaporator_service_life"/>
+	                    	        		<field name="evaporator_bool" invisible="1"/>
+	                    	            </group>
+	                    	        </group>
+                    	        </form>
+                    	    </field>
+                    	</group>
+                    	<field name="hid_fancoil_bool" invisible="1"/>
+                    	<group name='fancoil' string="Fancoil" attrs="{'invisible': [('hid_fancoil_bool','=',False)]}">
+                    		<group>
+                    			<field name="fancoil_bool" attrs="{'invisible': [('hid_fancoil_bool','=',False)]}"/>
+                    			<field name="fancoil_equipment_id" attrs="{'invisible': [('fancoil_bool','=',False)]}" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True}"/>
+                    			<field name="fancoil_equipment_brand_id" attrs="{'invisible': [('fancoil_bool','=',False)]}" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True}"/>
+                    			<field name="fancoil_equipment_model_id" attrs="{'invisible': [('fancoil_bool','=',False)]}" />
+                    			<field name="fancoil_equipment_serial_number" attrs="{'invisible': [('fancoil_bool','=',False)]}" />
+                    			<field name="fancoil_equipment_install_date" attrs="{'invisible': [('fancoil_bool','=',False)]}" />
+                    			<field name="fancoil_equipment_month_install" attrs="{'invisible': [('fancoil_bool','=',False)], 'required': [('fancoil_equipment_id','!=',False)]}" />
+                    			<field name="fancoil_equipment_year_install" attrs="{'invisible': [('fancoil_bool','=',False)], 'required': [('fancoil_equipment_id','!=',False)]}" />
+                    		</group>
+                    		<!-- <group>
+                    			<field name="fancoil_component_name" attrs="{'invisible': [('fancoil_bool','=',False)]}"/>
+                    	        <field name="fancoil_section_id" attrs="{'invisible': [('fancoil_bool','=',False)]}"/>
+                    	        <field name="fancoil_component_sub_category" attrs="{'invisible': [('fancoil_bool','=',False)]}"/>
+                    	        <field name="fancoil_service_life" attrs="{'invisible': [('fancoil_bool','=',False)]}"/>
+                    		</group> -->
+                    	</group>
+                    	<group attrs="{'invisible': [('fancoil_equipment_id','=',False)]}">
+                    	    <field name="fancoil_component_ids" context="{'default_fancoil_equipment_id': fancoil_equipment_id, 'default_fancoil_bool': fancoil_bool}" attrs="{'readonly': True,}">
+                    	        <tree>
+                    	        	<field name="fancoil_component_name"/>
+                    	        	<field name="fancoil_section_id"/>
+                    	        	<field name="fancoil_component_sub_category"/>
+                    	        	<field class="o_field_date_component" name="last_test"/>
+                                <field name="component_state"/>
+                    			<field class="o_field_date_component" name="install_date"/>
+                    			<field name="brand_id"/>
+<!--                     			<field name="model_id"/>
+                    			<field name="serial_number"/> -->
+                    	        </tree>
+                    	        <form>
+                    	            <group>
+		                  	            <group>
+		                  	            	<field name="fancoil_component_name"/>
+		                  	        		<field name="fancoil_component_sub_category"/>
+		                  	        		<field name="fancoil_equipment_id" invisible="1"/>
+		                  	            </group>
+		                  	            <group>
+		                  	            	<field name="fancoil_section_id"/>
+		                  	        		<field name="fancoil_service_life"/>
+		                  	        		<field name="fancoil_bool" invisible="1"/>
+		                  	            </group>
+                    	            </group>
+                    	        </form>
+                    	    </field>
+                    	</group>
+                    	<field name="hid_thermostat_bool" invisible="1"/>
+                    	<group name='thermostat' string="Thermostat" attrs="{'invisible': [('hid_thermostat_bool','=',False)]}">
+                    		<group>
+                    			<field name="thermostat_bool" attrs="{'invisible': [('hid_thermostat_bool','=',False)]}"/>
+                    			<field name="thermostat_equipment_id" attrs="{'invisible': [('thermostat_bool','=',False)]}" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True}"/>
+                    			<field name="thermostat_equipment_brand_id" attrs="{'invisible': [('thermostat_bool','=',False)]}" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True}"/>
+                    			<field name="thermostat_equipment_model_id" attrs="{'invisible': [('thermostat_bool','=',False)]}" />
+                    			<field name="thermostat_equipment_serial_number" attrs="{'invisible': [('thermostat_bool','=',False)]}" />
+                    			<field name="thermostat_equipment_install_date" attrs="{'invisible': [('thermostat_bool','=',False)]}" />
+                    			<field name="thermostat_equipment_month_install" attrs="{'invisible': [('thermostat_bool','=',False)], 'required': [('thermostat_equipment_id','!=',False)]}" />
+                    			<field name="thermostat_equipment_year_install" attrs="{'invisible': [('thermostat_bool','=',False)], 'required': [('thermostat_equipment_id','!=',False)]}" />
+                    		</group>
+                    		<!-- <group>
+                    			<field name="thermostat_component_name" attrs="{'invisible': [('thermostat_bool','=',False)]}"/>
+                    	        <field name="thermostat_section_id" attrs="{'invisible': [('thermostat_bool','=',False)]}"/>
+                    	        <field name="thermostat_component_sub_category" attrs="{'invisible': [('thermostat_bool','=',False)]}"/>
+                    	        <field name="thermostat_service_life" attrs="{'invisible': [('thermostat_bool','=',False)]}"/>
+                    		</group> -->
+                    	</group>
+                    	<group attrs="{'invisible': [('thermostat_equipment_id','=',False)]}">
+                    	    <field name="thermostat_component_ids" context="{'default_thermostat_equipment_id': thermostat_equipment_id, 'default_thermostat_bool': thermostat_bool}" attrs="{'readonly': True,}">
+                    	        <tree>
+                    	        	<field name="thermostat_component_name"/>
+                    	        	<field name="thermostat_section_id"/>
+                    	        	<field name="thermostat_component_sub_category"/>
+                    	        	<field class="o_field_date_component" name="last_test"/>
+                                <field name="component_state"/>
+                    			<field class="o_field_date_component" name="install_date"/>
+                    			<field name="brand_id"/>
+<!--                     			<field name="model_id"/>
+                    			<field name="serial_number"/> -->
+                    	        </tree>
+                    	        <form>
+                    	            <group>
+	                    	            <group>
+	                    	            	<field name="thermostat_component_name"/>
+	                    	        		<field name="thermostat_component_sub_category"/>
+	                    	        		<field name="thermostat_equipment_id" invisible="1"/>
+	                    	            </group>
+	                    	            <group>
+	                    	            	<field name="thermostat_section_id"/>
+	                    	        		<field name="thermostat_service_life"/>
+	                    	        		<field name="thermostat_bool" invisible="1"/>
+	                    	            </group>
+                    	            </group>
+                    	        </form>
+                    	    </field>
+                    	</group>
+                    	<field name="hid_airflow_ducting_bool" invisible="1"/>
+                    	<group name='airflow_ducting' string="Airflow Ducting" attrs="{'invisible': [('hid_airflow_ducting_bool','=',False)]}">
+                    		<group>
+                    			<field name="airflow_ducting_bool" attrs="{'invisible': [('hid_airflow_ducting_bool','=',False)]}"/>
+                                <!-- <field name="airflow_ducting_equipment_id" attrs="{'invisible': [('airflow_ducting_bool','=',False)]}"/> -->
+                    		</group>
+                    		<!-- <group>
+                    			<field name="airflow_ducting_component_name" attrs="{'invisible': [('airflow_ducting_bool','=',False)]}"/>
+                    	        <field name="airflow_ducting_section_id" attrs="{'invisible': [('airflow_ducting_bool','=',False)]}"/>
+                    	        <field name="airflow_ducting_component_sub_category" attrs="{'invisible': [('airflow_ducting_bool','=',False)]}"/>
+                    	        <field name="airflow_ducting_service_life" attrs="{'invisible': [('airflow_ducting_bool','=',False)]}"/>
+                    		</group> -->
+                    	</group>
+						<group attrs="{'invisible': [('airflow_ducting_bool','=',False)]}">
+							<group>
+								<button name="add_supply" string="Add Supply" type="object"
+									class="btn-primary" />
+							</group>
+							<group>
+								<button name="add_return" string="Add Return" type="object"
+									class="btn-primary" />
+							</group>
+							<field name="pm_component_airflow_ids" nolabel="1">
+								<tree>
+									<!-- <field name="name" /> -->
+									<field name="airflow_component" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True}"/>
+									<field name="cfm" />
+									<field name="filter_coefficient" />
+								</tree>
+								<form>
+									<group>
+										<!-- <field name="name" /> -->
+										<field name="cfm" />
+									</group>
+									<group>
+										<field name="airflow_component" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True}"/>
+										<field name="filter_coefficient" />
+									</group>
+								</form>
+							</field>
+							<field name="airflow" />
+							<!-- <field name="airflow_ducting_component_ids" context="{'default_airflow_ducting_equipment_id': 
+								airflow_ducting_equipment_id, 'default_airflow_ducting_bool':airflow_ducting_bool}" attrs="{'readonly': True,}"> 
+								<tree> <field name="airflow_ducting_component_name"/> <field name="airflow_ducting_section_id"/> 
+								<field name="airflow_ducting_component_sub_category"/> <field class="o_field_date_component" name="last_test"/> 
+								<field name="component_state"/> </tree> <form> <group> <group> <field name="airflow_ducting_component_name"/> 
+								<field name="airflow_ducting_component_sub_category"/> <field name="airflow_ducting_equipment_id" 
+								invisible="1"/> </group> <group> <field name="airflow_ducting_section_id"/> 
+								<field name="airflow_ducting_service_life"/> <field name="airflow_ducting_bool" 
+								invisible="1"/> </group> </group> </form> </field> -->
+						</group>
+                    	<field name="hid_blower_bool" invisible="1"/>
+                    	<group name='blower' string="Blower" attrs="{'invisible': [('hid_blower_bool','=',False)]}">
+                    		<group>
+                    			<field name="blower_bool" attrs="{'invisible': [('hid_blower_bool','=',False)]}"/>
+                    			<field name="blower_equipment_id" attrs="{'invisible': [('blower_bool','=',False)]}" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True}"/>
+                    			<field name="blower_equipment_brand_id" attrs="{'invisible': [('blower_bool','=',False)]}" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True}"/>
+                    			<field name="blower_equipment_model_id" attrs="{'invisible': [('blower_bool','=',False)]}" />
+                    			<field name="blower_equipment_serial_number" attrs="{'invisible': [('blower_bool','=',False)]}" />
+                    			<field name="blower_equipment_install_date" attrs="{'invisible': [('blower_bool','=',False)]}" />
+                    			<field name="blower_equipment_month_install" attrs="{'invisible': [('blower_bool','=',False)], 'required': [('blower_equipment_id','!=',False)]}" />
+                    			<field name="blower_equipment_year_install" attrs="{'invisible': [('blower_bool','=',False)], 'required': [('blower_equipment_id','!=',False)]}" />
+                    		</group>
+                    		<!-- <group>
+                    			<field name="blower_component_name" attrs="{'invisible': [('blower_bool','=',False)]}"/>
+                    	        <field name="blower_section_id" attrs="{'invisible': [('blower_bool','=',False)]}"/>
+                    	        <field name="blower_component_sub_category" attrs="{'invisible': [('blower_bool','=',False)]}"/>
+                    	        <field name="blower_service_life" attrs="{'invisible': [('blower_bool','=',False)]}"/>
+                    		</group> -->
+                    	</group>
+                    	<group attrs="{'invisible': [('blower_equipment_id','=',False)]}">
+                    	    <field name="blower_component_ids" context="{'default_blower_equipment_id': blower_equipment_id, 'default_blower_bool': blower_bool}" attrs="{'readonly': True,}">
+                    	        <tree>
+                    	        	<field name="blower_component_name"/>
+                    	        	<field name="blower_section_id"/>
+                    	        	<field name="blower_component_sub_category"/>
+                    	        	<field class="o_field_date_component" name="last_test"/>
+                                <field name="component_state"/>
+                    			<field class="o_field_date_component" name="install_date"/>
+                    			<field name="brand_id"/>
+<!--                     			<field name="model_id"/>
+                    			<field name="serial_number"/> -->
+                    	        </tree>
+                    	        <form>
+                    	            <group>
+	                    	            <group>
+	                    	            	<field name="blower_component_name"/>
+	                    	        		<field name="blower_component_sub_category"/>
+	                    	        		<field name="blower_equipment_id" invisible="1"/>
+	                    	            </group>
+	                    	            <group>
+	                    	            	<field name="blower_section_id"/>
+	                    	        		<field name="blower_service_life"/>
+	                    	        		<field name="blower_bool" invisible="1"/>
+	                    	            </group>
+                    	            </group>
+                    	        </form>
+                    	    </field>
+                    	</group>
+                    	<field name="hid_water_drainage_bool" invisible="1"/>
+                    	<group name='water_drainage' string="Water Drainage" attrs="{'invisible': [('hid_water_drainage_bool','=',False)]}">
+                    		<group>
+                    			<field name="water_drainage_bool" attrs="{'invisible': [('hid_water_drainage_bool','=',False)]}"/>
+                    			<field name="water_drainage_equipment_id" attrs="{'invisible': [('water_drainage_bool','=',False)]}" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True}"/>
+                    			<field name="water_drainage_equipment_brand_id" attrs="{'invisible': [('water_drainage_bool','=',False)]}" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True}"/>
+                    			<field name="water_drainage_equipment_model_id" attrs="{'invisible': [('water_drainage_bool','=',False)]}" />
+                    			<field name="water_drainage_equipment_serial_number" attrs="{'invisible': [('water_drainage_bool','=',False)]}" />
+                    			<field name="water_drainage_equipment_install_date" attrs="{'invisible': [('water_drainage_bool','=',False)]}" />
+                    			<field name="water_drainage_equipment_month_install" attrs="{'invisible': [('water_drainage_bool','=',False)], 'required': [('water_drainage_equipment_id','!=',False)]}" />
+                    			<field name="water_drainage_equipment_year_install" attrs="{'invisible': [('water_drainage_bool','=',False)], 'required': [('water_drainage_equipment_id','!=',False)]}" />
+                    		</group>
+                    		<!-- <group>
+                    			<field name="water_drainage_component_name" attrs="{'invisible': [('water_drainage_bool','=',False)]}"/>
+                    	        <field name="water_drainage_section_id" attrs="{'invisible': [('water_drainage_bool','=',False)]}"/>
+                    	        <field name="water_drainage_component_sub_category" attrs="{'invisible': [('water_drainage_bool','=',False)]}"/>
+                    	        <field name="water_drainage_service_life" attrs="{'invisible': [('water_drainage_bool','=',False)]}"/>
+                    		</group> -->
+                    	</group>
+                    	<group attrs="{'invisible': [('water_drainage_equipment_id','=',False)]}">
+                    	    <field name="water_drainage_component_ids" context="{'default_water_drainage_equipment_id': water_drainage_equipment_id, 'default_water_drainage_bool': water_drainage_bool}" attrs="{'readonly': True,}">
+                    	        <tree>
+                    	        	<field name="water_drainage_component_name"/>
+                    	        	<field name="water_drainage_section_id"/>
+                    	        	<field name="water_drainage_component_sub_category"/>
+                    	        	<field class="o_field_date_component" name="last_test"/>
+                                <field name="component_state"/>
+                    			<field class="o_field_date_component" name="install_date"/>
+                    			<field name="brand_id"/>
+<!--                     			<field name="model_id"/>
+                    			<field name="serial_number"/> -->
+                    	        </tree>
+                    	        <form>
+                    	        	<group>
+	                    	            <group>
+	                    	            	<field name="water_drainage_component_name"/>
+	                    	        		<field name="water_drainage_component_sub_category"/>
+	                    	        		<field name="water_drainage_equipment_id" invisible="1"/>
+	                    	            </group>
+	                    	            <group>
+	                    	            	<field name="water_drainage_section_id"/>
+	                    	        		<field name="water_drainage_service_life"/>
+	                    	        		<field name="water_drainage_bool" invisible="1"/>
+	                    	            </group>
+                    	            </group>
+                    	        </form>
+                    	    </field>
+                    	</group>
+                    	<field name="hid_iaq_bool" invisible="1"/>
+                    	<group name='iaq' string="IAQ" attrs="{'invisible': [('hid_iaq_bool','=',False)]}">
+                    		<group>
+                    			<field name="iaq_bool" attrs="{'invisible': [('hid_iaq_bool','=',False)]}"/>
+                    			<field name="iaq_equipment_id" attrs="{'invisible': [('iaq_bool','=',False)]}" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True}"/>
+                    			<field name="iaq_equipment_brand_id" attrs="{'invisible': [('iaq_bool','=',False)]}" options="{'no_quick_create': True,'no_create':True, 'no_create_edit':True}"/>
+                    			<field name="iaq_equipment_model_id" attrs="{'invisible': [('iaq_bool','=',False)]}" />
+                    			<field name="iaq_equipment_serial_number" attrs="{'invisible': [('iaq_bool','=',False)]}" />
+                    			<field name="iaq_equipment_install_date" attrs="{'invisible': [('iaq_bool','=',False)]}" />
+                    			<field name="iaq_equipment_month_install" attrs="{'invisible': [('iaq_bool','=',False)], 'required': [('iaq_equipment_id','!=',False)]}" />
+                    			<field name="iaq_equipment_year_install" attrs="{'invisible': [('iaq_bool','=',False)], 'required': [('iaq_equipment_id','!=',False)]}" />
+                    		</group>
+                    		<!-- <group>
+                    			<field name="iaq_component_name" attrs="{'invisible': [('iaq_bool','=',False)]}"/>
+                    	        <field name="iaq_section_id" attrs="{'invisible': [('iaq_bool','=',False)]}"/>
+                    	        <field name="iaq_component_sub_category" attrs="{'invisible': [('iaq_bool','=',False)]}"/>
+                    	        <field name="iaq_service_life" attrs="{'invisible': [('iaq_bool','=',False)]}"/>
+                    		</group> -->
+                    	</group>
+                    	<group attrs="{'invisible': [('iaq_equipment_id','=',False)]}">
+                    	    <field name="iaq_component_ids" context="{'default_iaq_equipment_id': iaq_equipment_id, 'default_iaq_bool': iaq_bool}" attrs="{'readonly': True,}">
+                    	        <tree>
+                    	        	<field name="iaq_component_name"/>
+                    	        	<field name="iaq_section_id"/>
+                    	        	<field name="iaq_component_sub_category"/>
+                    	        	<field class="o_field_date_component" name="last_test"/>
+                                <field name="component_state"/>
+                    			<field class="o_field_date_component" name="install_date"/>
+                    			<field name="brand_id"/>
+<!--                     			<field name="model_id"/>
+                    			<field name="serial_number"/> -->
+                    	        </tree>
+                    	        <form>
+                    	        	<group>
+	                    	            <group>
+	                    	            	<field name="iaq_component_name"/>
+	                    	        		<field name="iaq_component_sub_category"/>
+	                    	        		<field name="iaq_equipment_id" invisible="1"/>
+	                    	            </group>
+	                    	            <group>
+	                    	            	<field name="iaq_section_id"/>
+	                    	        		<field name="iaq_service_life"/>
+	                    	        		<field name="iaq_bool" invisible="1"/>
+	                    	            </group>
+                    	            </group>
+                    	        </form>
+                    	    </field>
+                    	</group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_pm_system_tree" model="ir.ui.view">
+            <field name="name">view.pm.system.tree</field>
+            <field name="model">preventive_maintenance.system</field>
+            <field name="arch" type="xml">
+                <tree create="false">
+                	<field name="name"/>
+                    <field name="location_id"/>
+                    <field name="system_type_id"/>
+              		<field name="health"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="pm_system_action" model="ir.actions.act_window">
+            <field name="name">System</field>
+            <field name="res_model">preventive_maintenance.system</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_project_base_task_form_custom" model="ir.ui.view">
+            <field name="name">view.project.base.task.custom.form</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_form2" ></field>
+            <field name="priority">101</field>
+            <field name="arch" type="xml">
+                 <xpath expr="//field[@name='name']" position="after">
+                     <field name="task_job_type" invisible="1" readonly="0"></field>
+                </xpath>
+
+
+
+                
+          </field>
+      </record>
+    </data>
+</odoo>

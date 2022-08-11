@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.actions.act_window" id="technician_view_action">
+            <field name="name">Technician view</field>
+            <field name="res_model">project.task</field>
+            <field name="view_mode">kanban,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('technician_view_kanban')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('technician_view_form')})]"/>
+            <field name="domain">[('is_fsm', '=', True)]</field>
+            <field name="search_view_id" ref="cap_field_service.technician_view_search"/>
+            <field name="context">{
+                'fsm_mode': True,
+                'show_address': True,
+                'search_default_planned_date_begin': True,
+                'fsm_task_kanban_whole_date': False,
+            }</field>
+        </record>
+
+      <record id="followup_department_action" model="ir.actions.act_window">
+        <field name="name">Followup department</field>
+        <field name="res_model">followup.department</field>
+        <field name="view_mode">tree</field>
+      </record>
+
+      <record id="time_selection_action" model="ir.actions.act_window">
+        <field name="name">Time table</field>
+        <field name="res_model">time.selection</field>
+        <field name="view_mode">tree,form</field>
+      </record>
+
+      <record id="team_color_action" model="ir.actions.act_window">
+        <field name="name">Team color</field>
+        <field name="res_model">team.color</field>
+        <field name="view_mode">tree,form</field>
+      </record>
+        
+      <record id="zip_list_action" model="ir.actions.act_window">
+        <field name="name">Zip list</field>
+        <field name="res_model">zip.list</field>
+        <field name="view_mode">tree,form</field>
+      </record>
+
+  </data>
+</odoo>

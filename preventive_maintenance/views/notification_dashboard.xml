@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+      <record id="view_preventive_maintenance_notification_dashboard_form" model="ir.ui.view">
+          <field name="name">view.preventive_maintenance.notification.dashboard.form</field>
+          <field name="model">preventive_maintenance.notification.dashboard</field>
+          <field name="arch" type="xml">
+              <form>
+                <group><button string="Generate inspections" class="btn btn-primary" name="921" type="action"/></group>
+                <group>
+                  <field name="name"/>
+                  <field name="high_skill_available" widget="float_time"/>
+                  <field name="low_skill_available" widget="float_time"/>
+                  <field name="risk_treshold" sum="Risk treshold"/>
+                  <field name="pm_type"/>
+                </group>
+                <group>
+                  <field name="notification_ids" invisible="1"/>
+                  <field name="filtered_notification_ids">
+                    <tree>
+                      <field name="name"/>
+                      <field name="location_id"/>
+                      <field name="system_id"/>
+                      <field name="inspection_time_needed" widget="float_time" sum="Sum of Total Time needed"/>
+                      <field name="high_skill_time_needed" widget="float_time" sum="Sum of High skill Time needed"/>
+                      <field name="low_skill_time_needed" widget="float_time" sum="Sum of Low Time needed"/>
+                      <field name="risk_score"/>
+                      <field name="inspection_ids"/>
+                      <field name="dashboard_id"/>
+                      <button class="btn btn-secondary" icon="fa-calendar" type="object" string="Create a ticket for the location" name="createTicket"></button>
+                    </tree>
+                  </field>
+                </group>
+              </form>
+          </field>
+      </record>
+
+
+
+      <record id="view_preventive_maintenance_notification_dashboard_tree" model="ir.ui.view">
+          <field name="name">view.preventive_maintenance.notification.dashboard.tree</field>
+          <field name="model">preventive_maintenance.notification.dashboard</field>
+          <field name="arch" type="xml">
+              <tree>
+                  <field name="name"/>
+                  <field name="high_skill_available" widget="float_time"/>
+                  <field name="low_skill_available" widget="float_time"/>
+
+                  <field name="notification_ids"/>
+                  <field name="filtered_notification_ids"/>
+              </tree>
+          </field>
+      </record>
+
+      <record id="notification_dashboard_action" model="ir.actions.act_window">
+          <field name="name">Notifications</field>
+          <field name="res_model">preventive_maintenance.notification.dashboard</field>
+          <field name="view_mode">tree,form</field>
+      </record>
+  </data>
+</odoo>

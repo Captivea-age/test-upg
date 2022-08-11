@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    	<record id="view_pm_maintenance_form" model="ir.ui.view">
+            <field name="name">view.pm.maintenance.form</field>
+            <field name="model">preventive_maintenance.maintenance</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+	                    <group>
+	                    	<group>
+	                    		<field name="system_id"/>
+	                    		<field name="pm_type"/>
+	                    	</group>
+	                    	<group>
+	                    		<field name="date"/>
+	                    		<field name="state"/>
+	                    	</group>
+	                   	</group>
+                    	<group>
+                    	    <field name="tests_done">
+                    	        <tree>
+                    	            <field name="system_id"/>
+				                    <field name="maintenance_id"/>
+				                    <field name="component_id"/>
+				                    <field name="date"/>
+                    	        </tree>
+                    	        <form>
+                    	            <sheet>
+	                    	            <group>
+					                    	<group>
+					                    		<field name="system_id"/>
+					                    		<field name="component_id"/>
+					                    		<field name="test_type"/>
+					                    	</group>
+					                    	<group>
+					                    		<field name="maintenance_id"/>
+					                    		<field name="date"/>
+					                    		<field name="result"/>
+					                    	</group>
+					                   	</group>
+				                    </sheet>
+                    	        </form>
+                    	    </field>
+                    	</group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_pm_maintenance_tree" model="ir.ui.view">
+            <field name="name">view.pm.maintenance.tree</field>
+            <field name="model">preventive_maintenance.maintenance</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="system_id"/>
+                    <field name="date"/>
+                    <field name="pm_type"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="pm_maintenance_action" model="ir.actions.act_window">
+            <field name="name">Inspections</field>
+            <field name="res_model">preventive_maintenance.maintenance</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+    </data>
+</odoo>

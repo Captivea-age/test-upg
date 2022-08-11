@@ -1,0 +1,104 @@
+/* Gantt view designing change [start]*/
+.o_gantt_view .o_gantt_row_nogroup .o_gantt_cell {
+  min-height: 70px;
+}
+
+.o_gantt_view .o_gantt_row_group .o_gantt_row_sidebar, .o_gantt_view .o_gantt_row_group .o_gantt_row_title, .o_gantt_view .o_gantt_row_group .o_gantt_cell {
+  min-height: 70px;
+  line-height: 70px;
+}
+
+
+.o_gantt_view .o_gantt_row_sidebar .o_gantt_row_title {
+  line-height: 70px;
+}
+.o_gantt_view .o_gantt_row .o_gantt_pill, .o_gantt_view .o_gantt_total_row_container .o_gantt_pill {
+  z-index: 1;
+  height: 35px;
+  top: 17.5px;
+}
+
+.o_gantt_view .o_gantt_row_group .o_gantt_pill_wrapper.o_gantt_consolidated_wrapper {
+  margin-top: 0;
+  line-height: 24px;
+  display: none;
+}
+/* Gantt view designing change [end]*/
+
+
+
+
+//Stick left panel of gantt view [start]
+.o_gantt_row_sidebar.col-2{
+    position: sticky !important;
+    left: 0px;
+    background: white;
+    z-index: 10;
+    border-right: 1px solid #e9ecef;
+    max-width: 5%;
+}
+.container-fluid.p-0 {
+    width: 300%;
+}
+//Stick left panel of gantt view [end]
+
+
+
+
+
+
+
+
+/* gantt view color dots */
+.o_field_color_picker_preview > li {
+    border: none !important;
+    box-shadow: none !important;
+}
+.o_field_color_picker_preview > li > a::after {
+content: "";
+display: block;
+width: 15px !important;
+height: 15px !important;
+border-radius: 100% !important;
+}
+/* gantt view color dots */
+
+.o_gantt_button_scale[data-value="week"],.o_gantt_button_scale[data-value="week"],.o_gantt_button_scale[data-value="month"],.o_gantt_button_scale[data-value="year"] {
+    display:none;
+}
+
+.o_gantt_date_picker {
+    height: 30px;
+    position: relative;
+    top: 3px;
+    background: #00A09D;
+    color: white;
+    font-weight: bold;
+    border: 0px;
+    /* padding-left: 0px; */
+    padding-right: 5px;
+    font-size: 18px;
+    padding-left: 5px;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  margin-left: -2px;
+  filter:invert(100%);
+  opacity: 1;
+}
+
+.o_gantt_date_picker:hover {
+  background: #007A77;
+  color: white;
+}
+
+.gantt-day-now-indicator{
+    position: absolute;
+    top: 0;
+    border: 0.5px solid red;
+    bottom: 0;
+}
+.half_indicator{
+    display: inline-block;
+}
